@@ -1,0 +1,222 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "Stressor Test Platform for create and execute test for stress evalutions.",
+    "version": "1.0.0",
+    "title": "Stressor Test Platform API",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Evaluator",
+      "description": "Create, update and delete evaluations for stress."
+    },
+    {
+      "name": "User",
+      "description": "Implement specific test created previously"
+    }
+  ],
+  "paths": {
+    "/test/create_test": {
+      "post": {
+        "tags": ["Evaluator"],
+        "summary": "Create a new test",
+        "requestBody": {
+          "description": "New test configuration",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Test"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success. Test created successfully"
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      }
+    },
+    "/test/{id}": {
+      "post": {
+        "tags": ["Evaluator"],
+        "summary": "Add new steps to the test",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Test id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "description": "New step configuration",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Step"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Failed. Bad post data."
+          }
+        }
+      }
+    },
+    "/test/{id}/{step_id}": {
+      "put": {
+        "tags": ["Evaluator"],
+        "summary": "Update existent step in test",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Test id",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "step_id",
+            "in": "query",
+            "description": "Step id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "description": "Update step configuration",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Step"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Failed. Bad put data."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Evaluator"],
+        "summary": "Remove existent step in test",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Test id",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "step_id",
+            "in": "query",
+            "description": "Step id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Failed. Bad put data."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Test": {
+        "type": "object",
+        "required": ["id", "name", "description"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "string"
+          },
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "description": {
+            "type": "string",
+            "format": "string"
+          },
+          "consent": {
+            "type": "string",
+            "format": "string"
+          },
+          "number_of_steps": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            }
+          },
+          "published": {
+            "type": "boolean",
+            "format": "boolean"
+          }
+        }
+      },
+      "Step": {
+        "type": "object",
+        "required": ["id", "name", "type", "duration"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "string"
+          },
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "type": {
+            "type": "string",
+            "format": "string"
+          },
+          "duration": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  }
+}
