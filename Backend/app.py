@@ -1,12 +1,14 @@
 import argparse
 import os
-from flask import Flask, jsonify, request, redirect, make_response
+from flask import Flask, abort, jsonify, request, redirect, make_response
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
 from dotenv import load_dotenv
 from pathlib import Path
 import pymongo
-from pymongo.errors import BulkWriteError
+from pymongo.errors import *
+
+from helpers import *
 
 app = Flask(__name__)
 
@@ -41,12 +43,14 @@ db = db_client.get_database('Evaluations')
 @app.errorhandler(400)
 def handle_400_error(_error):
     """Return a http 400 error to client"""
-    return make_response(jsonify({'error': 'Misunderstood'}), 400)
+    return make_response(jsonify({'error': 'Bad request'}), 400)
+
 
 @app.errorhandler(404)
 def handle_404_error(_error):
     """Return a http 404 error to client"""
     return make_response(jsonify({'error': 'Not found'}), 404)
+
 
 @app.errorhandler(500)
 def handle_500_error(_error):
@@ -54,16 +58,51 @@ def handle_500_error(_error):
     return make_response(jsonify({'error': 'Server error'}), 500)
 
 # Valid routes
-# Create test
-@app.route('/create_test', methods=['POST'])
-def create_test():
+# CRUD oparation for test
+@app.route('/test', methods=['POST'])
+def create():
     try:
         if request.method == 'POST':
-            new_test = {'number_of_steps': request.json["number_of_steps"]}
-            db.Test.insert_one(new_test)
-            return make_response(jsonify(message="success"), 200)
+            if all(k in request.json for k in ("test_id", "name", "description")):
+
+                new_test = {'_id': request.json["test_id"], # test_id correspond to the _id in mongodb
+                            'name': request.json["name"],
+                            'description': request.json["description"],
+                            'consent': request.json["consent"] if keyExist("consent", request.json) else "",
+                            'number_of_steps': request.json["number_of_steps"] if keyExist("number_of_steps", request.json) else 0,
+                            'steps': request.json["steps"] if keyExist("steps", request.json) else [],
+                            'published': False}
+                db.Test.insert_one(new_test)
+                return make_response(jsonify(message="Test created successfully"), 200)
+            else:
+                abort(400)
     except BulkWriteError as e:
         return make_response(jsonify(message="Error creating test",
+                                     details=e.details), 500)
+    except DuplicateKeyError as e:
+        return make_response(jsonify(message="Error creating test. Test already exist",
+                                     details=e.details), 500)
+
+
+@app.route('/test/<test_id>', methods=['GET', 'DELETE'])
+def test_operations(test_id):
+    try:
+        if request.method == 'GET':
+            test = db.Test.find_one({"_id": test_id})
+            if test is None:
+                return make_response(jsonify(message="Test not found"), 404)
+            else:
+                test['_id'] = str(test['_id'])  # Convert objectId to string
+                return make_response(jsonify(test), 200)
+                
+        if request.method == 'DELETE':
+            result = db.Test.find_one_and_delete({"_id": test_id})
+            if result is None:
+                return make_response(jsonify(message="Test not found"), 404)
+            else:
+                return make_response(jsonify(message="Test deleted successfully"), 200)
+    except BulkWriteError as e:
+        return make_response(jsonify(message="Error",
                                      details=e.details), 500)
 
 

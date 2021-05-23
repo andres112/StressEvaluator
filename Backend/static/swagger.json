@@ -16,18 +16,26 @@
   ],
   "tags": [
     {
-      "name": "Evaluator",
-      "description": "Create, update and delete evaluations for stress."
+      "name": "Test",
+      "description": "Endpoints related to the Test."
     },
     {
-      "name": "User",
-      "description": "Implement specific test created previously"
+      "name": "Step",
+      "description": "Endpoints related to the steps included into a specific Test."
+    },
+    {
+      "name": "Result",
+      "description": "Endpoints related to results obtained of test implementation."
+    },
+    {
+      "name": "Implementation",
+      "description": "Endpoints used in test implementation stage."
     }
   ],
   "paths": {
-    "/test/create_test": {
+    "/test": {
       "post": {
-        "tags": ["Evaluator"],
+        "tags": ["Test"],
         "summary": "Create a new test",
         "requestBody": {
           "description": "New test configuration",
@@ -41,7 +49,7 @@
           }
         },
         "responses": {
-          "201": {
+          "200": {
             "description": "Success. Test created successfully"
           },
           "400": {
@@ -50,14 +58,58 @@
         }
       }
     },
-    "/test/{id}": {
+    "/test/{test_id}": {
+      "get": {
+        "tags": ["Test", "Implementation"],
+        "summary": "Find a test by ID",
+        "parameters": [
+          {
+            "name": "test_id",
+            "in": "path",
+            "description": "Test id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Test"],
+        "summary": "Remove a test by ID",
+        "parameters": [
+          {
+            "name": "test_id",
+            "in": "path",
+            "description": "Test id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/test/{test_id}/step/{step_id}": {
       "post": {
-        "tags": ["Evaluator"],
+        "tags": ["Step"],
         "summary": "Add new steps to the test",
         "parameters": [
           {
-            "name": "id",
-            "in": "query",
+            "name": "test_id",
+            "in": "path",
             "description": "Test id",
             "required": true,
             "schema": { "type": "string" }
@@ -75,30 +127,59 @@
           }
         },
         "responses": {
-          "201": {
+          "200": {
             "description": "OK"
           },
           "400": {
-            "description": "Failed. Bad post data."
+            "description": "Failed. Bad request"
+          },
+          "404": {
+            "description": "Resource not found."
           }
         }
-      }
-    },
-    "/test/{id}/{step_id}": {
-      "put": {
-        "tags": ["Evaluator"],
-        "summary": "Update existent step in test",
+      },
+      "get": {
+        "tags": ["Step", "Implementation"],
+        "summary": "Find a step from a test by step ID",
         "parameters": [
           {
-            "name": "id",
-            "in": "query",
+            "name": "test_id",
+            "in": "path",
             "description": "Test id",
             "required": true,
             "schema": { "type": "string" }
           },
           {
             "name": "step_id",
-            "in": "query",
+            "in": "path",
+            "description": "Step id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "put": {
+        "tags": ["Step"],
+        "summary": "Update existent step in test",
+        "parameters": [
+          {
+            "name": "test_id",
+            "in": "path",
+            "description": "Test id",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "step_id",
+            "in": "path",
             "description": "Step id",
             "required": true,
             "schema": { "type": "string" }
@@ -116,21 +197,77 @@
           }
         },
         "responses": {
-          "201": {
+          "200": {
             "description": "OK"
           },
           "400": {
-            "description": "Failed. Bad put data."
+            "description": "Failed. Bad request."
+          },
+          "404": {
+            "description": "Resource not found."
           }
         }
       },
       "delete": {
-        "tags": ["Evaluator"],
+        "tags": ["Step"],
         "summary": "Remove existent step in test",
         "parameters": [
           {
-            "name": "id",
-            "in": "query",
+            "name": "test_id",
+            "in": "path",
+            "description": "Test id",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "step_id",
+            "in": "path",
+            "description": "Step id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/test_results/{test_id}": {
+      "get": {
+        "tags": ["Result"],
+        "summary": "Get results from a test by ID",
+        "parameters": [
+          {
+            "name": "test_id",
+            "in": "path",
+            "description": "Test id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/send_step/{test_id}": {
+      "post": {
+        "tags": ["Implementation"],
+        "summary": "Send the answer to questionnaires or stressors from user",
+        "parameters": [
+          {
+            "name": "test_id",
+            "in": "path",
             "description": "Test id",
             "required": true,
             "schema": { "type": "string" }
@@ -143,12 +280,23 @@
             "schema": { "type": "string" }
           }
         ],
+        "requestBody": {
+          "description": "Step answers",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Test"
+              }
+            }
+          }
+        },
         "responses": {
-          "201": {
-            "description": "OK"
+          "200": {
+            "description": "Success. Test created successfully"
           },
           "400": {
-            "description": "Failed. Bad put data."
+            "description": "Failed. Bad post data."
           }
         }
       }
@@ -158,19 +306,22 @@
     "schemas": {
       "Test": {
         "type": "object",
-        "required": ["id", "name", "description"],
+        "required": ["test_id", "name", "description"],
         "properties": {
-          "id": {
+          "test_id": {
             "type": "string",
-            "format": "string"
+            "format": "string",
+            "example": "12345"
           },
           "name": {
             "type": "string",
-            "format": "string"
+            "format": "string",
+            "example": "Test name"
           },
           "description": {
             "type": "string",
-            "format": "string"
+            "format": "string",
+            "example": "Test name"
           },
           "consent": {
             "type": "string",
@@ -188,7 +339,8 @@
           },
           "published": {
             "type": "boolean",
-            "format": "boolean"
+            "format": "boolean",
+            "example": false
           }
         }
       },
