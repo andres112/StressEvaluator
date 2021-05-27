@@ -102,6 +102,29 @@
         }
       }
     },
+    "/test/{test_id}/steps": {
+      "get": {
+        "tags": ["Step"],
+        "summary": "Find all steps from a test by test ID",
+        "parameters": [
+          {
+            "name": "test_id",
+            "in": "path",
+            "description": "Test id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
     "/test/{test_id}/step/{step_id}": {
       "post": {
         "tags": ["Step"],
@@ -335,7 +358,8 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Step"
-            }
+            },
+            "example": []
           },
           "published": {
             "type": "boolean",
@@ -346,23 +370,26 @@
       },
       "Step": {
         "type": "object",
-        "required": ["id", "name", "type", "duration"],
+        "required": ["step_id", "name", "type", "duration"],
         "properties": {
-          "id": {
+          "step_id": {
             "type": "string",
             "format": "string"
           },
           "name": {
             "type": "string",
-            "format": "string"
+            "format": "string",
+            "example": "First Questionnaire"
           },
           "type": {
             "type": "string",
-            "format": "string"
+            "format": "string",
+            "example": "q"
           },
           "duration": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "example": 30
           },
           "content": {
             "type": "object"
