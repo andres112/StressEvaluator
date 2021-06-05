@@ -283,6 +283,50 @@
         }
       }
     },
+    "/create_session/{test_id}": {
+      "post": {
+        "tags": ["Implementation"],
+        "summary": "Create the user session for test implementation",
+        "parameters": [
+          {
+            "name": "test_id",
+            "in": "path",
+            "description": "Test id",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "session_id",
+            "in": "query",
+            "description": "Session id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "description": "Session creation schema",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Session"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Failed. Bad request"
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
     "/send_step/{test_id}": {
       "post": {
         "tags": ["Implementation"],
@@ -329,12 +373,11 @@
     "schemas": {
       "Test": {
         "type": "object",
-        "required": ["test_id", "name", "description"],
+        "required": ["name", "description"],
         "properties": {
           "test_id": {
             "type": "string",
-            "format": "string",
-            "example": "12345"
+            "format": "string"
           },
           "name": {
             "type": "string",
@@ -344,7 +387,7 @@
           "description": {
             "type": "string",
             "format": "string",
-            "example": "Test name"
+            "example": "Test description"
           },
           "consent": {
             "type": "string",
@@ -370,7 +413,7 @@
       },
       "Step": {
         "type": "object",
-        "required": ["step_id", "name", "type", "duration"],
+        "required": ["name", "type", "duration"],
         "properties": {
           "step_id": {
             "type": "string",
@@ -393,6 +436,36 @@
           },
           "content": {
             "type": "object"
+          }
+        }
+      },
+      "Session": {
+        "type": "object",
+        "required": ["session_id", "test_id"],
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "format": "string"
+          },
+          "test_id": {
+            "type": "string",
+            "format": "string"
+          },
+          "consent": {
+            "type": "boolean",
+            "format": "boolean"
+          },
+          "responses": {
+            "type": "array",
+            "example": []
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       }
