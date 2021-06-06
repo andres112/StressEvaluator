@@ -1,73 +1,48 @@
-import argparse
-import os
+from flask import Blueprint, make_response, jsonify, request, abort
 import datetime
 import uuid
-from flask import Flask, abort, jsonify, request, redirect, make_response
-from flask_cors import CORS
-from flask_swagger_ui import get_swaggerui_blueprint
-from dotenv import load_dotenv
-from pathlib import Path
-import pymongo
 from pymongo.errors import *
-
 from helpers import *
+from db_config import Test, Step, Result
 
-app = Flask(__name__)
+endpoint = Blueprint("endpoint", __name__, static_folder='static')
 
-# Environment variables
-load_dotenv()
-env_path = Path('.')/'.env'
-load_dotenv(dotenv_path=env_path)
-
-# swagger details
-SWAGGER_URL = '/swagger'
-API_URL = '/static/swagger.json'
-SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
-    SWAGGER_URL,
-    API_URL,
-    config={
-        'app_name': "Stressor Test Platform API"
-    }
-)
-app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
-
-# DB connection and client configuration
-DB_PASS = os.getenv('DB_PASS')
-DB_USER = os.getenv('DB_USER')
-db_url = f'mongodb+srv://{DB_USER}:{DB_PASS}@tester.dcebp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
-db_client = pymongo.MongoClient(db_url)
-
-# Database
-db = db_client.get_database('Evaluations')
-
-# Collections
-Test = db.Test
-Step = db.Step
-
-# Routes
-# HTTP messages
-@app.errorhandler(400)
+# HTTP error handlers
+@endpoint.errorhandler(400)
 def handle_400_error(_error):
     """Return a http 400 error to client"""
     return make_response(jsonify({'error': 'Bad request'}), 400)
 
 
-@app.errorhandler(404)
+@endpoint.errorhandler(404)
 def handle_404_error(_error):
     """Return a http 404 error to client"""
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-@app.errorhandler(500)
+@endpoint.errorhandler(500)
 def handle_500_error(_error):
     """Return a http 500 error to client"""
     return make_response(jsonify({'error': 'Server error'}), 500)
 
-# Valid routes
 
 # CRUD oparation for Test
 ##########################
-@app.route('/test', methods=['POST'])
+@endpoint.route('/all_test', methods=['GET'])
+def get_all_test():
+    try:
+        if request.method == 'GET':
+            tests = Test.find()
+            if tests is None:
+                return make_response(jsonify(message="Test not found"), 404)
+            else:
+                return make_response(jsonify([item for item in tests]), 200)
+    except BulkWriteError as e:
+        return make_response(jsonify(message="Error",
+                                     details=e.details), 500)
+
+
+@endpoint.route('/test', methods=['POST'])
 def create():
     try:
         if request.method == 'POST':
@@ -92,7 +67,7 @@ def create():
                                      details=e.details), 500)
 
 
-@app.route('/test/<test_id>', methods=['GET', 'DELETE'])
+@endpoint.route('/test/<test_id>', methods=['GET', 'DELETE'])
 def test_operations(test_id):
     try:
         # convert test_id to test_uuid
@@ -103,7 +78,6 @@ def test_operations(test_id):
             if test is None:
                 return make_response(jsonify(message="Test not found"), 404)
             else:
-                test['_id'] = str(test['_id'])  # Convert objectId to string
                 return make_response(jsonify(test), 200)
 
         if request.method == 'DELETE':
@@ -121,7 +95,7 @@ def test_operations(test_id):
 
 # CRUD operation for Steps
 ##########################
-@app.route('/test/<test_id>/steps', methods=['GET'])
+@endpoint.route('/test/<test_id>/steps', methods=['GET'])
 def get_all_steps(test_id):
     try:
         if test_id is None:
@@ -138,11 +112,11 @@ def get_all_steps(test_id):
             else:
                 return make_response(jsonify([item for item in steps]), 200)
     except BulkWriteError as e:
-        return make_response(jsonify(message="Error creating test",
+        return make_response(jsonify(message="Error getting steps",
                                      details=e.details), 500)
 
 
-@app.route('/test/<test_id>/step/<step_id>', methods=['PUT', 'DELETE', 'GET', 'POST'])
+@endpoint.route('/test/<test_id>/step/<step_id>', methods=['PUT', 'DELETE', 'GET', 'POST'])
 def step_operations(test_id, step_id):
     try:
         if test_id is None:
@@ -161,7 +135,7 @@ def step_operations(test_id, step_id):
                         'content': {}}
             # create step in current test
             test = Test.update_one(
-                {'_id': test_uuid}, {'$push': {'steps': new_step['_id']}})
+                {'_id': test_uuid}, {'$push': {'steps': new_step['_id']}, '$inc': {'number_of_steps': 1}})
             # create new step
             Step.insert_one(new_step)
             if test.matched_count == 0:
@@ -190,8 +164,8 @@ def step_operations(test_id, step_id):
                 if keyExist(param, request.json):
                     updated_step[param] = request.json[param]
             # update step in db
-            step = Step.update_one({'_id': step_uuid, 'test_id': test_uuid}, {
-                '$set': updated_step})
+            step = Step.update_one({'_id': step_uuid, 'test_id': test_uuid},
+                                   {'$set': updated_step})
             if step.matched_count == 0:
                 return make_response(jsonify(message="Step not found"), 404)
             elif step.modified_count == 0:
@@ -207,26 +181,38 @@ def step_operations(test_id, step_id):
             else:
                 # Remove step identifier from Test[test_id].steps
                 Test.update_one(
-                    {'_id': test_uuid}, {'$pull': {'steps': step_uuid}})
+                    {'_id': test_uuid}, {'$pull': {'steps': step_uuid}, '$inc': {'number_of_steps': -1}})
                 return make_response(jsonify(message="Test step deleted successfully", test_id=test_uuid, step_id=step_uuid), 200)
     except BulkWriteError as e:
-        return make_response(jsonify(message="Error creating test",
+        return make_response(jsonify(message="Error in step operation",
                                      details=e.details), 500)
 
 
-# Main execution
-if __name__ == '__main__':
-    PARSER = argparse.ArgumentParser(description="Stressor Test Platform API")
-    PARSER.add_argument('--debug', action='store_true',
-                        help="Use flask debug/dev mode with file change reloading")
-    ARGS = PARSER.parse_args()
+# CRUD operation for Session and Results
+########################################
+@endpoint.route('/create_session/<test_id>', methods=['POST'])
+def create_session(test_id):
+    try:
+        if test_id is None or not keyExist("session_id", request.json):
+            abort(400)
+            return
+        
+        # convert test_id to test_uuid
+        test_uuid = uuid.UUID(test_id)
 
-    PORT = os.getenv('PORT')
-
-    if ARGS.debug:
-        print("Running in debug mode")
-        # cross origen support
-        CORS(app)
-        app.run(host='0.0.0.0', port=PORT, debug=True)
-    else:
-        app.run(host='0.0.0.0', port=PORT, debug=False)
+        if request.method == 'POST':
+            new_session = {'_id': request.json["session_id"],
+                        'test_id': test_uuid,  # test_id correspond to the _id in mongodb
+                        'consent': False,
+                        'creation_date': datetime.datetime.now(),
+                        'close_date': None,
+                        'responses': []}
+            # create new step
+            Result.insert_one(new_session)
+            return make_response(jsonify(message="User session created successfully", test_id=test_uuid, session_id=new_session['_id']), 200)
+    except BulkWriteError as e:
+        return make_response(jsonify(message="Error creating User Session",
+                                     details=e.details), 500)
+    except DuplicateKeyError as e:
+        return make_response(jsonify(message="Error creating User Session. This already exist",
+                                     details=e.details), 500)

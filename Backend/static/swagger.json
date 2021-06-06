@@ -24,15 +24,29 @@
       "description": "Endpoints related to the steps included into a specific Test."
     },
     {
-      "name": "Result",
-      "description": "Endpoints related to results obtained of test implementation."
-    },
-    {
       "name": "Implementation",
       "description": "Endpoints used in test implementation stage."
+    },
+    {
+      "name": "Result",
+      "description": "Endpoints related to results obtained of test implementation."
     }
   ],
   "paths": {
+    "/all_test": {
+      "get": {
+        "tags": ["Test"],
+        "summary": "Find all tests",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
     "/test": {
       "post": {
         "tags": ["Test"],
@@ -53,7 +67,7 @@
             "description": "Success. Test created successfully"
           },
           "400": {
-            "description": "Failed. Bad post data."
+            "description": "Failed. Bad request data."
           }
         }
       }
@@ -294,13 +308,6 @@
             "description": "Test id",
             "required": true,
             "schema": { "type": "string" }
-          },
-          {
-            "name": "session_id",
-            "in": "query",
-            "description": "Session id",
-            "required": true,
-            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -404,6 +411,10 @@
             },
             "example": []
           },
+          "creation_date": {
+            "type": "string",
+            "format": "date-time"
+          },
           "published": {
             "type": "boolean",
             "format": "boolean",
@@ -445,7 +456,8 @@
         "properties": {
           "session_id": {
             "type": "string",
-            "format": "string"
+            "format": "string",
+            "example":"12345"
           },
           "test_id": {
             "type": "string",
@@ -459,11 +471,11 @@
             "type": "array",
             "example": []
           },
-          "start_date": {
+          "creation_date": {
             "type": "string",
             "format": "date-time"
           },
-          "end_date": {
+          "close_date": {
             "type": "string",
             "format": "date-time"
           }
