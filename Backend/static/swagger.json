@@ -334,7 +334,7 @@
         }
       }
     },
-    "/send_step/{test_id}": {
+    "/send_step/{test_id}/session/{session_id}": {
       "post": {
         "tags": ["Implementation"],
         "summary": "Send the answer to questionnaires or stressors from user",
@@ -347,9 +347,9 @@
             "schema": { "type": "string" }
           },
           {
-            "name": "step_id",
-            "in": "query",
-            "description": "Step id",
+            "name": "session_id",
+            "in": "path",
+            "description": "Session id",
             "required": true,
             "schema": { "type": "string" }
           }
@@ -360,7 +360,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Test"
+                "$ref": "#/components/schemas/Session_Step"
               }
             }
           }
@@ -371,6 +371,9 @@
           },
           "400": {
             "description": "Failed. Bad post data."
+          },
+          "404": {
+            "description": "Resource not found."
           }
         }
       }
@@ -457,7 +460,7 @@
           "session_id": {
             "type": "string",
             "format": "string",
-            "example":"12345"
+            "example": "12345"
           },
           "test_id": {
             "type": "string",
@@ -476,6 +479,28 @@
             "format": "date-time"
           },
           "close_date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Session_Step": {
+        "type": "object",
+        "required": ["step_id", "content", "start_time", "end_time"],
+        "properties": {
+          "step_id": {
+            "type": "string",
+            "format": "string"
+          },
+          "content": {
+            "type": "object",
+            "example": {}
+          },
+          "start_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end_time": {
             "type": "string",
             "format": "date-time"
           }

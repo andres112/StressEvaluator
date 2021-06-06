@@ -145,6 +145,9 @@ def step_operations(test_id, step_id):
             else:
                 return make_response(jsonify(message=f"Step added successfully to the test", test_id=test_uuid, step_id=new_step['_id']), 200)
 
+        if step_id is None:
+            abort(400)
+            return
         # convert step_id to step_uuid
         step_uuid = uuid.UUID(step_id)
 
@@ -196,17 +199,17 @@ def create_session(test_id):
         if test_id is None or not keyExist("session_id", request.json):
             abort(400)
             return
-        
+
         # convert test_id to test_uuid
         test_uuid = uuid.UUID(test_id)
 
         if request.method == 'POST':
             new_session = {'_id': request.json["session_id"],
-                        'test_id': test_uuid,  # test_id correspond to the _id in mongodb
-                        'consent': False,
-                        'creation_date': datetime.datetime.now(),
-                        'close_date': None,
-                        'responses': []}
+                           'test_id': test_uuid,  # test_id correspond to the _id in mongodb
+                           'consent': False,
+                           'creation_date': datetime.datetime.now(),
+                           'close_date': None,
+                           'responses': []}
             # create new step
             Result.insert_one(new_session)
             return make_response(jsonify(message="User session created successfully", test_id=test_uuid, session_id=new_session['_id']), 200)
@@ -215,4 +218,35 @@ def create_session(test_id):
                                      details=e.details), 500)
     except DuplicateKeyError as e:
         return make_response(jsonify(message="Error creating User Session. This already exist",
+                                     details=e.details), 500)
+
+
+@endpoint.route('/send_step/<test_id>/session/<session_id>', methods=['POST'])
+def session_send_step(test_id, session_id):
+    try:
+        if test_id is None or session_id is None:
+            abort(400)
+            return
+
+        # convert test_id to test_uuid
+        test_uuid = uuid.UUID(test_id)
+        # session_id is not converted to uuid
+        if request.method == 'POST':
+            if all(k in request.json for k in ("step_id", "content", "start_time", "end_time")):
+                new_answer = {'step_id': uuid.UUID(request.json["step_id"]),  # test_id correspond to the _id in mongodb
+                              'content': request.json["content"],
+                              'start_time': request.json["start_time"],
+                              'end_time': request.json["end_time"]}
+                result = Result.update_one(
+                    {'_id': session_id, 'test_id': test_uuid}, {'$push': {'responses': new_answer}})
+                if result.matched_count == 0:
+                    return make_response(jsonify(message="User Session not found"), 404)
+                elif result.modified_count == 0:
+                    return make_response(jsonify(message="User Session response not updated"), 500)
+                else:
+                    return make_response(jsonify(message="Answer sent successfully", test_id=test_uuid, step_id=new_answer["step_id"], session_id=session_id), 200)
+            else:
+                abort(400)
+    except BulkWriteError as e:
+        return make_response(jsonify(message="Error sending answer",
                                      details=e.details), 500)
