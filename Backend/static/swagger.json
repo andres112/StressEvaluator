@@ -33,10 +33,26 @@
     }
   ],
   "paths": {
-    "/all_test": {
+    "/find_tests": {
       "get": {
         "tags": ["Test"],
-        "summary": "Find all tests",
+        "summary": "Find all tests according searching parameters",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Test name",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "description": "Test owner",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -400,6 +416,11 @@
             "type": "string",
             "format": "string",
             "example": "Test name"
+          },
+          "owner": {
+            "type": "string",
+            "format": "string",
+            "example": "Test owner"
           },
           "description": {
             "type": "string",

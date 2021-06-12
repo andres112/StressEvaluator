@@ -28,11 +28,29 @@ def handle_500_error(_error):
 
 # CRUD oparation for Test
 ##########################
-@endpoint.route('/all_test', methods=['GET'])
+@endpoint.route('/find_tests', methods=['GET'])
 def get_all_test():
     try:
         if request.method == 'GET':
-            tests = Test.find()
+            name = request.args.get('name')
+            owner = request.args.get('owner')
+            tests = {}
+            if(name is not None and owner is not None):
+                tests = Test.find({'$and': [
+                    {"name": {"$regex": name, "$options": 'i'}},
+                    {"owner": {"$regex": owner, "$options": 'i'}}
+                ]})
+            elif(owner is not None):
+                tests = Test.find(
+                    {"owner": {"$regex": owner, "$options": 'i'}}
+                )
+            elif(name is not None):
+                tests = Test.find(
+                    {"name": {"$regex": name, "$options": 'i'}}
+                )
+            else:
+                tests = Test.find()
+
             if tests is None:
                 return make_response(jsonify(message="Test not found"), 404)
             else:
@@ -46,10 +64,11 @@ def get_all_test():
 def create():
     try:
         if request.method == 'POST':
-            if all(k in request.json for k in ("name", "description")):
+            if all(k in request.json for k in ("name", "description", "owner")):
                 new_test = {'_id': uuid.uuid4(),  # test_id correspond to the _id in mongodb
                             'name': request.json["name"],
                             'description': request.json["description"],
+                            'owner': request.json["owner"],
                             'consent': request.json["consent"] if keyExist("consent", request.json) else "",
                             'number_of_steps': 0,
                             'steps': [],

@@ -14,7 +14,7 @@
             x-large
             dark
             block
-            @click.prevent="onClick('create')"
+            @click.prevent="onClick('/builder/create')"
           >
             <v-icon left large>
               mdi-flask-plus
@@ -29,7 +29,7 @@
             x-large
             dark
             block
-            @click.prevent="onClick('modify')"
+            @click.prevent="onClick('/builder/modify')"
           >
             <v-icon left large>
               mdi-lead-pencil

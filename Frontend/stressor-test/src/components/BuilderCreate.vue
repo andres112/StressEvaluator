@@ -9,13 +9,25 @@
           <v-form v-model="valid" ref="create_form">
             <v-text-field
               v-model="evaluation.name"
-              :rules="[rules.required]"
+              :rules="[rules.required, rules.minLength]"
               label="Evaluation Name"
               outlined
               clearable
               color="light-green"
               counter
               maxlength="75"
+              class="mb-3"
+              required
+            ></v-text-field>
+            <v-text-field
+              v-model="evaluation.owner"
+              :rules="[rules.required]"
+              label="Evaluation Owner"
+              outlined
+              clearable
+              color="light-green"
+              counter
+              maxlength="50"
               class="mb-3"
               required
             ></v-text-field>
@@ -60,9 +72,11 @@ export default {
   data() {
     return {
       valid: false,
-      evaluation: { name: null, description: null },
+      evaluation: { name: null, description: null, owner: null },
       rules: {
         required: (value) => !!value || "Required.",
+        minLength: (value) =>
+          (value && value.length > 5) || "Min 5 characters.",
         counter_desc: (value) =>
           (value && value.length <= 750) || "Max. 750 characters.",
       },
@@ -75,7 +89,7 @@ export default {
       if (this.valid) {
         this.createEvaluation(this.evaluation);
         //TODO: create a loading variable before to sent next view
-        this.$router.push(`steps`);
+        this.$router.push(`/builder/steps`);
       }
     },
   },
