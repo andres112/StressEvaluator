@@ -1,15 +1,15 @@
 <template>
-  <create-experiment />
+  <builder-menu />
 </template>
 
 <script>
-import CreateExperiment from "@/components/CreateExperiment";
+import BuilderMenu from "../../components/BuilderMenu.vue";
 
 export default {
   name: "Home",
 
   components: {
-    CreateExperiment,
+    BuilderMenu,
   },
 };
 </script>

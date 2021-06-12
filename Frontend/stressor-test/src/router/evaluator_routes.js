@@ -1,5 +1,7 @@
 import Home from "@/views/Evaluator/Home.vue";
 import Create from "@/views/Evaluator/Create.vue";
+import Modify from "@/views/Evaluator/Modify.vue";
+import Steps from "@/views/Evaluator/Steps.vue";
 
 export const e_routes = [
   {
@@ -11,18 +13,28 @@ export const e_routes = [
     },
     children: [
       {
-        path: "/",
+        path: "",
         name: "Home",
         component: Home,
       },
       {
-        path: "/create",
+        path: "create",
         name: "Create",
         component: Create,
       },
       {
-        path: "/modify",
+        path: "modify",
         name: "Modify",
+        component: Modify,
+      },
+      {
+        path: "steps",
+        name: "Steps",
+        component: Steps,
+      },
+      // TODO: change for specific not found page
+      {
+        path: "*",
         component: Home,
       },
     ],

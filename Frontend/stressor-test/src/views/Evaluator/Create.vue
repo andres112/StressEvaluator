@@ -1,11 +1,12 @@
 <template>
-  <h1>Create view</h1>
+  <builder-create></builder-create>
 </template>
 
 <script>
+import BuilderCreate from "@/components/BuilderCreate.vue";
 export default {
   name: "Create",
 
-  components: {},
+  components: { BuilderCreate },
 };
 </script>

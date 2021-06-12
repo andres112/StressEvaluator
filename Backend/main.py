@@ -23,10 +23,11 @@ if __name__ == '__main__':
 
     PORT = os.getenv('PORT')
 
+    # cross origen support
+    CORS(app)
+
     if ARGS.debug:
         print("Running in debug mode")
-        # cross origen support
-        CORS(app)
         app.run(host='0.0.0.0', port=PORT, debug=True)
     else:
         app.run(host='0.0.0.0', port=PORT, debug=False)
