@@ -18,6 +18,7 @@
               maxlength="75"
               class="mb-3"
               required
+              hint="The name may not be changed later."
             ></v-text-field>
             <v-text-field
               v-model="evaluation.owner"
@@ -38,7 +39,7 @@
               label="Evaluation Description"
               color="light-green"
               counter
-              rows="10"
+              rows="9"
               no-resize
               required
             >
@@ -54,7 +55,7 @@
             block
             @click.prevent="onSubmit()"
           >
-            <span class="text-subtitle-1 text-sm-h5 font-weight-bold mx-2"
+            <span class="text-h6 text-sm-h5 font-weight-bold mx-2"
               >Continue</span
             >
           </v-btn>
@@ -68,7 +69,7 @@
 import { mapActions } from "vuex";
 
 export default {
-  name: "Create",
+  name: "BuilderCreate",
   data() {
     return {
       valid: false,
@@ -76,7 +77,7 @@ export default {
       rules: {
         required: (value) => !!value || "Required.",
         minLength: (value) =>
-          (value && value.length > 5) || "Min 5 characters.",
+          (value && value.length >= 5) || "Min. 5 characters.",
         counter_desc: (value) =>
           (value && value.length <= 750) || "Max. 750 characters.",
       },

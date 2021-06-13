@@ -28,7 +28,7 @@ def handle_500_error(_error):
 
 # CRUD oparation for Test
 ##########################
-@endpoint.route('/find_tests', methods=['GET'])
+@endpoint.route('/find_test', methods=['GET'])
 def get_all_test():
     try:
         if request.method == 'GET':
@@ -73,6 +73,7 @@ def create():
                             'number_of_steps': 0,
                             'steps': [],
                             'published': False,
+                            'closed': False,
                             'creation_date': datetime.datetime.now()}
                 Test.insert_one(new_test)
                 return make_response(jsonify(message="Test created successfully", test_id=new_test['_id']), 200)
@@ -85,12 +86,18 @@ def create():
         return make_response(jsonify(message="Error creating test. Test already exist",
                                      details=e.details), 500)
 
-
-@endpoint.route('/test/<test_id>', methods=['GET', 'DELETE'])
+# TODO: Pending the published flag validation
+@endpoint.route('/test/<test_id>', methods=['GET', 'DELETE', 'PUT'])
 def test_operations(test_id):
     try:
-        # convert test_id to test_uuid
-        test_uuid = uuid.UUID(test_id)
+        if test_id is None:
+            abort(400)
+            return
+
+        test_uuid = test_id
+        if isUUID(test_id):
+            # convert test_id to test_uuid
+            test_uuid = uuid.UUID(test_id)
 
         if request.method == 'GET':
             test = Test.find_one({"_id": test_uuid})
@@ -107,6 +114,25 @@ def test_operations(test_id):
                 # Delete all steps associated to the test
                 Step.delete_many({"test_id": test_uuid})
                 return make_response(jsonify(message="Test deleted successfully", test_id=test_uuid), 200)
+
+        if request.method == 'PUT':
+            updated_test = {}
+            # parameters allowed
+            __parameters = ['description', 'owner', 'consent']
+            # build the data to send to db
+            for param in __parameters:
+                if keyExist(param, request.json):
+                    updated_test[param] = request.json[param]
+            # update test in db
+            test = Test.update_one({'_id': test_uuid},
+                                   {'$set': updated_test})
+            if test.matched_count == 0:
+                return make_response(jsonify(message="Test not found"), 404)
+            elif test.modified_count == 0:
+                return make_response(jsonify(message="Test not updated"), 500)
+            else:
+                return make_response(jsonify(message=f"Test updated successfully", test_id=test_uuid), 200)
+
     except BulkWriteError as e:
         return make_response(jsonify(message="Error",
                                      details=e.details), 500)
@@ -121,8 +147,10 @@ def get_all_steps(test_id):
             abort(400)
             return
 
-        # convert test_id to test_uuid
-        test_uuid = uuid.UUID(test_id)
+        test_uuid = test_id
+        if isUUID(test_id):
+            # convert test_id to test_uuid
+            test_uuid = uuid.UUID(test_id)
 
         if request.method == 'GET':
             steps = Step.find({'test_id': test_uuid})
@@ -142,8 +170,10 @@ def step_operations(test_id, step_id):
             abort(400)
             return
 
-        # convert test_id to test_uuid
-        test_uuid = uuid.UUID(test_id)
+        test_uuid = test_id
+        if isUUID(test_id):
+            # convert test_id to test_uuid
+            test_uuid = uuid.UUID(test_id)
 
         if request.method == 'POST':
             new_step = {'_id': uuid.uuid4(),
@@ -167,8 +197,11 @@ def step_operations(test_id, step_id):
         if step_id is None:
             abort(400)
             return
-        # convert step_id to step_uuid
-        step_uuid = uuid.UUID(step_id)
+
+        step_uuid = step_id
+        if isUUID(step_id):
+            # convert step_id to step_uuid
+            step_uuid = uuid.UUID(step_id)
 
         if request.method == 'GET':
             step = Step.find_one({'_id': step_uuid, 'test_id': test_uuid})
@@ -219,8 +252,10 @@ def create_session(test_id):
             abort(400)
             return
 
-        # convert test_id to test_uuid
-        test_uuid = uuid.UUID(test_id)
+        test_uuid = test_id
+        if isUUID(test_id):
+            # convert test_id to test_uuid
+            test_uuid = uuid.UUID(test_id)
 
         if request.method == 'POST':
             new_session = {'_id': request.json["session_id"],
@@ -247,8 +282,11 @@ def session_send_step(test_id, session_id):
             abort(400)
             return
 
-        # convert test_id to test_uuid
-        test_uuid = uuid.UUID(test_id)
+        test_uuid = test_id
+        if isUUID(test_id):
+            # convert test_id to test_uuid
+            test_uuid = uuid.UUID(test_id)
+
         # session_id is not converted to uuid
         if request.method == 'POST':
             if all(k in request.json for k in ("step_id", "content", "start_time", "end_time")):
@@ -278,8 +316,11 @@ def test_results(test_id):
             abort(400)
             return
 
-        # convert test_id to test_uuid
-        test_uuid = uuid.UUID(test_id)
+        test_uuid = test_id
+        if isUUID(test_id):
+            # convert test_id to test_uuid
+            test_uuid = uuid.UUID(test_id)
+            
         if request.method == 'GET':
             # validate if full data or just the responses
             if request.args.get('full_data') != "true":

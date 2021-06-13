@@ -65,7 +65,7 @@
 
 <script>
 export default {
-  name: "Menu",
+  name: "BuilderMenu",
   methods: {
     onClick(route) {
       this.$router.push(`${route}`);

@@ -33,7 +33,7 @@
     }
   ],
   "paths": {
-    "/find_tests": {
+    "/find_test": {
       "get": {
         "tags": ["Test"],
         "summary": "Find all tests according searching parameters",
@@ -125,6 +125,41 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "put": {
+        "tags": ["Test"],
+        "summary": "Update some details of test",
+        "parameters": [
+          {
+            "name": "test_id",
+            "in": "path",
+            "description": "Test id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "description": "Update test configuration",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Test"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Failed. Bad request."
           },
           "404": {
             "description": "Resource not found."
@@ -447,6 +482,11 @@
             "format": "date-time"
           },
           "published": {
+            "type": "boolean",
+            "format": "boolean",
+            "example": false
+          },
+          "closed": {
             "type": "boolean",
             "format": "boolean",
             "example": false

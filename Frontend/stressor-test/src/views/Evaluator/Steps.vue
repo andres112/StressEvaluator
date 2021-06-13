@@ -6,6 +6,7 @@
 import { mapState } from "vuex";
 
 export default {
+  name: "Steps",
   computed: {
     ...mapState({ test_id: (state) => state.evaluator.test_id }),
   },

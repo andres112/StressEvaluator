@@ -5,7 +5,7 @@
 <script>
 import BuilderModify from "@/components/BuilderModify.vue";
 export default {
-  name: "Create",
+  name: "Modify",
 
   components: { BuilderModify },
 };
