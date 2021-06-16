@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <home-button />
     <v-layout justify-center align-center>
       <v-card class="text-center mt-5" elevation="0">
         <v-card-title
@@ -81,9 +82,13 @@
 
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
+import HomeButton from "@/components/Common/HomeButton.vue";
 
 export default {
   name: "BuilderModify",
+  components: {
+    HomeButton
+  },
   data() {
     return {
       result_loading: false,

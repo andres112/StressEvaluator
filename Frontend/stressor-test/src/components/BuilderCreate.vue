@@ -1,5 +1,6 @@
 <template>
   <v-layout justify-center align-center fill-height>
+    <home-button />
     <v-card class="text-center" elevation="0">
       <v-card-title class="text-md-h2 text-sm-h4 text-h5 font-weight-bold mb-6">
         Stress Evaluator - Builder
@@ -67,9 +68,13 @@
 
 <script>
 import { mapActions } from "vuex";
+import HomeButton from "@/components/Common/HomeButton.vue";
 
 export default {
   name: "BuilderCreate",
+  components: {
+    HomeButton
+  },
   data() {
     return {
       valid: false,

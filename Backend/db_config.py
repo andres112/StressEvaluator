@@ -9,13 +9,12 @@ env_path = Path('.')/'.env'
 load_dotenv(dotenv_path=env_path)
 
 # DB connection and client configuration
-DB_PASS = os.getenv('DB_PASS')
-DB_USER = os.getenv('DB_USER')
-db_url = f'mongodb+srv://{DB_USER}:{DB_PASS}@tester.dcebp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+db_url = os.getenv('DB_URL')
 db_client = pymongo.MongoClient(db_url)
 
 # Database
-db = db_client.get_database('Evaluations')
+db_name = os.getenv('DB_NAME')
+db = db_client.get_database(db_name)
 
 # Collections
 Test = db.Test
