@@ -26,7 +26,7 @@ def handle_500_error(_error):
     return make_response(jsonify({'error': 'Server error'}), 500)
 
 
-# CRUD oparation for Test
+# CRUD operation for Test
 ##########################
 @endpoint.route('/find_test', methods=['GET'])
 def get_all_test():
@@ -64,12 +64,13 @@ def get_all_test():
 def create():
     try:
         if request.method == 'POST':
+            default_consent = getDefaultRes('consent')
             if all(k in request.json for k in ("name", "description", "owner")):
                 new_test = {'_id': uuid.uuid4(),  # test_id correspond to the _id in mongodb
                             'name': request.json["name"],
                             'description': request.json["description"],
                             'owner': request.json["owner"],
-                            'consent': request.json["consent"] if keyExist("consent", request.json) else "",
+                            'consent': default_consent["content"],
                             'number_of_steps': 0,
                             'steps': [],
                             'published': False,
@@ -320,7 +321,7 @@ def test_results(test_id):
         if isUUID(test_id):
             # convert test_id to test_uuid
             test_uuid = uuid.UUID(test_id)
-            
+
         if request.method == 'GET':
             # validate if full data or just the responses
             if request.args.get('full_data') != "true":

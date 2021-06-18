@@ -1,4 +1,6 @@
 import uuid
+from db_config import DefaultRes
+
 
 def keyExist(parameter, object):
     return parameter in object
@@ -10,3 +12,11 @@ def isUUID(text):
         return True
     except ValueError:
         return False
+
+
+def getDefaultRes(type):
+    # Get default resources from database   
+    D_RES = DefaultRes.find_one({'type': type})
+    del D_RES["_id"]
+    return D_RES
+  

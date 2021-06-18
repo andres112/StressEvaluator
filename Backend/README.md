@@ -29,6 +29,7 @@ Create Database in Mongodb with 3 collections, named as:
 - Result
 - Step
 - Test
+- DefaultRes (*Contains the default resources for Informed consent, Questionnaires and Stressors*)
 
 Create .env file in the root of project (.\mt_stress_detection\Backend\) with the following structure:
 

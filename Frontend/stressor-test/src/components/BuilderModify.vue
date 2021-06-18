@@ -106,6 +106,7 @@ export default {
   created() {
     // clean results every time this components is loaded
     this.setTestList([]);
+    this.setSelectedTest(null);
   },
   computed: {
     ...mapState({ test_list: (state) => state.evaluator.test_list }),

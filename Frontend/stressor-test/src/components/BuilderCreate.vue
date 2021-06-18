@@ -67,13 +67,13 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapMutations } from "vuex";
 import HomeButton from "@/components/Common/HomeButton.vue";
 
 export default {
   name: "BuilderCreate",
   components: {
-    HomeButton
+    HomeButton,
   },
   data() {
     return {
@@ -88,14 +88,18 @@ export default {
       },
     };
   },
+  created() {
+    this.setSelectedTest(null);
+  },
   methods: {
     ...mapActions({ createEvaluation: "evaluator/createEvaluation" }),
-    onSubmit() {
+    ...mapMutations({ setSelectedTest: "evaluator/setSelectedTest" }),
+    async onSubmit() {
       this.$refs.create_form.validate();
       if (this.valid) {
-        this.createEvaluation(this.evaluation);
+        await this.createEvaluation(this.evaluation);
         //TODO: create a loading variable before to sent next view
-        this.$router.push(`/builder/steps`);
+        await this.$router.push(`/builder/steps`);
       }
     },
   },

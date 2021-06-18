@@ -20,3 +20,4 @@ db = db_client.get_database(db_name)
 Test = db.Test
 Step = db.Step
 Result = db.Result
+DefaultRes = db.DefaultRes

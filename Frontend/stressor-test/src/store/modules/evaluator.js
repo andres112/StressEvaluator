@@ -1,13 +1,9 @@
 import { removeEmpty } from "@/assets/helpers.js";
 
-const state = { test_id: null, selected_test: null, test_list: [] };
+const state = { selected_test: null, test_list: [] };
 const mutations = {
-  setTestId(state, value) {
-    state.test_id = value;
-  },
   setSelectedTest(state, payload) {
     state.selected_test = payload;
-    state.test_id = state.selected_test._id;
   },
   setTestList(state, payload) {
     state.test_list = [];
@@ -26,7 +22,11 @@ const actions = {
         body: JSON.stringify(payload),
       });
       const res = await req.json();
-      commit("setTestId", res.test_id);
+      const req_test = await fetch(
+        process.env.VUE_APP_BUILDER_URL + "test/" + res.test_id
+      );
+      const res_test = await req_test.json();
+      commit("setSelectedTest", res_test);
     } catch (error) {
       console.log(error);
     }

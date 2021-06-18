@@ -1,15 +1,15 @@
 <template>
-  <h1>{{ test_id }}</h1>
+  <div>
+    <builder-steps></builder-steps>
+  </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import BuilderSteps from "@/components/BuilderSteps";
 
 export default {
   name: "Steps",
-  computed: {
-    ...mapState({ test_id: (state) => state.evaluator.test_id }),
-  },
+  components: { BuilderSteps },
 };
 </script>
 
