@@ -64,19 +64,29 @@ def get_all_test():
 def create():
     try:
         if request.method == 'POST':
-            default_consent = getDefaultRes('consent')
+            # Special handle of informed consent step
+            def_consent = getDefaultRes('consent')
+            id_consent = uuid.uuid4()
+
             if all(k in request.json for k in ("name", "description", "owner")):
                 new_test = {'_id': uuid.uuid4(),  # test_id correspond to the _id in mongodb
                             'name': request.json["name"],
                             'description': request.json["description"],
                             'owner': request.json["owner"],
-                            'consent': default_consent["content"],
                             'number_of_steps': 0,
-                            'steps': [],
+                            'steps': [id_consent],
                             'published': False,
                             'closed': False,
                             'creation_date': datetime.datetime.now()}
                 Test.insert_one(new_test)
+
+                # insert the consent in firs place of steps
+                step0 = {'_id': id_consent,
+                         'test_id': new_test['_id'],
+                         'name': "Informed Consent",
+                         'type': "consent",
+                         'content': def_consent["content"]}
+                Step.insert_one(step0)
                 return make_response(jsonify(message="Test created successfully", test_id=new_test['_id']), 200)
             else:
                 abort(400)
@@ -119,7 +129,7 @@ def test_operations(test_id):
         if request.method == 'PUT':
             updated_test = {}
             # parameters allowed
-            __parameters = ['description', 'owner', 'consent']
+            __parameters = ['description', 'owner', 'published', 'closed']
             # build the data to send to db
             for param in __parameters:
                 if keyExist(param, request.json):

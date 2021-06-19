@@ -89,11 +89,11 @@ export default {
     };
   },
   created() {
-    this.setSelectedTest(null);
+    this.cleanStates();
   },
   methods: {
     ...mapActions({ createEvaluation: "evaluator/createEvaluation" }),
-    ...mapMutations({ setSelectedTest: "evaluator/setSelectedTest" }),
+    ...mapMutations({ cleanStates: "evaluator/cleanStates" }),
     async onSubmit() {
       this.$refs.create_form.validate();
       if (this.valid) {

@@ -1,7 +1,9 @@
 <template>
   <v-card elevation="0">
     <v-app-bar dense flat dark color="light-green">
-      <v-app-bar-title class="text-capitalize"> {{ textLength(selected_test.name) }}</v-app-bar-title>
+      <v-app-bar-title class="text-capitalize">
+        {{ textLength(selected_test.name) }}</v-app-bar-title
+      >
       <v-spacer></v-spacer>
 
       <v-btn icon>
@@ -9,17 +11,17 @@
       </v-btn>
       <template v-slot:extension>
         <v-tabs background-color="light-green" dark v-model="selected_tab">
-          <v-tab v-for="item in items" :key="item">
-            {{ item }}
+          <v-tab v-for="item in steps" :key="item._id">
+            {{ item.name }}
           </v-tab>
         </v-tabs>
       </template>
     </v-app-bar>
 
     <v-tabs-items v-model="selected_tab">
-      <v-tab-item v-for="item in items" :key="item">
+      <v-tab-item v-for="item in steps" :key="item._id">
         <v-card flat>
-          <v-card-text v-html="selected_test.consent"></v-card-text>
+          <v-card-text v-html="item.content"></v-card-text>
         </v-card>
       </v-tab-item>
     </v-tabs-items>
@@ -32,12 +34,14 @@ import { mapState } from "vuex";
 export default {
   name: "BuilderSteps",
   computed: {
-    ...mapState({ selected_test: (state) => state.evaluator.selected_test }),
+    ...mapState({
+      selected_test: (state) => state.evaluator.selected_test,
+      steps: (state) => state.evaluator.steps,
+    }),
   },
   data() {
     return {
       selected_tab: null,
-      items: ["Informed Consent"],
     };
   },
   methods: {

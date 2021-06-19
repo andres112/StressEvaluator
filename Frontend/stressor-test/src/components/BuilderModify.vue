@@ -87,7 +87,7 @@ import HomeButton from "@/components/Common/HomeButton.vue";
 export default {
   name: "BuilderModify",
   components: {
-    HomeButton
+    HomeButton,
   },
   data() {
     return {
@@ -106,7 +106,7 @@ export default {
   created() {
     // clean results every time this components is loaded
     this.setTestList([]);
-    this.setSelectedTest(null);
+    this.cleanStates();
   },
   computed: {
     ...mapState({ test_list: (state) => state.evaluator.test_list }),
@@ -127,10 +127,11 @@ export default {
     ...mapActions({
       searchMultiple: "evaluator/searchMultipleEvaluations",
       searchOne: "evaluator/searchOneEvaluation",
+      setSelectedTest: "evaluator/setSelectedTest",
     }),
     ...mapMutations({
-      setSelectedTest: "evaluator/setSelectedTest",
       setTestList: "evaluator/setTestList",
+      cleanStates: "evaluator/cleanStates",
     }),
     onSubmit() {
       if (!this.validate) return;

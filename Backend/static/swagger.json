@@ -462,10 +462,6 @@
             "format": "string",
             "example": "Test description"
           },
-          "consent": {
-            "type": "string",
-            "format": "string"
-          },
           "number_of_steps": {
             "type": "integer",
             "format": "int32"
@@ -501,6 +497,10 @@
             "type": "string",
             "format": "string"
           },
+          "test_id": {
+            "type": "string",
+            "format": "string"
+          },
           "name": {
             "type": "string",
             "format": "string",
@@ -509,7 +509,7 @@
           "type": {
             "type": "string",
             "format": "string",
-            "example": "q"
+            "example": "question"
           },
           "duration": {
             "type": "integer",
