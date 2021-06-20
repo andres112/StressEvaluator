@@ -4,6 +4,9 @@
       <v-app-bar-title class="text-capitalize">
         {{ textLength(selected_test.name) }}</v-app-bar-title
       >
+      <v-btn icon>
+        <v-icon>mdi-pencil</v-icon>
+      </v-btn>
       <v-spacer></v-spacer>
 
       <v-btn icon>
@@ -20,8 +23,10 @@
 
     <v-tabs-items v-model="selected_tab">
       <v-tab-item v-for="item in steps" :key="item._id">
-        <v-card flat>
-          <v-card-text v-html="item.content"></v-card-text>
+        <v-card>
+          <v-card-text>
+            <text-editor :value="item.content" @onSubmit="save"></text-editor>
+          </v-card-text>
         </v-card>
       </v-tab-item>
     </v-tabs-items>
@@ -29,14 +34,18 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
+import TextEditor from "./TextEditor.vue";
 
 export default {
   name: "BuilderSteps",
+  components: {
+    TextEditor,
+  },
   computed: {
     ...mapState({
-      selected_test: (state) => state.evaluator.selected_test,
-      steps: (state) => state.evaluator.steps,
+      selected_test: (state) => state.builder.selected_test,
+      steps: (state) => state.builder.steps,
     }),
   },
   data() {
@@ -45,6 +54,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions({ updateStep: "builder/updateStep" }),
     textLength(text) {
       let short_text;
       switch (this.$vuetify.breakpoint.name) {
@@ -64,6 +74,17 @@ export default {
           return text;
       }
       return short_text + "...";
+    },
+    save({ step }) {
+      const tab_content = this.steps[this.selected_tab];
+      let payload = {
+        test_id: tab_content.test_id,
+        step_id: tab_content._id,
+      };
+      for (const item in step) {
+        payload[item] = step[item];
+      }
+      this.updateStep(payload);
     },
   },
 };

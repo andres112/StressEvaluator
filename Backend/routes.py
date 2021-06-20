@@ -129,7 +129,7 @@ def test_operations(test_id):
         if request.method == 'PUT':
             updated_test = {}
             # parameters allowed
-            __parameters = ['description', 'owner', 'published', 'closed']
+            __parameters = ['name', 'description', 'owner', 'published', 'closed']
             # build the data to send to db
             for param in __parameters:
                 if keyExist(param, request.json):

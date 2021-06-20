@@ -52,7 +52,7 @@ In your local machine execute the following:
 
 Install dependencies included in __requirements.txt__ file
 
-    pip install requirements.txt
+    pip install -r requirements.txt
 
 ## Implementation
 

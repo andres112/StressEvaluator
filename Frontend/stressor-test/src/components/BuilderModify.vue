@@ -71,9 +71,14 @@
         :items-per-page="10"
       >
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon large @click="onContinue(item)" color="green">
+          <v-icon large @click="onContinue(item)" color="green" v-show="!loading">
             mdi-play
           </v-icon>
+          <v-progress-circular
+            indeterminate
+            color="green"
+            v-show="loading"
+          ></v-progress-circular>
         </template>
       </v-data-table>
     </v-card>
@@ -91,6 +96,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       result_loading: false,
       result_headers: [
         { text: "Test Id", align: "start", value: "_id", sortable: false },
@@ -103,13 +109,13 @@ export default {
       owner: null,
     };
   },
-  created() {
+  mounted() {
     // clean results every time this components is loaded
     this.setTestList([]);
     this.cleanStates();
   },
   computed: {
-    ...mapState({ test_list: (state) => state.evaluator.test_list }),
+    ...mapState({ test_list: (state) => state.builder.test_list }),
     validate() {
       if (!this.id && !this.name && !this.owner) {
         return false;
@@ -125,13 +131,13 @@ export default {
   },
   methods: {
     ...mapActions({
-      searchMultiple: "evaluator/searchMultipleEvaluations",
-      searchOne: "evaluator/searchOneEvaluation",
-      setSelectedTest: "evaluator/setSelectedTest",
+      searchMultiple: "builder/searchMultipleEvaluations",
+      searchOne: "builder/searchOneEvaluation",
+      setSelectedTest: "builder/setSelectedTest",
     }),
     ...mapMutations({
-      setTestList: "evaluator/setTestList",
-      cleanStates: "evaluator/cleanStates",
+      setTestList: "builder/setTestList",
+      cleanStates: "builder/cleanStates",
     }),
     onSubmit() {
       if (!this.validate) return;
@@ -147,10 +153,11 @@ export default {
         return;
       }
     },
-    onContinue(test) {
-      this.setSelectedTest(test);
-      //TODO: create a loading variable before to sent next view
-      this.$router.push(`/builder/steps`);
+    async onContinue(test) {
+      this.loading = true;
+      await this.setSelectedTest(test);
+      await this.$router.push(`/builder/steps`);
+      this.loading = await false;
     },
   },
   watch: {

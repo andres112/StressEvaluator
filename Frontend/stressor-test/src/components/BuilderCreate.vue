@@ -1,7 +1,7 @@
 <template>
   <v-layout justify-center align-center fill-height>
     <home-button />
-    <v-card class="text-center" elevation="0">
+    <v-card class="text-center" elevation="0" :loading="loading" loader-height="2">
       <v-card-title class="text-md-h2 text-sm-h4 text-h5 font-weight-bold mb-6">
         Stress Evaluator - Builder
       </v-card-title>
@@ -79,6 +79,7 @@ export default {
     return {
       valid: false,
       evaluation: { name: null, description: null, owner: null },
+      loading: null,
       rules: {
         required: (value) => !!value || "Required.",
         minLength: (value) =>
@@ -92,14 +93,15 @@ export default {
     this.cleanStates();
   },
   methods: {
-    ...mapActions({ createEvaluation: "evaluator/createEvaluation" }),
-    ...mapMutations({ cleanStates: "evaluator/cleanStates" }),
+    ...mapActions({ createEvaluation: "builder/createEvaluation" }),
+    ...mapMutations({ cleanStates: "builder/cleanStates" }),
     async onSubmit() {
       this.$refs.create_form.validate();
       if (this.valid) {
+        this.loading = "success"
         await this.createEvaluation(this.evaluation);
-        //TODO: create a loading variable before to sent next view
         await this.$router.push(`/builder/steps`);
+        this.loading = null
       }
     },
   },

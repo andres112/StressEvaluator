@@ -1,0 +1,320 @@
+[
+  {
+    "attributes": {
+      "italic": true,
+      "background": "#ffff00",
+      "bold": true
+    },
+    "insert": "Information in italics is for your information and should be deleted from the actual consent form. The material in brackets should be completed with relevant information."
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "attributes": {
+      "italic": true
+    },
+    "insert": "Note to Investigators:"
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "attributes": {
+      "italic": true
+    },
+    "insert": "When creating informed consent letters, investigators are encouraged to keep language and vocabulary as basic and straightforward as possible. Investigators are also encouraged to use this template when creating informed consent letters. Use of alternative wording or format is permitted, but doing so may slow down the review process. All sections of the consent form, except the \"Consent\" section, should be written in the second person (\"You are invited...\")."
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "attributes": {
+      "italic": true
+    },
+    "insert": "Headers should include “Informed Consent” followed by the title of the study (e.g., the header in this document). Footers should include page numbers. If your consent letter is more than one page, the footer should also include a space for the participant’s initials (e.g., the footer in this document)."
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "attributes": {
+      "italic": true
+    },
+    "insert": "Be sure to include any basic components of informed consent that are appropriate to your study "
+  },
+  {
+    "attributes": {
+      "underline": true,
+      "italic": true
+    },
+    "insert": ". If components apply to your study, they must be included."
+  },
+  {
+    "attributes": {
+      "italic": true
+    },
+    "insert": " Please refer to the document entitled “components of informed consent” for more information. If you have any further questions, contact the Director of Institutional Research at (865) 354-3000, ext. 4822."
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "attributes": {
+      "bold": true
+    },
+    "insert": " "
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "attributes": {
+      "bold": true
+    },
+    "insert": "TITLE OF STUDY"
+  },
+  {
+    "insert": "\n[Insert title]\n \n"
+  },
+  {
+    "attributes": {
+      "bold": true
+    },
+    "insert": "PRINCIPAL INVESTIGATOR "
+  },
+  {
+    "insert": "\n[Name]\n[Department]\n[Address]\n[Phone]\n[Email]\n\n"
+  },
+  {
+    "attributes": {
+      "bold": true
+    },
+    "insert": "PURPOSE OF STUDY"
+  },
+  {
+    "insert": "\nYou are being asked to take part in a research study. Before you decide to participate in this study, it is important that you understand why the research is being done and what it will involve. Please read the following information carefully. Please ask the researcher if there is anything that is not clear or if you need more information.\nThe purpose of this study is to [Briefly describe the purpose of the study.]\n\n"
+  },
+  {
+    "attributes": {
+      "bold": true
+    },
+    "insert": "STUDY PROCEDURES"
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "attributes": {
+      "italic": true
+    },
+    "insert": "List all procedures, preferably in chronological order, which will be employed in the study. Point out any procedures that are considered experimental. Clearly explain technical and medical terminology using non-technical language. Explain all procedures using language that is appropriate for the expected reading level of participants."
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "attributes": {
+      "italic": true
+    },
+    "insert": "State the amount of time required of participants per session, if applicable, and for the total duration of the study."
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "attributes": {
+      "italic": true
+    },
+    "insert": "If audiotaping, videotaping or film procedures are going to be used, provide information about the use of these products."
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "attributes": {
+      "italic": true
+    },
+    "insert": " "
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "attributes": {
+      "bold": true
+    },
+    "insert": "RISKS"
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "attributes": {
+      "italic": true
+    },
+    "insert": "List all reasonably foreseeable risks, if any, of each of the procedures to be used in the study, and any measures that will be used to minimize the risks."
+  },
+  {
+    "insert": "\nYou may decline to answer any or all questions and you may terminate your involvement at any time if you choose.\n\n"
+  },
+  {
+    "attributes": {
+      "bold": true
+    },
+    "insert": "BENEFITS"
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "attributes": {
+      "italic": true
+    },
+    "insert": "List the benefits you anticipate will be achieved from this research. Include benefits to participants, others, or the body of knowledge. If there is no direct benefit to the participant, state so. For example, “There will be no direct benefit to you for your participation in this study. However, we hope that the information obtained from this study may….” "
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "attributes": {
+      "underline": true,
+      "italic": true,
+      "bold": true
+    },
+    "insert": "When applicable"
+  },
+  {
+    "attributes": {
+      "italic": true
+    },
+    "insert": ", disclose alternative procedures or courses of treatment, if any, which might be advantageous to participants. "
+  },
+  {
+    "insert": "\n\n"
+  },
+  {
+    "attributes": {
+      "bold": true
+    },
+    "insert": "CONFIDENTIALITY"
+  },
+  {
+    "insert": "\nYour responses to this [survey] will be anonymous. Please do not write any identifying information on your [survey]. "
+  },
+  {
+    "attributes": {
+      "underline": true
+    },
+    "insert": "OR"
+  },
+  {
+    "insert": " For the purposes of this research study, your comments will not be anonymous. Every effort will be made by the researcher to preserve your confidentiality including the following:\n"
+  },
+  {
+    "attributes": {
+      "bold": true
+    },
+    "insert": "["
+  },
+  {
+    "insert": "State measures are taken to ensure confidentiality, such as those listed below:\nAssigning code names/numbers for participants that will be used on all research notes and documents"
+  },
+  {
+    "attributes": {
+      "list": "bullet"
+    },
+    "insert": "\n"
+  },
+  {
+    "insert": " Keeping notes, interview transcriptions, and any other identifying participant information in a locked file cabinet in the personal possession of the researcher."
+  },
+  {
+    "attributes": {
+      "bold": true
+    },
+    "insert": "]"
+  },
+  {
+    "attributes": {
+      "list": "bullet"
+    },
+    "insert": "\n"
+  },
+  {
+    "insert": "\nParticipant data will be kept confidential except in cases where the researcher is legally obligated to report specific incidents. These incidents include, but may not be limited to, incidents of abuse and suicide risk.\n\n"
+  },
+  {
+    "attributes": {
+      "bold": true
+    },
+    "insert": "COMPENSATION"
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "attributes": {
+      "italic": true
+    },
+    "insert": "If there is no compensation, delete this section."
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "attributes": {
+      "italic": true
+    },
+    "insert": "Indicate what participants will receive for their participation in this study. Indicate other ways participants can earn the same amount of credit or compensation. State whether participants will be eligible for compensation if they withdraw from the study prior to its completion. If compensation is pro-rated over the period of the participant\\\\\\'s involvement, indicate the points/stages at which compensation changes during the study."
+  },
+  {
+    "insert": "\n\n"
+  },
+  {
+    "attributes": {
+      "bold": true
+    },
+    "insert": "CONTACT INFORMATION"
+  },
+  {
+    "insert": "\nIf you have questions at any time about this study, or you experience adverse effects as the result of participating in this study, you may contact the researcher whose contact information is provided on the first page. If you have questions regarding your rights as a research participant, or if problems arise which you do not feel you can discuss with the Primary Investigator, please contact the Institutional Review Board at (865) 354-3000, ext. 4822.\n\n"
+  },
+  {
+    "attributes": {
+      "bold": true
+    },
+    "insert": "VOLUNTARY PARTICIPATION"
+  },
+  {
+    "insert": "\nYour participation in this study is voluntary. It is up to you to decide whether or not to take part in this study. If you decide to take part in this study, you will be asked to sign a consent form. After you sign the consent form, you are still free to withdraw at any time and without giving a reason. Withdrawing from this study will not affect the relationship you have, if any, with the researcher. If you withdraw from the study before data collection is completed, your data will be returned to you or destroyed.\n"
+  },
+  {
+    "attributes": {
+      "italic": true,
+      "bold": true
+    },
+    "insert": "Note:"
+  },
+  {
+    "insert": " "
+  },
+  {
+    "attributes": {
+      "italic": true
+    },
+    "insert": " Please delineate the \"Consent\" section of the Informed Consent Form by drawing a line across the page (like the one above this paragraph). This delineation is important because the consent form grammar shifts from the second person to the first person, as shown in this example."
+  },
+  {
+    "insert": "\n\n"
+  },
+  {
+    "attributes": {
+      "bold": true
+    },
+    "insert": "CONSENT"
+  },
+  {
+    "insert": "\nI have read and understood the provided information and have had the opportunity to ask questions. I understand that my participation is voluntary and that I am free to withdraw at any time, without giving a reason and without cost. I understand that I will be given a copy of this consent form. I voluntarily agree to take part in this study.\n"
+  }
+]

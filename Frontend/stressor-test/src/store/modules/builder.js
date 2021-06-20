@@ -19,6 +19,8 @@ const mutations = {
   },
 };
 const actions = {
+  //************************************************* */
+  // CRUD Evaluation section
   async createEvaluation({ commit }, payload) {
     try {
       // create new test
@@ -47,15 +49,20 @@ const actions = {
       console.log(error);
     }
   },
-  async setSelectedTest({ commit }, payload) {
+
+  async updateEvaluation({ commit }, payload) {
     try {
-      commit("setSelectedTest", payload);
-      // fetch steps of selected test
-      const req_steps = await fetch(
-        process.env.VUE_APP_BUILDER_URL + "test/" + payload._id + "/steps"
+      const req = await fetch(
+        process.env.VUE_APP_BUILDER_URL + "test/" + payload.test_id,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
       );
-      const res_steps = await req_steps.json();
-      commit("setSteps", res_steps);
     } catch (error) {
       console.log(error);
     }
@@ -74,6 +81,7 @@ const actions = {
       console.log(error);
     }
   },
+
   async searchMultipleEvaluations({ commit }, payload) {
     try {
       payload = removeEmpty(payload);
@@ -82,6 +90,46 @@ const actions = {
       const req = await fetch(url);
       const res = await req.json();
       commit("setTestList", res);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  //************************************************* */
+
+  //************************************************* */
+  // CRUD Steps section
+  async updateStep({ commit }, payload) {
+    try {
+      const req = await fetch(
+        process.env.VUE_APP_BUILDER_URL +
+          "test/" +
+          payload.test_id +
+          "/step/" +
+          payload.step_id,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  //************************************************* */
+
+  async setSelectedTest({ commit }, payload) {
+    try {
+      commit("setSelectedTest", payload);
+      // fetch steps of selected test
+      const req_steps = await fetch(
+        process.env.VUE_APP_BUILDER_URL + "test/" + payload._id + "/steps"
+      );
+      const res_steps = await req_steps.json();
+      commit("setSteps", res_steps);
     } catch (error) {
       console.log(error);
     }
