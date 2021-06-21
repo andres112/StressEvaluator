@@ -100,21 +100,20 @@ const actions = {
   // CRUD Steps section
   async updateStep({ commit }, payload) {
     try {
-      const req = await fetch(
+      const url =
         process.env.VUE_APP_BUILDER_URL +
-          "test/" +
-          payload.test_id +
-          "/step/" +
-          payload.step_id,
-        {
-          method: "PUT",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+        "test/" +
+        payload.test_id +
+        "/step/" +
+        payload.step_id;
+      await fetch(url, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
     } catch (error) {
       console.log(error);
     }

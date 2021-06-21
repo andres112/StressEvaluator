@@ -1,14 +1,6 @@
 <template>
-  <v-container class="pt-0">
+  <v-container class="py-0 px-0">
     <div class="editor-node" ref="editorNode"></div>
-    <v-row class="mt-2 d-flex justify-center">
-      <v-btn color="success" @click.prevent="saveContent" large>
-        <v-icon left>
-          mdi-content-save
-        </v-icon>
-        Save
-      </v-btn>
-    </v-row>
   </v-container>
 </template>
 
@@ -43,6 +35,7 @@ export default {
   },
   props: {
     value: Array,
+    actions: Object,
   },
   mounted() {
     this.initializeEditor();
@@ -74,7 +67,7 @@ export default {
     },
     saveContent() {
       const content = this.editorInstance.getContents();
-      this.$emit("onSubmit", { step: { content: content.ops } });
+      return { content: content.ops }
     },
   },
 };

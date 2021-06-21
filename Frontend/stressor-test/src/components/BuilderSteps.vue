@@ -13,7 +13,7 @@
         <v-icon large>mdi-plus</v-icon>
       </v-btn>
       <template v-slot:extension>
-        <v-tabs background-color="light-green" dark v-model="selected_tab">
+        <v-tabs background-color="light-green" dark v-model="current_tab">
           <v-tab v-for="item in steps" :key="item._id">
             {{ item.name }}
           </v-tab>
@@ -21,12 +21,44 @@
       </template>
     </v-app-bar>
 
-    <v-tabs-items v-model="selected_tab">
+    <v-tabs-items v-model="current_tab">
       <v-tab-item v-for="item in steps" :key="item._id">
         <v-card>
           <v-card-text>
-            <text-editor :value="item.content" @onSubmit="save"></text-editor>
+            <text-editor :value="item.content" :ref="item._id"></text-editor>
           </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="deep-orange accent-4"
+              class="mr-2 text-capitalize"
+              @click.prevent="saveContent($refs[item._id])"
+              large
+              dark
+              :loading="saving"
+              align-content-center
+              v-show="!isRemovable(item)"
+            >
+              <v-icon left>
+                mdi-delete-alert
+              </v-icon>
+              Delete
+            </v-btn>
+            <v-btn
+              color="light-green"
+              class="mr-6 text-capitalize"
+              @click.prevent="saveContent($refs[item._id])"
+              large
+              dark
+              :loading="saving"
+              align-content-center
+            >
+              <v-icon left>
+                mdi-content-save
+              </v-icon>
+              <span class="mx-2 text-subtitle-1">Save</span>
+            </v-btn>
+          </v-card-actions>
         </v-card>
       </v-tab-item>
     </v-tabs-items>
@@ -46,11 +78,12 @@ export default {
     ...mapState({
       selected_test: (state) => state.builder.selected_test,
       steps: (state) => state.builder.steps,
-    }),
+    }),    
   },
   data() {
     return {
-      selected_tab: null,
+      current_tab: null,
+      saving: false,
     };
   },
   methods: {
@@ -75,16 +108,23 @@ export default {
       }
       return short_text + "...";
     },
-    save({ step }) {
-      const tab_content = this.steps[this.selected_tab];
+    async saveContent(comp) {
+      this.saving = true;
+      const tab_content = this.steps[this.current_tab];
       let payload = {
         test_id: tab_content.test_id,
         step_id: tab_content._id,
       };
-      for (const item in step) {
-        payload[item] = step[item];
+      const step_content = comp[0].saveContent(); // execute function in child component for save specific content
+      for (const item in step_content) {
+        payload[item] = step_content[item];
       }
-      this.updateStep(payload);
+      await this.updateStep(payload);
+      this.saving = await false;
+    },
+    isRemovable(item) {
+      const no_removable = ["consent"];
+      return no_removable.includes(item.type);
     },
   },
 };

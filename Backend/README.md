@@ -26,8 +26,8 @@ Create Database in Mongodb with 3 collections, named as:
     ### DefaultRes - Document collection schema:
     ```json
     {
-        type:<resource_type>, //"consent"
-        content:<resource_content> // "content in html format"
+        "type":"<resource_type>", //"consent"
+        "content":"<resource_content>" // "content in html format"
     }
     ```
 Create .env file in the root of project (.\mt_stress_detection\Backend\) with the following structure:

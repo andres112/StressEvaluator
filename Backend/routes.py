@@ -235,7 +235,7 @@ def step_operations(test_id, step_id):
             if step.matched_count == 0:
                 return make_response(jsonify(message="Step not found"), 404)
             elif step.modified_count == 0:
-                return make_response(jsonify(message="Step not updated"), 500)
+                return make_response(jsonify(message="Step not updated. Similar to current value"), 201)
             else:
                 return make_response(jsonify(message=f"Step updated successfully", test_id=test_uuid, step_id=step_uuid), 200)
 
