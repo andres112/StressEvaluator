@@ -1,3 +1,4 @@
+import store from "@/store/index.js";
 import Home from "@/views/Evaluator/Home.vue";
 import Create from "@/views/Evaluator/Create.vue";
 import Modify from "@/views/Evaluator/Modify.vue";
@@ -21,6 +22,10 @@ export const e_routes = [
         path: "create",
         name: "Create",
         component: Create,
+        beforeEnter: (to, from, next) => {
+          store.commit("builder/setEditionMode", false);
+          next();
+        },
       },
       {
         path: "modify",

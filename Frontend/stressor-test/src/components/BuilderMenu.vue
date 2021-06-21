@@ -1,9 +1,7 @@
 <template>
   <v-layout justify-center align-center fill-height>
     <v-card class="text-center" elevation="0">
-      <v-card-title
-        class="text-md-h1 text-sm-h3 text-h4 font-weight-bold mb-6"
-      >
+      <v-card-title class="text-md-h1 text-sm-h3 text-h4 font-weight-bold mb-6">
         Stress Evaluator
       </v-card-title>
       <v-card-text>
@@ -64,13 +62,20 @@
 </template>
 
 <script>
+import { mapMutations } from "vuex";
+
 export default {
   name: "BuilderMenu",
+  created() {
+    this.cleanStates();
+  },
   methods: {
+    ...mapMutations({ cleanStates: "builder/cleanStates" }),
     onClick(route) {
       this.$router.push(`${route}`);
     },
   },
+  
 };
 </script>
 <style></style>

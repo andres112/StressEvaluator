@@ -1,9 +1,14 @@
 <template>
   <v-layout justify-center align-center fill-height>
-    <home-button />
-    <v-card class="text-center" elevation="0" :loading="loading" loader-height="2">
+    <home-button v-if="!edition_mode" />
+    <v-card
+      class="text-center"
+      elevation="0"
+      :loading="loading"
+      loader-height="2"
+    >
       <v-card-title class="text-md-h2 text-sm-h4 text-h5 font-weight-bold mb-6">
-        Stress Evaluator - Builder
+        Stress Evaluator-Create
       </v-card-title>
       <v-card-text>
         <v-col md="11" class="mx-auto">
@@ -48,6 +53,7 @@
           </v-form>
         </v-col>
         <v-col cols="8" md="4" class="mx-auto">
+          <!-- Edition mode deactivated -->
           <v-btn
             color="light-green"
             class="mt-2 text-capitalize"
@@ -55,10 +61,41 @@
             dark
             block
             @click.prevent="onSubmit()"
+            v-if="!edition_mode"
           >
-            <span class="text-h6 text-sm-h5 font-weight-bold mx-2"
-              >Continue</span
-            >
+            <span class="text-h6 text-sm-h5 font-weight-bold mx-2">
+              Continue
+            </span>
+          </v-btn>
+          <!-- Edition mode activated -->
+          <v-btn
+            color="light-green"
+            class="mt-2 text-capitalize"
+            large
+            dark
+            block
+            @click.prevent="sendEvent(true)"
+            v-if="edition_mode"
+          >
+            <v-icon left>
+              mdi-content-save
+            </v-icon>
+            <span class="text-subtitle-1 font-weight-bold mx-2">
+              Save
+            </span>
+          </v-btn>
+          <v-btn
+            color="deep-orange accent-4"
+            class="mt-2 text-capitalize"
+            large
+            dark
+            block
+            @click.prevent="sendEvent(false)"
+            v-if="edition_mode"
+          >
+            <span class="text-subtitle-1 font-weight-bold mx-2">
+              Cancel
+            </span>
           </v-btn>
         </v-col>
       </v-card-text>
@@ -67,7 +104,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 import HomeButton from "@/components/Common/HomeButton.vue";
 
 export default {
@@ -90,7 +127,20 @@ export default {
     };
   },
   created() {
-    this.cleanStates();
+    if (!this.edition_mode) {
+      this.cleanStates();
+    } else {
+      // load the information if there is a selected_test in editon mode
+      for (const item in this.evaluation) {
+        this.evaluation[item] = this.selected_test[item];
+      }
+    }
+  },
+  computed: {
+    ...mapState({
+      edition_mode: (state) => state.builder.edition_mode,
+      selected_test: (state) => state.builder.selected_test,
+    }),
   },
   methods: {
     ...mapActions({ createEvaluation: "builder/createEvaluation" }),
@@ -98,11 +148,17 @@ export default {
     async onSubmit() {
       this.$refs.create_form.validate();
       if (this.valid) {
-        this.loading = "success"
+        this.loading = "success";
         await this.createEvaluation(this.evaluation);
         await this.$router.push(`/builder/steps`);
-        this.loading = null
+        this.loading = null;
       }
+    },
+    getContent() {
+      return this.evaluation;
+    },
+    sendEvent(isSave) {
+      this.$emit("trigger", isSave);
     },
   },
 };

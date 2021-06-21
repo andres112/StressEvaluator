@@ -65,7 +65,7 @@ export default {
         ? this.editorInstance.root.innerHTML
         : "";
     },
-    saveContent() {
+    getContent() {
       const content = this.editorInstance.getContents();
       return { content: content.ops }
     },

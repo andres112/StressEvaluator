@@ -1,6 +1,11 @@
 import { removeEmpty } from "@/assets/helpers.js";
 
-const state = { selected_test: null, test_list: [], steps: [] };
+const state = {
+  selected_test: null,
+  test_list: [],
+  steps: [],
+  edition_mode: false,
+};
 const mutations = {
   setSelectedTest(state, payload) {
     state.selected_test = payload;
@@ -13,9 +18,12 @@ const mutations = {
     state.test_list = [];
     state.test_list = [...payload];
   },
-  cleanStates() {
+  cleanStates(state) {
     state.selected_test = null;
     state.steps = [];
+  },
+  setEditionMode(state, value) {
+    state.edition_mode = value;
   },
 };
 const actions = {
@@ -55,7 +63,7 @@ const actions = {
       const req = await fetch(
         process.env.VUE_APP_BUILDER_URL + "test/" + payload.test_id,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
