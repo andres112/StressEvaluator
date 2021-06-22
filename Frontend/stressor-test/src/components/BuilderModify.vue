@@ -71,14 +71,13 @@
         :items-per-page="10"
       >
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon large @click="onContinue(item)" color="green" v-show="!loading">
+          <v-icon
+            large
+            @click="onContinue(item)"
+            color="green"
+          >
             mdi-play
           </v-icon>
-          <v-progress-circular
-            indeterminate
-            color="green"
-            v-show="loading"
-          ></v-progress-circular>
         </template>
       </v-data-table>
     </v-card>
@@ -96,7 +95,6 @@ export default {
   },
   data() {
     return {
-      loading: false,
       result_loading: false,
       result_headers: [
         { text: "Test Id", align: "start", value: "_id", sortable: false },
@@ -154,10 +152,8 @@ export default {
       }
     },
     async onContinue(test) {
-      this.loading = true;
       await this.setSelectedTest(test);
       await this.$router.push(`/builder/steps`);
-      this.loading = await false;
     },
   },
   watch: {

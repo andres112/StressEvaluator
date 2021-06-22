@@ -1,5 +1,7 @@
 import { removeEmpty } from "@/assets/helpers.js";
 
+const ALLOWED_STEPS = new Set(["consent", "question", "stress"]);
+
 const state = {
   selected_test: null,
   test_list: [],
@@ -12,7 +14,8 @@ const mutations = {
   },
   setSteps(state, payload) {
     state.test_list = [];
-    state.steps = [...payload];
+    const allowed_steps = payload.filter((x) => ALLOWED_STEPS.has(x.type));
+    state.steps = [...allowed_steps];
   },
   setTestList(state, payload) {
     state.test_list = [];

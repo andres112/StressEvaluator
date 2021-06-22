@@ -33,7 +33,11 @@
       <v-tab-item v-for="item in steps" :key="item._id">
         <v-card>
           <v-card-text>
-            <text-editor :value="item.content" :ref="item._id"></text-editor>
+            <!-- load dinamically the component according item.type -->
+            <component
+              :is="currentComponent(item)"
+              :step_content="item.content"
+            ></component>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -45,7 +49,7 @@
               dark
               :loading="saving"
               align-content-center
-              v-show="!isRemovable(item)"
+              v-show="item.type !== 'consent'"
             >
               <v-icon left>
                 mdi-delete-alert
@@ -76,12 +80,16 @@
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
 import BuilderCreate from "./BuilderCreate.vue";
+
+// Step components
 import TextEditor from "./TextEditor.vue";
+import Questionnaire from "./Questionnaire.vue";
 
 export default {
   name: "BuilderSteps",
   components: {
     TextEditor,
+    Questionnaire,
     BuilderCreate,
   },
   data() {
@@ -152,6 +160,7 @@ export default {
       this.saving = await false;
     },
 
+    // Close the Test editior dialog
     closeDialog(isSave) {
       this.edit_dialog = false;
       if (isSave) {
@@ -159,9 +168,14 @@ export default {
       }
     },
 
-    isRemovable(item) {
-      const no_removable = ["consent"];
-      return no_removable.includes(item.type);
+    // Assign the component according the type of step
+    currentComponent(item) {
+      if (item.type === "consent") {
+        return TextEditor;
+      }
+      if (item.type === "question") {
+        return Questionnaire;
+      }
     },
   },
 };
