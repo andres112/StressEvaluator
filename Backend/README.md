@@ -30,6 +30,10 @@ Create Database in Mongodb with 3 collections, named as:
         "content":"<resource_content>" // "content in html format"
     }
     ```
+
+    - The content for *type: consent* could be found in assets folder:  [default_consent.json](./assets/default_consent.json)
+
+
 Create .env file in the root of project (.\mt_stress_detection\Backend\) with the following structure:
 
 ![](../Readme_Assets/folder.png)
@@ -60,5 +64,37 @@ After the configuration is correct, in the same directory execute:
 
     python main.py
 
-In http://localhost:5000/swagger/ It's possible to find the swagger documentation. The document structure is as follow:
+After the server is running, in http://localhost:5000/swagger/ It's possible to find the swagger documentation. There you can find the interactive endpoint of the API REST:
 
+- ### Test
+    - GET: http://localhost:5000/find_test -> Get all tests or those which match with name and owner
+        - Query params: 
+            - name[String] *optional*
+            - owner[String] *optional*
+    - POST: http://localhost:5000/test -> Create new test
+        - Body: 
+            ```json
+            {
+                "name": String,
+                "owner": String,
+                "description": String
+            }
+            ```
+    - GET: http://localhost:5000/test/{test_id} -> Get test, that which match with test_id
+        - Path params: 
+            - test_id[String] *required*
+    - DELETE: http://localhost:5000/test/{test_id} -> Delete test, that which match with test_id
+        - Path params: 
+            - test_id[String] *required*
+    - POST: http://localhost:5000/test/{test_id} -> Update test , that which match with test_id
+        - Body: 
+            ```json
+            {
+                "name": String,
+                "owner": String,
+                "description": String,
+                "published": Boolean,
+                "closed": Boolean
+            }
+            ```
+            
