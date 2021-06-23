@@ -110,27 +110,6 @@
           }
         }
       },
-      "delete": {
-        "tags": ["Test"],
-        "summary": "Remove a test by ID",
-        "parameters": [
-          {
-            "name": "test_id",
-            "in": "path",
-            "description": "Test id",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Resource not found."
-          }
-        }
-      },
       "put": {
         "tags": ["Test"],
         "summary": "Update some details of test",
@@ -160,6 +139,27 @@
           },
           "400": {
             "description": "Failed. Bad request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Test"],
+        "summary": "Remove a test by ID",
+        "parameters": [
+          {
+            "name": "test_id",
+            "in": "path",
+            "description": "Test id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           },
           "404": {
             "description": "Resource not found."

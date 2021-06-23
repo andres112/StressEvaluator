@@ -83,10 +83,7 @@ After the server is running, in http://localhost:5000/swagger/ It's possible to 
     - GET: http://localhost:5000/test/{test_id} -> Get test, that which match with test_id
         - Path params: 
             - test_id[String] *required*
-    - DELETE: http://localhost:5000/test/{test_id} -> Delete test, that which match with test_id
-        - Path params: 
-            - test_id[String] *required*
-    - POST: http://localhost:5000/test/{test_id} -> Update test , that which match with test_id
+    - PUT: http://localhost:5000/test/{test_id} -> Update test , that which match with test_id
         - Body: 
             ```json
             {
@@ -97,4 +94,71 @@ After the server is running, in http://localhost:5000/swagger/ It's possible to 
                 "closed": Boolean
             }
             ```
-            
+    - DELETE: http://localhost:5000/test/{test_id} -> Delete test, that which match with test_id
+        - Path params: 
+            - test_id[String] *required*
+- ### Step
+    - GET: http://localhost:5000/test/{test_id}/steps -> Get all steps for one test with test_id
+        - Path params: 
+            - test_id[String] *required*
+    - POST: http://localhost:5000/test/{test_id}/step -> Create new step for one test with test_id
+        - Path params: 
+            - test_id[String] *required*
+        - Body: 
+            ```json
+            {
+                "test_id": String,
+                "name": String,
+                "type": String, //"Consent, question or stress"
+                "duration": Number,
+                "content": Object || Array // "Depend of component"
+            }
+            ```
+    - GET: http://localhost:5000/test/{test_id}/step/{step_id}-> Get one step from one test with test_id
+        - Path params: 
+            - test_id[String] *required*
+            - step_id[String] *required*
+    - PUT: http://localhost:5000/test/{test_id}/step/{step_id} -> Update one step from one test with test_id
+        - Path params: 
+            - test_id[String] *required*
+            - step_id[String] *required*
+        - Body: 
+            ```json
+            {
+                "name": String,
+                "type": String, //"Consent, question or stress"
+                "duration": Number,
+                "content": Object || Array // "Depend of component"
+            }
+            ```
+    - DELETE: http://localhost:5000/test/{test_id}/step/{step_id}-> Delete one step from one test with test_id
+        - Path params: 
+            - test_id[String] *required*
+            - step_id[String] *required*
+- ### Implementation
+    - POST: http://localhost:5000/create_session/{test_id} -> Create new session for test implementation
+        - Path params: 
+            - test_id[String] *required*
+        - Body: 
+            ```json
+            {
+                "test_id": String,
+                "session_id": String
+            }
+            ```
+    - POST: http://localhost:5000/send_step/{test_id}/session/{session_id} -> Send results for one step from one test
+        - Path params: 
+            - test_id[String] *required*
+            - step_id[String] *required*
+        - Body: 
+            ```json
+            {
+                "content": Object,
+                "start_time": Datetime,
+                "end_time": Datetime
+            }
+            ```
+ - ### Result
+    - GET: http://localhost:5000/test_results/{test_id} -> Get results from test with test_id
+        - Path params: 
+            - test_id[String] *required*           
