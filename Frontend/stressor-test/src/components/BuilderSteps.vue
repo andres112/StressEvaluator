@@ -37,8 +37,10 @@
             <component
               :is="currentComponent(item)"
               :step_content="item.content"
+              :ref="item._id"
             ></component>
           </v-card-text>
+
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
