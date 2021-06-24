@@ -24,7 +24,6 @@
               maxlength="75"
               class="mb-3"
               required
-              hint="The name may not be changed later."
             ></v-text-field>
             <v-text-field
               v-model="evaluation.owner"

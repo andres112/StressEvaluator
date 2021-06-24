@@ -167,7 +167,7 @@
         }
       }
     },
-    "/test/{test_id}/steps": {
+    "/test/{test_id}/step": {
       "get": {
         "tags": ["Step"],
         "summary": "Find all steps from a test by test ID",
@@ -188,9 +188,7 @@
             "description": "Resource not found."
           }
         }
-      }
-    },
-    "/test/{test_id}/step/{step_id}": {
+      },
       "post": {
         "tags": ["Step"],
         "summary": "Add new steps to the test",
@@ -225,7 +223,9 @@
             "description": "Resource not found."
           }
         }
-      },
+      }
+    },
+    "/test/{test_id}/step/{step_id}": {
       "get": {
         "tags": ["Step", "Implementation"],
         "summary": "Find a step from a test by step ID",

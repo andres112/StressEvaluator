@@ -98,7 +98,7 @@ After the server is running, in http://localhost:5000/swagger/ It's possible to 
         - Path params: 
             - test_id[String] *required*
 - ### Step
-    - GET: http://localhost:5000/test/{test_id}/steps -> Get all steps for one test with test_id
+    - GET: http://localhost:5000/test/{test_id}/step -> Get all steps for one test with test_id
         - Path params: 
             - test_id[String] *required*
     - POST: http://localhost:5000/test/{test_id}/step -> Create new step for one test with test_id

@@ -85,6 +85,7 @@ def create():
                          'test_id': new_test['_id'],
                          'name': "Informed Consent",
                          'type': "consent",
+                         'duration': 0,
                          'content': def_consent["content"]}
                 Step.insert_one(step0)
                 return make_response(jsonify(message="Test created successfully", test_id=new_test['_id']), 200)
@@ -151,7 +152,7 @@ def test_operations(test_id):
 
 # CRUD operation for Steps
 ##########################
-@endpoint.route('/test/<test_id>/steps', methods=['GET'])
+@endpoint.route('/test/<test_id>/step', methods=['GET', 'POST'])
 def get_all_steps(test_id):
     try:
         if test_id is None:
@@ -169,30 +170,15 @@ def get_all_steps(test_id):
                 return make_response(jsonify(message="Steps not found"), 404)
             else:
                 return make_response(jsonify([item for item in steps]), 200)
-    except BulkWriteError as e:
-        return make_response(jsonify(message="Error getting steps",
-                                     details=e.details), 500)
-
-
-@endpoint.route('/test/<test_id>/step/<step_id>', methods=['PUT', 'DELETE', 'GET', 'POST'])
-def step_operations(test_id, step_id):
-    try:
-        if test_id is None:
-            abort(400)
-            return
-
-        test_uuid = test_id
-        if isUUID(test_id):
-            # convert test_id to test_uuid
-            test_uuid = uuid.UUID(test_id)
 
         if request.method == 'POST':
             new_step = {'_id': uuid.uuid4(),
                         'test_id': test_uuid,  # test_id correspond to the _id in mongodb
                         'name': request.json["name"],
                         'type': request.json["type"],
-                        'duration': request.json["duration"] if keyExist("duration", request.json) else 30,
-                        'content': {}}
+                        'duration': request.json["duration"] if keyExist("duration", request.json) else 60,
+                        'content': request.json["content"] if keyExist("content", request.json) else {}
+                        }
             # create step in current test
             test = Test.update_one(
                 {'_id': test_uuid}, {'$push': {'steps': new_step['_id']}, '$inc': {'number_of_steps': 1}})
@@ -203,11 +189,25 @@ def step_operations(test_id, step_id):
             elif test.modified_count == 0:
                 return make_response(jsonify(message="Step not added"), 500)
             else:
-                return make_response(jsonify(message=f"Step added successfully to the test", test_id=test_uuid, step_id=new_step['_id']), 200)
+                return make_response(
+                    jsonify(message=f"Step added successfully to the test", test_id=test_uuid, step_id=new_step['_id']),
+                    200)
+    except BulkWriteError as e:
+        return make_response(jsonify(message="Error getting steps",
+                                     details=e.details), 500)
 
-        if step_id is None:
+
+@endpoint.route('/test/<test_id>/step/<step_id>', methods=['PUT', 'DELETE', 'GET'])
+def step_operations(test_id, step_id):
+    try:
+        if test_id is None or step_id is None:
             abort(400)
             return
+
+        test_uuid = test_id
+        if isUUID(test_id):
+            # convert test_id to test_uuid
+            test_uuid = uuid.UUID(test_id)
 
         step_uuid = step_id
         if isUUID(step_id):

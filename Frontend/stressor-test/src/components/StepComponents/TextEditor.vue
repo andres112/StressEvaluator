@@ -74,8 +74,8 @@ export default {
 
 <style>
 .editor-node {
-  height: 75vh;
-  min-height: 75vh;
+  height: 70vh;
+  min-height: 70vh;
   overflow-y: auto;
 }
 .ql-editor {
