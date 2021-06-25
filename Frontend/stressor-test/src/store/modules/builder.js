@@ -1,6 +1,6 @@
 import { removeEmpty } from "@/assets/helpers.js";
 
-const ALLOWED_STEPS = new Set(["new", "consent", "question", "stress"]);
+const ALLOWED_STEPS = new Set(["consent", "question", "stress"]);
 
 const state = {
   selected_test: null,

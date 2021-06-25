@@ -28,8 +28,8 @@ export default {
       const new_step = {
         test_id: this.current_step.test_id,
         name: "New step",
-        type: "new",
-        content:{ pages: [{ name: "page 1", elements: [] }] }
+        type: "question",
+        content:[]
       };
       this.createStep(new_step);
     },

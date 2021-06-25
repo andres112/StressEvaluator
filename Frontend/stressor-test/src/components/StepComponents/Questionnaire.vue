@@ -1,97 +1,118 @@
 <template>
-  <div id="creatorElement" class="editor-question" />
+  <v-card>
+    <v-card-text v-if="edition_mode">
+      <v-row>
+        <v-col cols="3" sm="2" md="3" class="editor-toolbox">
+          <p class="mb-2 text-subtitle-2 text-sm-subtitle-1 text-md-h6 font-weight-bold">Toolbox</p>
+          <v-list flat class="editor-toolbox">
+            <v-list-item-group v-model="selectedItem" color="light-green">
+              <v-list-item v-for="(item, i) in items" :key="i" @click="selectTool(item.value)">
+                <v-list-item-icon>
+                  <v-icon v-text="item.icon"></v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title v-text="item.text"></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-col>
+        <v-divider vertical class="my-2"></v-divider>
+        <v-col cols="9" sm="10" md="9" class="editor-question">
+          <h2 class="mb-2 text-subtitle-2 text-sm-subtitle-1 text-md-h6 font-weight-bold">
+            Editor
+          </h2>
+          <v-card v-for="question in survey" :key="question.id" class="mb-4" shaped>
+            <component
+              :is="getToolComponent(question.type)"
+              :content="question"
+              @onDeleteQuestion="onDeleteQuestion"
+            ></component>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-card-text>
+    <v-card-text v-else class="presenter-question">
+      <v-card v-for="question in survey" :key="question.id" class="mb-4" shaped>
+        <component :is="getToolComponent(question.type)" :content="question"></component>
+      </v-card>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>
-import * as SurveyCreator from "survey-creator";
-import "survey-creator/survey-creator.css";
-import "survey-knockout/survey.css";
+import { mapState } from "vuex";
+import { createNanoId } from "@/assets/helpers.js";
+import Checkbox from "../SurveyTools/Checkbox.vue";
+import Radiogroup from "../SurveyTools/Radiogroup.vue";
 
 export default {
-  name: "surveyjs-creator-component",
+  components: {
+    Checkbox,
+    Radiogroup,
+  },
   props: {
-    step_content: Object,
+    step_content: Array,
   },
-  data() {
-    return {
-      creator: null,
-    };
-  },
+  data: () => ({
+    survey: [],
+    answers: [],
+    selectedItem: null,
+    items: [
+      { text: "Checkbox", icon: "mdi-checkbox-marked", value: "checkbox" },
+      { text: "Radiogroup", icon: "mdi-radiobox-marked", value: "radio" },
+      { text: "Dropdown", icon: "mdi-form-dropdown", value: "dropdown" },
+      { text: "Single Input", icon: "mdi-format-text", value: "single" },
+      { text: "Comment", icon: "mdi-comment-text", value: "comment" },
+      { text: "Rating", icon: "mdi-star", value: "rating" },
+      { text: "Boolean", icon: "mdi-toggle-switch-off", value: "boolean" },
+    ],
+  }),
   mounted() {
-    SurveyCreator.SurveyNestedPropertyEditorItem.dragIconName = "icon-custom-drag";
-    SurveyCreator.SurveyNestedPropertyEditorItem.deleteIconName = "icon-custom-delete";
-
-    var mainColor = "#7ff07f";
-    var mainHoverColor = "#6fe06f";
-    var textColor = "#4a4a4a";
-    var defaultThemeColorsEditor = SurveyCreator.StylesManager.ThemeColors["default"];
-    defaultThemeColorsEditor["$primary-color"] = mainColor;
-    defaultThemeColorsEditor["$secondary-color"] = mainColor;
-    defaultThemeColorsEditor["$primary-hover-color"] = mainHoverColor;
-    defaultThemeColorsEditor["$primary-text-color"] = textColor;
-    defaultThemeColorsEditor["$selection-border-color"] = mainColor;
-
-    SurveyCreator.StylesManager.applyTheme();
-
-    // Show Designer, Test Survey, JSON Editor and additionally Logic tabs
-    var options = {
-      showLogicTab: false,
-      showJSONEditorTab: false,
-      questionTypes: [
-        "text",
-        "checkbox",
-        "radiogroup",
-        "dropdown",
-        "comment",
-        "rating",
-        "imagepicker",
-        "boolean",
-      ],
-      pageEditMode: "multiple",
-      showTitlesInExpressions: false,
-      allowControlSurveyTitleVisibility: false,
-      showSurveyTitle: "never",
-      showOptions: false,
-      isAutoSave: true,
-      designerHeight: "75vh",
-    };
-    //create the SurveyJS Creator and render it in div with id equals to "creatorElement"
-    this.creator = new SurveyCreator.SurveyCreator("creatorElement", options);
-    //Show toolbox in the right container. It is shown on the left by default
-    this.creator.showToolbox = "left";
-    //Show property grid in the right container, combined with toolbox
-    this.creator.showPropertyGrid = "left";
-    // Remove survey setting button: For the simplicity of this implementation
-    this.creator.toolbarItems.remove((x) => x.id === "svd-survey-settings");
-    this.creator.onShowingProperty.add(function(sender, options) {
-      if (options.obj.getType() == "survey") {
-        options.canShow = options.property.name == "";
-      }
-    });
-
-    //Make toolbox active by default
-    this.creator.rightContainerActiveItem("toolbox");
-    //Remove default properties layout in property grid and have only one "general" category.
-    SurveyCreator.SurveyQuestionEditorDefinition.definition = {};
-
-    // Load existent questionnaire
-    if (this.step_content) {
-      this.creator.text = JSON.stringify(this.step_content);
-    }
+    this.survey = this.step_content;
+  },
+  computed: {
+    ...mapState({ edition_mode: (state) => state.builder.edition_mode }),
   },
   methods: {
+    selectTool(tool) {
+      this.survey.push({
+        id: createNanoId(),
+        question: null,
+        type: tool,
+        required: false,
+        options: [],
+      });
+    },
+    getToolComponent(tool) {
+      if (tool == "checkbox") {
+        return Checkbox;
+      }
+      if (tool == "radio") {
+        return Radiogroup;
+      }
+    },
+    onDeleteQuestion(question_id) {
+      this.survey = this.survey.filter((x) => x.id != question_id);
+    },
     getContent() {
-      const survey_json = JSON.parse(this.creator.text);
-      return { content: survey_json };
+      return { content: this.survey };
     },
   },
 };
 </script>
-
-<style lang="scss" scoped>
+<style scoped>
+.editor-toolbox {
+  background-color: #f1f8e9;
+}
 .editor-question {
-  height: 75vh;
-  min-height: 75vh;
+  height: 70vh;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+.presenter-question{
+  height: 80vh;
+  max-height: 90vh;
   overflow-y: auto;
 }
 </style>

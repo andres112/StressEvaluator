@@ -6,7 +6,7 @@
       </v-app-bar-title>
 
       <!-- Editor button for test information edition - top-left side-->
-      <v-dialog v-model="edit_dialog" persistent>
+      <v-dialog v-model="edit_dialog" persistent v-if="edition_mode">
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on">
             <v-icon>mdi-pencil</v-icon>
@@ -35,7 +35,7 @@
       <v-tab-item v-for="item in steps" :key="item._id">
         <v-card>
           <!-- Step setting section -->
-          <v-card-text class="pb-0">
+          <v-card-text class="pb-0" v-if="edition_mode">
             <builder-step-settings :br="br[item.type]"></builder-step-settings>
           </v-card-text>
 
@@ -82,12 +82,14 @@ import StepButtons from "./Common/StepButtons.vue";
 // Step components
 import TextEditor from "./StepComponents/TextEditor.vue";
 import Questionnaire from "./StepComponents/Questionnaire.vue";
+import Stressor from "./StepComponents/Stressor.vue";
 
 export default {
   name: "BuilderSteps",
   components: {
     TextEditor,
     Questionnaire,
+    Stressor,
     BuilderCreate,
     BuilderStepSettings,
     StepButtons,
@@ -117,6 +119,7 @@ export default {
       selected_test: (state) => state.builder.selected_test,
       steps: (state) => state.builder.steps,
       current_step: (state) => state.builder.current_step,
+      edition_mode: (state) => state.builder.edition_mode,
     }),
   },
   methods: {
@@ -178,6 +181,9 @@ export default {
       }
       if (item.type === "question") {
         return Questionnaire;
+      }
+      if (item.type === "stress") {
+        return Stressor;
       }
     },
   },
