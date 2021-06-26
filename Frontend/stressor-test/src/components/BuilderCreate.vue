@@ -1,12 +1,7 @@
 <template>
   <v-layout justify-center align-center fill-height>
     <home-button v-if="!edition_mode" />
-    <v-card
-      class="text-center"
-      elevation="0"
-      :loading="loading"
-      loader-height="2"
-    >
+    <v-card class="text-center" elevation="0" :loading="loading" loader-height="2">
       <v-card-title class="text-md-h2 text-sm-h4 text-h5 font-weight-bold mb-6">
         Stress Evaluator-Create
       </v-card-title>
@@ -118,10 +113,8 @@ export default {
       loading: null,
       rules: {
         required: (value) => !!value || "Required.",
-        minLength: (value) =>
-          (value && value.length >= 5) || "Min. 5 characters.",
-        counter_desc: (value) =>
-          (value && value.length <= 750) || "Max. 750 characters.",
+        minLength: (value) => (value && value.length >= 5) || "Min. 5 characters.",
+        counter_desc: (value) => (value && value.length <= 750) || "Max. 750 characters.",
       },
     };
   },
@@ -137,7 +130,7 @@ export default {
   },
   computed: {
     ...mapState({
-      edition_mode: (state) => state.builder.edition_mode,
+      edition_mode: (state) => state.settings.edition_mode,
       selected_test: (state) => state.builder.selected_test,
     }),
   },

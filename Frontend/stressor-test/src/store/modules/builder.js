@@ -7,11 +7,10 @@ const state = {
   current_step: null,
   test_list: [],
   steps: [],
-  edition_mode: false,
 };
 const mutations = {
   setSelectedTest(state, payload) {
-    state.selected_test = payload;
+    state.selected_test = { ...state.selected_test, ...payload };
   },
   setSteps(state, payload) {
     const allowed_steps = payload.filter((x) => ALLOWED_STEPS.has(x.type));
@@ -28,9 +27,6 @@ const mutations = {
     state.selected_test = null;
     state.steps = [];
     state.current_step = null;
-  },
-  setEditionMode(state, value) {
-    state.edition_mode = value;
   },
 };
 const actions = {
@@ -67,6 +63,8 @@ const actions = {
         },
         body: JSON.stringify(payload),
       });
+      commit("setSelectedTest", payload);
+      return req;
     } catch (error) {
       console.log(error);
     }
@@ -126,7 +124,7 @@ const actions = {
     try {
       const url =
         process.env.VUE_APP_BUILDER_URL + "test/" + payload.test_id + "/step/" + payload._id;
-      await fetch(url, {
+      const req = await fetch(url, {
         method: "PUT",
         headers: {
           Accept: "application/json",
@@ -134,6 +132,7 @@ const actions = {
         },
         body: JSON.stringify(payload),
       });
+      return req;
     } catch (error) {
       console.log(error);
     }
@@ -169,6 +168,8 @@ const actions = {
       );
       const res_steps = await req_steps.json();
       commit("setSteps", res_steps);
+      // when load a test set the first step by default
+      commit("setCurrentStep", res_steps[0]);
     } catch (error) {
       console.log(error);
     }

@@ -2,7 +2,7 @@
   <v-card elevation="0">
     <v-app-bar dense flat dark color="light-green">
       <v-app-bar-title class="text-capitalize mr-2">
-        {{ textLength(selected_test.name) }}
+        {{ appTitle }}
       </v-app-bar-title>
 
       <!-- Editor button for test information edition - top-left side-->
@@ -18,7 +18,7 @@
       <v-spacer></v-spacer>
 
       <!-- Add and Delete step button - top-right side-->
-      <step-buttons></step-buttons>
+      <step-buttons v-if="edition_mode"></step-buttons>
 
       <!-- Tabs -->
       <template v-slot:extension>
@@ -109,7 +109,6 @@ export default {
   },
   created() {
     this.setEditionMode(true);
-    this.setCurrentStep(this.steps[this.current_tab]);
   },
   destroyed() {
     this.setEditionMode(false);
@@ -119,8 +118,11 @@ export default {
       selected_test: (state) => state.builder.selected_test,
       steps: (state) => state.builder.steps,
       current_step: (state) => state.builder.current_step,
-      edition_mode: (state) => state.builder.edition_mode,
+      edition_mode: (state) => state.settings.edition_mode,
     }),
+    appTitle(){
+      return this.textLength(this.selected_test.name)
+    }
   },
   methods: {
     ...mapActions({
@@ -128,8 +130,9 @@ export default {
       updateEvaluation: "builder/updateEvaluation",
     }),
     ...mapMutations({
-      setEditionMode: "builder/setEditionMode",
+      setEditionMode: "settings/setEditionMode",
       setCurrentStep: "builder/setCurrentStep",
+      setNotifications: "settings/setNotifications",
     }),
     textLength(text) {
       const LENGTHS = new Map([
@@ -140,7 +143,7 @@ export default {
         ["xl", 75],
       ]);
       const len = LENGTHS.get(this.$vuetify.breakpoint.name);
-      return text.length > len ? `${text.slice(0, len)}...` : text.slice(0, len);
+      return text.length > len ? `${text.slice(0, len)}...` : text;
     },
 
     // Update step info when user click on upload button
@@ -150,20 +153,22 @@ export default {
         test_id: this.current_step.test_id,
         _id: this.current_step._id,
       };
+      let res;
       // Execute function in child component for save specific content
       const content = Array.isArray(comp) ? comp[0].getContent() : comp.getContent();
       for (const item in content) {
         payload[item] = content[item];
       }
       if (isTest) {
-        await this.updateEvaluation(payload);
+        res = await this.updateEvaluation(payload);
       } else {
         payload["name"] = this.current_step.name;
         payload["type"] = this.current_step.type;
         payload["duration"] = this.current_step.duration;
-        await this.updateStep(payload);
+        res = await this.updateStep(payload);
       }
       this.saving = await false;
+      this.sendNotification(res);
     },
 
     // Close the Test editior dialog
@@ -185,6 +190,23 @@ export default {
       if (item.type === "stress") {
         return Stressor;
       }
+    },
+
+    sendNotification(res) {
+      const note = { isOn: true, text: null, timeout: 3000, status: "info" };
+      if (res.status == 200) {
+        note.status = "ok";
+        note.text = "Evaluation updated successfully.";
+      }
+      if (res.status == 304) {
+        note.status = "info";
+        note.text = "Evaluation not updated, data already updated.";
+      }
+      if (res.status == 404 || res.status == 500) {
+        note.status = "error";
+        note.text = "Evaluation not updated.";
+      }
+      this.setNotifications(note);
     },
   },
   watch: {

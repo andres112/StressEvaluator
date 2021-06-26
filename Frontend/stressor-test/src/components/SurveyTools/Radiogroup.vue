@@ -27,6 +27,7 @@
             :value="opt.value"
             v-for="opt in content.options"
             :key="opt.value"
+            readonly
           >
             <template v-slot:label>
               <v-col cols="11" class="pb-0">
@@ -79,7 +80,7 @@ export default {
     }
   },
   computed: {
-    ...mapState({ edition_mode: (state) => state.builder.edition_mode }),
+    ...mapState({ edition_mode: (state) => state.settings.edition_mode }),
   },
   methods: {
     deleteQuestion() {

@@ -74,7 +74,7 @@ export default {
     }
   },
   computed: {
-    ...mapState({ edition_mode: (state) => state.builder.edition_mode }),
+    ...mapState({ edition_mode: (state) => state.settings.edition_mode }),
   },
   methods: {
     deleteQuestion() {

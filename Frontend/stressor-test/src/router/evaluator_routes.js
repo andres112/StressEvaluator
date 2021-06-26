@@ -23,7 +23,7 @@ export const e_routes = [
         name: "Create",
         component: Create,
         beforeEnter: (to, from, next) => {
-          store.commit("builder/setEditionMode", false);
+          store.commit("settings/setEditionMode", false);
           next();
         },
       },
