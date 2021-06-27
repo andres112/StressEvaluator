@@ -4,7 +4,7 @@ const state = {
 };
 const mutations = {
   setEditionMode(state, value) {
-    state.edition_mode = !value;
+    state.edition_mode = value;
   },
   setNotifications(state, payload) {
     state.notification = payload;
