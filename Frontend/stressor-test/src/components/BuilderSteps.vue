@@ -50,7 +50,7 @@
               :ref="item._id"
             ></component>
           </v-card-text>
-          <v-card-text style="height: 100px; position: relative">
+          <v-card-text style="height: 100px; position: relative" v-if="edition_mode">
             <v-fab-transition>
               <v-btn
                 color="light-blue"
@@ -120,9 +120,9 @@ export default {
       current_step: (state) => state.builder.current_step,
       edition_mode: (state) => state.settings.edition_mode,
     }),
-    appTitle(){
-      return this.textLength(this.selected_test.name)
-    }
+    appTitle() {
+      return this.textLength(this.selected_test.name);
+    },
   },
   methods: {
     ...mapActions({

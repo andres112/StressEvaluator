@@ -1,35 +1,20 @@
 <template>
   <v-container fluid>
     <p class="text-subtitle-2 green--text" v-if="edition_mode">Radiogroup</p>
-    <v-row align="center">
-      <v-col cols="11" class="pb-0">
-        <v-text-field
-          v-if="edition_mode"
-          dense
-          color="light-green"
-          v-model="content.question"
-          placeholder="Question"
-        ></v-text-field>
-        <v-subheader v-else class="text-subtitle-1 text-sm-h6">{{ content.question }}</v-subheader>
-      </v-col>
-      <v-col cols="1">
-        <v-btn icon color="deep-orange accent-4" v-if="edition_mode" @click="deleteQuestion()">
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
+    <question :content="content" @onDeleteQuestion="deleteQuestion"></question>
 
     <v-row align="center" class="mt-0" v-if="content.options.length > 0">
       <v-col cols="11">
-        <v-radio-group v-model="option_selected" dense>
+        <v-radio-group v-model="answer_selected" dense>
           <v-radio
-            class="shrink ml-2"
+            class="ml-2"
             :value="opt.value"
             v-for="opt in content.options"
             :key="opt.value"
-            readonly
+            :readonly="edition_mode"
+            :label="opt.text"
           >
-            <template v-slot:label>
+            <template v-slot:label v-if="edition_mode">
               <v-col cols="11" class="pb-0">
                 <v-text-field
                   dense
@@ -37,9 +22,10 @@
                   color="light-green"
                   class="mr-2"
                   v-model="opt.text"
-                  placeholder="option"
-                ></v-text-field>
-                <span v-else class="my-1 text-subtitle-2">{{ opt.text }}</span>
+                  placeholder="Option"
+                  counter
+                  maxlength="150"
+                ></v-text-field>                
               </v-col>
               <v-col cols="1">
                 <v-btn
@@ -56,22 +42,33 @@
         </v-radio-group>
       </v-col>
     </v-row>
-    <a class="text-subtitle-2" color="light-green" @click="addOption()" v-if="edition_mode">
-      + Add option
-    </a>
+
+    <!-- question settings -->
+    <div v-if="edition_mode">
+      <a class="text-subtitle-2 ml-1" color="light-green" @click="addOption()">
+        + Add option
+      </a>
+      <br />
+      <div class="d-inline-flex">
+        <v-checkbox dense v-model="content.required" class="ml-1" label="Required"></v-checkbox>
+      </div>
+    </div>
   </v-container>
 </template>
 <script>
 import { mapState } from "vuex";
 import { createNanoId } from "@/assets/helpers.js";
+import Question from "./Question.vue";
 
 export default {
+  name: "Radiogroup",
+  components: { Question },
   props: {
     content: Object,
   },
   data() {
     return {
-      option_selected: null,
+      answer_selected: null,
     };
   },
   created() {
@@ -87,6 +84,7 @@ export default {
       this.$emit("onDeleteQuestion", this.content.id);
     },
     addOption() {
+      // Nano id used for creating option id
       const new_option = { value: createNanoId(), text: "" };
       this.content.options.push(new_option);
     },

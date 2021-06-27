@@ -5,14 +5,12 @@
       :timeout="notification.timeout"
       bottom
       dark
-      vertical
       :color="getColor"
     >
       <span class="text-h6">{{ notification.text }}</span>
       <template v-slot:action="{ attrs }">
-        <v-btn dark icon v-bind="attrs" @click="notification.isOn = false">
+        <v-btn icon v-bind="attrs" @click="notification.isOn = false" >
           <v-icon>mdi-close-thick</v-icon>
-
         </v-btn>
       </template>
     </v-snackbar>
@@ -28,12 +26,12 @@ export default {
     ...mapState({ notification: (state) => state.settings.notification }),
     getColor() {
       if (this.notification.status == "ok") {
-        return "light-green darken-1";
+        return "light-green";
       }
       if (this.notification.status == "error") {
         return "deep-orange";
       }
-      return "light-blue darken-1";
+      return "light-blue";
     },
   },
   methods: {
