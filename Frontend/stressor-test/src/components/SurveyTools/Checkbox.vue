@@ -1,42 +1,28 @@
 <template>
   <v-container fluid>
     <p class="text-subtitle-2 green--text" v-if="edition_mode">Checkbox</p>
-    <v-row align="center" class="pb-0">
-      <v-col cols="11">
-        <v-text-field
-          v-if="edition_mode"
-          dense
-          color="light-green"
-          v-model="content.question"
-          placeholder="Question"
-        ></v-text-field>
-        <v-subheader v-else class="text-subtitle-1 text-sm-h6">{{ content.question }}</v-subheader>
-      </v-col>
-      <v-col cols="1">
-        <v-btn icon color="deep-orange accent-4" v-if="edition_mode" @click="deleteQuestion()">
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
+    <question :content="content" @onDeleteQuestion="deleteQuestion"></question>
 
     <v-row align="center" v-for="opt in content.options" :key="opt.value">
-      <v-col cols="10" class="d-flex">
+      <v-col cols="10" class="d-flex" :class="{ 'pb-0': !edition_mode }">
         <v-checkbox
           dense
-          v-model="option_selected"
+          v-model="answer_selected"
           hide-details
-          class="shrink ml-2 mt-0"
+          class="ml-2 mt-0"
           :value="opt.value"
           :disabled="edition_mode"
+          :label="edition_mode ? null : opt.text"
         ></v-checkbox>
         <v-text-field
           dense
           v-if="edition_mode"
           color="light-green"
           v-model="opt.text"
-          placeholder="option"
+          placeholder="Option"
+          counter
+          maxlength="150"
         ></v-text-field>
-        <span v-else class="my-1">{{ opt.text }}</span>
       </v-col>
       <v-col cols="1">
         <v-btn
@@ -50,22 +36,33 @@
       </v-col>
     </v-row>
     <br />
-    <a class="text-subtitle-2" color="light-green" @click="addOption()" v-if="edition_mode">
-      + Add option</a
-    >
+
+    <!-- question settings -->
+    <div v-if="edition_mode">
+      <a class="text-subtitle-2 ml-1" color="light-green" @click="addOption()">
+        + Add option
+      </a>
+      <br />
+      <div class="d-inline-flex">
+        <v-checkbox dense v-model="content.required" class="ml-1" label="Required"></v-checkbox>
+      </div>
+    </div>
   </v-container>
 </template>
 <script>
 import { mapState } from "vuex";
 import { createNanoId } from "@/assets/helpers.js";
+import Question from "./Question.vue";
 
 export default {
+  name: "Checkbox",
+  components: { Question },
   props: {
     content: Object,
   },
   data() {
     return {
-      option_selected: [],
+      answer_selected: [],
     };
   },
   created() {

@@ -6,6 +6,7 @@
 
 <script>
 import Quill from "quill";
+import { mapState } from "vuex";
 
 const toolbarOptions = [
   [{ font: [] }],
@@ -30,6 +31,7 @@ export default {
           toolbar: toolbarOptions,
         },
         theme: "snow",
+        readOnly: false,
       },
     };
   },
@@ -39,8 +41,17 @@ export default {
   mounted() {
     this.initializeEditor();
   },
+  computed: {
+    ...mapState({ edition_mode: (state) => state.settings.edition_mode }),
+  },
   methods: {
     initializeEditor() {
+      // Validate if edition_mode
+      if (!this.edition_mode) {
+        this.editorOpts.readOnly = true;
+        this.editorOpts.theme = "bubble";
+      }
+
       // Create the Quill instance
       this.editorInstance = new Quill(this.$refs.editorNode, this.editorOpts);
 
@@ -66,7 +77,7 @@ export default {
     },
     getContent() {
       const content = this.editorInstance.getContents();
-      return { content: content.ops }
+      return { content: content.ops };
     },
   },
 };

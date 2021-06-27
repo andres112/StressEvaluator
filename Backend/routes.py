@@ -7,6 +7,7 @@ from db_config import Test, Step, Result
 
 endpoint = Blueprint("endpoint", __name__, static_folder='static')
 
+
 # HTTP error handlers
 @endpoint.errorhandler(400)
 def handle_400_error(_error):
@@ -35,16 +36,16 @@ def get_all_test():
             name = request.args.get('name')
             owner = request.args.get('owner')
             tests = {}
-            if(name is not None and owner is not None):
+            if (name is not None and owner is not None):
                 tests = Test.find({'$and': [
                     {"name": {"$regex": name, "$options": 'i'}},
                     {"owner": {"$regex": owner, "$options": 'i'}}
                 ]})
-            elif(owner is not None):
+            elif (owner is not None):
                 tests = Test.find(
                     {"owner": {"$regex": owner, "$options": 'i'}}
                 )
-            elif(name is not None):
+            elif (name is not None):
                 tests = Test.find(
                     {"name": {"$regex": name, "$options": 'i'}}
                 )
@@ -97,6 +98,7 @@ def create():
     except DuplicateKeyError as e:
         return make_response(jsonify(message="Error creating test. Test already exist",
                                      details=e.details), 500)
+
 
 # TODO: Pending the published flag validation
 @endpoint.route('/test/<test_id>', methods=['GET', 'DELETE', 'PUT'])
@@ -237,7 +239,8 @@ def step_operations(test_id, step_id):
             elif step.modified_count == 0:
                 return make_response(jsonify(message="Step not updated. Similar to current value"), 304)
             else:
-                return make_response(jsonify(message=f"Step updated successfully", test_id=test_uuid, step_id=step_uuid), 200)
+                return make_response(
+                    jsonify(message=f"Step updated successfully", test_id=test_uuid, step_id=step_uuid), 200)
 
         if request.method == 'DELETE':
             result = Step.find_one_and_delete(
@@ -248,7 +251,8 @@ def step_operations(test_id, step_id):
                 # Remove step identifier from Test[test_id].steps
                 Test.update_one(
                     {'_id': test_uuid}, {'$pull': {'steps': step_uuid}, '$inc': {'number_of_steps': -1}})
-                return make_response(jsonify(message="Test step deleted successfully", test_id=test_uuid, step_id=step_uuid), 200)
+                return make_response(
+                    jsonify(message="Test step deleted successfully", test_id=test_uuid, step_id=step_uuid), 200)
     except BulkWriteError as e:
         return make_response(jsonify(message="Error in step operation",
                                      details=e.details), 500)
@@ -277,7 +281,9 @@ def create_session(test_id):
                            'responses': []}
             # create new step
             Result.insert_one(new_session)
-            return make_response(jsonify(message="User session created successfully", test_id=test_uuid, session_id=new_session['_id']), 200)
+            return make_response(
+                jsonify(message="User session created successfully", test_id=test_uuid, session_id=new_session['_id']),
+                200)
     except BulkWriteError as e:
         return make_response(jsonify(message="Error creating User Session",
                                      details=e.details), 500)
@@ -312,7 +318,9 @@ def session_send_step(test_id, session_id):
                 elif result.modified_count == 0:
                     return make_response(jsonify(message="User Session response not updated"), 500)
                 else:
-                    return make_response(jsonify(message="Answer sent successfully", test_id=test_uuid, step_id=new_answer["step_id"], session_id=session_id), 200)
+                    return make_response(
+                        jsonify(message="Answer sent successfully", test_id=test_uuid, step_id=new_answer["step_id"],
+                                session_id=session_id), 200)
             else:
                 abort(400)
     except BulkWriteError as e:
