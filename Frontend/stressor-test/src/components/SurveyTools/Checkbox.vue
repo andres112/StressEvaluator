@@ -10,7 +10,7 @@
           v-model="answer_selected"
           hide-details
           class="ml-2 mt-0"
-          :value="opt.value"
+          :value="opt.text"
           :disabled="edition_mode"
           :label="edition_mode ? null : opt.text"
         ></v-checkbox>

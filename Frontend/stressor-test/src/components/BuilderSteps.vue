@@ -1,6 +1,6 @@
 <template>
   <v-card elevation="0">
-    <v-app-bar dense flat dark color="light-green">
+    <v-app-bar dense flat dark :color="edition_mode ? 'light-green' : 'light-blue'">
       <v-app-bar-title class="text-capitalize mr-2">
         {{ appTitle }}
       </v-app-bar-title>
@@ -22,7 +22,11 @@
 
       <!-- Tabs -->
       <template v-slot:extension>
-        <v-tabs background-color="light-green" dark v-model="current_tab">
+        <v-tabs
+          :background-color="edition_mode ? 'light-green' : 'light-blue'"
+          dark
+          v-model="current_tab"
+        >
           <v-tab v-for="item in steps" :key="item._id">
             {{ textLength(item.name) }}
           </v-tab>

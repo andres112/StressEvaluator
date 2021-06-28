@@ -35,14 +35,13 @@
         </ol>
       </v-col>
       <!-- For test implementation mode -->
-      <v-col cols="11" v-else>
+      <v-col cols="10" v-else class="mt-4">
         <v-select
           class="ml-2"
           v-model="answer_selected"
-          :items="content.options"
+          :items="dropdown_items"
           label="Select your answer"
           :multiple="content.multiple"
-          chips
         ></v-select>
       </v-col>
     </v-row>
@@ -76,11 +75,16 @@ export default {
   data() {
     return {
       answer_selected: null,
+      dropdown_items: [],
     };
   },
   created() {
-    if (this.content.options.length == 0) {
-      this.addOption();
+    if (this.edition_mode) {
+      if (this.content.options.length == 0) {
+        this.addOption();
+      }
+    } else {
+      this.dropdown_items = this.content.options.map((x) => x.text);
     }
   },
   computed: {

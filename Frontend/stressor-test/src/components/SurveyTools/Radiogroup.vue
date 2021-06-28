@@ -8,7 +8,7 @@
         <v-radio-group v-model="answer_selected" dense>
           <v-radio
             class="ml-2"
-            :value="opt.value"
+            :value="opt.text"
             v-for="opt in content.options"
             :key="opt.value"
             :readonly="edition_mode"

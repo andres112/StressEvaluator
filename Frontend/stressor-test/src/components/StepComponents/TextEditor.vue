@@ -1,6 +1,6 @@
 <template>
   <v-container class="py-0 px-0">
-    <div class="editor-node" ref="editorNode"></div>
+    <div class="editor-node" :class="{ edition: edition_mode }" ref="editorNode"></div>
   </v-container>
 </template>
 
@@ -83,11 +83,15 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 .editor-node {
-  height: 70vh;
-  min-height: 70vh;
+  height: 80vh;
+  min-height: 80vh;
   overflow-y: auto;
+  &.edition {
+    height: 70vh;
+  min-height: 70vh;
+  }
 }
 .ql-editor {
   font-size: 18px;

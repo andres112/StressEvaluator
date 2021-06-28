@@ -30,11 +30,12 @@
               <v-card
                 v-for="question in survey"
                 :key="question.id"
-                class="mb-4"
+                class="mb-4 question-card"
                 shaped
                 :ripple="false"
                 :elevation="isSelectedCard(question.id)"
-                @click="selectCard(question.id)"
+                @input="selectCard(question.id)"
+                :outlined="isSelectedCard(question.id) > 2"
               >
                 <component
                   :is="getToolComponent(question.type)"
@@ -65,7 +66,9 @@ import Checkbox from "../SurveyTools/Checkbox.vue";
 import Radiogroup from "../SurveyTools/Radiogroup.vue";
 import Dropdown from "../SurveyTools/Dropdown.vue";
 import SingleText from "../SurveyTools/SingleText.vue";
-import LongText from "@/components/SurveyTools/LongText.vue";
+import LongText from "../SurveyTools/LongText.vue";
+import LinearScale from "../SurveyTools/LinearScale.vue";
+import MultipleChoiceGrid from "../SurveyTools/MultipleChoiceGrid.vue";
 
 export default {
   components: {
@@ -74,6 +77,7 @@ export default {
     Dropdown,
     SingleText,
     LongText,
+    LinearScale,
   },
   props: {
     step_content: Array,
@@ -90,7 +94,8 @@ export default {
       { text: "Single Text", icon: "mdi-format-text", value: "single" },
       { text: "Long Text", icon: "mdi-text", value: "long" },
       { text: "Linear Scale", icon: "mdi-dots-horizontal", value: "rating" },
-      { text: "Boolean", icon: "mdi-toggle-switch-off", value: "boolean" },
+      { text: "Multiple Choice Grid", icon: "mdi-dots-grid", value: "multigrid" },
+      { text: "Checkbox Grid", icon: "mdi-view-grid", value: "checkboxgrid" },
     ],
   }),
   mounted() {
@@ -102,12 +107,18 @@ export default {
   methods: {
     addTool(tool) {
       const aux = this;
-      let q = { id: createNanoId(), question: null, type: tool, required: false };
+      let q = { id: createNanoId(), question: null, type: tool, required: false, options: null };
       if (["checkbox", "radio", "dropdown"].includes(tool)) {
-        q["options"] = [];
+        q.options = [];
       }
       if (tool == "dropdown") {
         q["multiple"] = false;
+      }
+      if (tool == "rating") {
+        q.options = 5;
+      }
+      if (tool == "multigrid") {
+        q.options = { rows: [], columns: [] };
       }
       // Data structure for question
       this.survey.push(q);
@@ -135,6 +146,12 @@ export default {
       }
       if (tool == "long") {
         return LongText;
+      }
+      if (tool == "rating") {
+        return LinearScale;
+      }
+      if (tool == "multigrid") {
+        return MultipleChoiceGrid;
       }
     },
     onDeleteQuestion(question_id) {
@@ -169,7 +186,7 @@ export default {
 }
 .presenter-question {
   height: 80vh;
-  max-height: 90vh;
+  max-height: 80vh;
   overflow-y: auto;
 }
 </style>
