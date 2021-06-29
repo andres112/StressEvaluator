@@ -1,6 +1,14 @@
 <template>
   <v-container fluid>
-    <p class="text-subtitle-2 green--text" v-if="edition_mode">Multiple Choice Grid</p>
+    <p class="text-subtitle-2 green--text" v-if="edition_mode && content.type == 'radiogrid'">
+      Radiogroup Grid
+    </p>
+    <p
+      class="text-subtitle-2 green--text"
+      v-else-if="edition_mode && content.type == 'checkboxgrid'"
+    >
+      Checkbox Grid
+    </p>
     <question :content="content" @onDeleteQuestion="deleteQuestion"></question>
 
     <!-- For edition mode -->
@@ -78,7 +86,7 @@
     <!-- For test implementation mode -->
     <v-row v-else class="mx-4">
       <v-col cols="11">
-        <v-simple-table fixed-header height="20vh">
+        <v-simple-table fixed-header height="23vh">
           <template v-slot:default>
             <thead>
               <tr>
@@ -93,10 +101,18 @@
                 <td>{{ row.text }}</td>
                 <td v-for="column in content.options.columns" :key="column.value">
                   <input
+                    v-if="content.type == 'radiogrid'"
                     type="radio"
                     :value="column.text"
                     :name="row.value"
-                    @change="setAnswer(row.text, column.text)"
+                    @change="setAnswer(row, column)"
+                  />
+                  <input
+                    type="checkbox"
+                    :ref="`${row.value}-${column.value}`"
+                    v-else-if="content.type == 'checkboxgrid'"
+                    @change="setAnswer(row, column)"
+                    :value="column.text"
                   />
                 </td>
               </tr>
@@ -116,7 +132,7 @@ import { createNanoId } from "@/assets/helpers.js";
 import Question from "./Question.vue";
 
 export default {
-  name: "MultipleChoiceGrid",
+  name: "Grid",
   components: { Question },
   props: {
     content: Object,
@@ -136,6 +152,10 @@ export default {
       }
     } else {
       this.answer_selected = new Map();
+      this.content.options.rows.forEach((row) => {
+        if (this.content.type == "checkboxgrid") this.answer_selected.set(row.text, []);
+        if (this.content.type == "radiogrid") this.answer_selected.set(row.text, null);
+      });
     }
   },
   computed: {
@@ -153,7 +173,20 @@ export default {
       this.content.options[item] = this.content.options[item].filter((x) => x.value != option_id);
     },
     setAnswer(key, value = null) {
-      this.answer_selected.set(key, value);
+      if (this.content.type == "checkboxgrid") {
+        let current = this.answer_selected.get(key.text);
+        const checked = this.$refs[`${key.value}-${value.value}`][0].checked;
+        if (checked && !current.includes(value.text)) {
+          current.push(value.text);
+        } else if (!checked && current.includes(value.text)) {
+          current = current.filter((x) => x != value.text);
+        }
+        value = current;
+      }
+      if (this.content.type == "radiogrid") {
+        value = value.text;
+      }
+      this.answer_selected.set(key.text, value);
     },
   },
 };

@@ -3,9 +3,7 @@
     <home-button />
     <v-layout justify-center align-center>
       <v-card class="text-center mt-5" elevation="0">
-        <v-card-title
-          class="text-md-h2 text-sm-h4 text-h5 font-weight-bold mb-6"
-        >
+        <v-card-title class="text-md-h2 text-sm-h4 text-h5 font-weight-bold mb-6">
           Stress Evaluator - Builder
         </v-card-title>
         <v-card-text>
@@ -51,9 +49,7 @@
             elevation="2"
           >
             <v-icon color="white">mdi-magnify</v-icon>
-            <span class="text-h6 font-weight-bold mx-2 white--text"
-              >Search</span
-            >
+            <span class="text-h6 font-weight-bold mx-2 white--text">Search</span>
           </v-btn>
         </v-card-text>
       </v-card>
@@ -71,12 +67,11 @@
         :items-per-page="10"
       >
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon
-            large
-            @click="onContinue(item)"
-            color="green"
-          >
-            mdi-play
+          <v-icon @click.prevent="onDelete(item)" color="deep-orange accent-4">
+            mdi-trash-can
+          </v-icon>
+          <v-icon @click.prevent="onContinue(item)" color="light-green" class="ml-2">
+            mdi-pencil
           </v-icon>
         </template>
       </v-data-table>
@@ -100,7 +95,7 @@ export default {
         { text: "Test Id", align: "start", value: "_id", sortable: false },
         { text: "Name", value: "name" },
         { text: "Owner", value: "owner" },
-        { text: "Select", value: "actions", sortable: false },
+        { text: "Actions", value: "actions", sortable: false },
       ],
       id: null,
       name: null,
@@ -132,6 +127,7 @@ export default {
       searchMultiple: "builder/searchMultipleEvaluations",
       searchOne: "builder/searchOneEvaluation",
       setSelectedTest: "builder/setSelectedTest",
+      deleteEvaluation: "builder/deleteEvaluation",
     }),
     ...mapMutations({
       setTestList: "builder/setTestList",
@@ -154,6 +150,9 @@ export default {
     async onContinue(test) {
       await this.setSelectedTest(test);
       await this.$router.push(`/builder/steps`);
+    },
+    async onDelete(test) {
+      await this.deleteEvaluation(test._id);
     },
   },
   watch: {

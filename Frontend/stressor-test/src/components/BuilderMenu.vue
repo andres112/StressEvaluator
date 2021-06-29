@@ -50,11 +50,6 @@
               >Results</span
             >
           </v-btn>
-          <v-btn color="deep-orange accent-4" class="my-3 text-capitalize" text>
-            <span class="text-subtitle-1 text-sm-h5 font-weight-bold"
-              >Delete</span
-            >
-          </v-btn>
         </v-col>
       </v-card-text>
     </v-card>

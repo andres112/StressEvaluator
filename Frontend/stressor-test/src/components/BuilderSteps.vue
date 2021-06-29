@@ -18,7 +18,7 @@
       <v-spacer></v-spacer>
 
       <!-- Add and Delete step button - top-right side-->
-      <step-buttons v-if="edition_mode"></step-buttons>
+      <step-buttons v-if="edition_mode" @addStepTab="changeToLastTab"></step-buttons>
 
       <!-- Tabs -->
       <template v-slot:extension>
@@ -211,6 +211,13 @@ export default {
         note.text = "Evaluation not updated.";
       }
       this.setNotifications(note);
+    },
+
+    changeToLastTab() {
+      const aux = this;
+      setTimeout(function() {
+        aux.current_tab = aux.steps.length - 1;
+      }, 500);
     },
   },
   watch: {

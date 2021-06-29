@@ -16,14 +16,14 @@
           label="Max."
         ></v-slider>
       </v-col>
-      <v-col cols="12" md="6" lg="4" class="d-flex align-center">
+      <v-col cols="12" md="6" class="d-flex align-center">
         <label class="mr-2 text-subtitle-2  text-sm-h6">1</label>
         <v-rating
           :dense="$vuetify.breakpoint.smAndDown"
           :x-small="$vuetify.breakpoint.xsOnly"
           :large="$vuetify.breakpoint.mdAndUp"
           :readonly="edition_mode"
-          color="green"
+          color="light-blue"
           background-color="gray"
           empty-icon="mdi-checkbox-blank-circle-outline"
           full-icon="mdi-circle-slice-8"

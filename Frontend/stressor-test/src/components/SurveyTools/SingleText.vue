@@ -12,7 +12,7 @@
           v-model="answer_selected"
           placeholder="Write your short answer."
           counter
-          maxlength="150"
+          maxlength="100"
         ></v-text-field>
       </v-col>
     </v-row>

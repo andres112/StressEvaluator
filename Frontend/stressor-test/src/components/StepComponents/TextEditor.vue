@@ -21,6 +21,7 @@ const toolbarOptions = [
 ];
 
 export default {
+  name:"TextEditor",
   data() {
     return {
       editorDelta: null,

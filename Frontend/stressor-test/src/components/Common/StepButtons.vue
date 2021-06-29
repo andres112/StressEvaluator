@@ -19,7 +19,7 @@ export default {
       current_step: (state) => state.builder.current_step,
     }),
     showDelete() {
-      return this.current_step.type !== "consent";
+      return this.current_step?.type !== "consent";
     },
   },
   methods: {
@@ -32,6 +32,7 @@ export default {
         content:[]
       };
       this.createStep(new_step);
+      this.$emit("addStepTab")
     },
     delStep() {
       this.deleteStep(this.current_step);

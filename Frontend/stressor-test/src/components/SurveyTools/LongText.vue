@@ -13,7 +13,7 @@
           placeholder="Write your long answer."
           rows="3"
           counter
-          maxlength="500"
+          maxlength="350"
           no-resize
         ></v-textarea>
       </v-col>

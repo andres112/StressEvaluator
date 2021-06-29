@@ -96,6 +96,24 @@ const actions = {
       console.log(error);
     }
   },
+  async deleteEvaluation({ commit, state }, test_id) {
+    try {
+      const req = await fetch(process.env.VUE_APP_BUILDER_URL + "test/" + test_id, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      if (req.status == 200) {
+        const payload = state.test_list.filter((x) => x._id != test_id);
+        commit("setTestList", payload);
+      }
+      return req;
+    } catch (error) {
+      console.log(error);
+    }
+  },
   //************************************************* */
 
   //************************************************* */

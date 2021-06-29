@@ -68,9 +68,10 @@ import Dropdown from "../SurveyTools/Dropdown.vue";
 import SingleText from "../SurveyTools/SingleText.vue";
 import LongText from "../SurveyTools/LongText.vue";
 import LinearScale from "../SurveyTools/LinearScale.vue";
-import MultipleChoiceGrid from "../SurveyTools/MultipleChoiceGrid.vue";
+import Grid from "../SurveyTools/Grid.vue";
 
 export default {
+  name:"Questionnaire",
   components: {
     Checkbox,
     Radiogroup,
@@ -78,6 +79,7 @@ export default {
     SingleText,
     LongText,
     LinearScale,
+    Grid,
   },
   props: {
     step_content: Array,
@@ -94,7 +96,7 @@ export default {
       { text: "Single Text", icon: "mdi-format-text", value: "single" },
       { text: "Long Text", icon: "mdi-text", value: "long" },
       { text: "Linear Scale", icon: "mdi-dots-horizontal", value: "rating" },
-      { text: "Multiple Choice Grid", icon: "mdi-dots-grid", value: "multigrid" },
+      { text: "Radiogroup Grid", icon: "mdi-dots-grid", value: "radiogrid" },
       { text: "Checkbox Grid", icon: "mdi-view-grid", value: "checkboxgrid" },
     ],
   }),
@@ -117,7 +119,7 @@ export default {
       if (tool == "rating") {
         q.options = 5;
       }
-      if (tool == "multigrid") {
+      if (["radiogrid", "checkboxgrid"].includes(tool)) {
         q.options = { rows: [], columns: [] };
       }
       // Data structure for question
@@ -150,8 +152,8 @@ export default {
       if (tool == "rating") {
         return LinearScale;
       }
-      if (tool == "multigrid") {
-        return MultipleChoiceGrid;
+      if (["radiogrid", "checkboxgrid"].includes(tool)) {
+        return Grid;
       }
     },
     onDeleteQuestion(question_id) {
