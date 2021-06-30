@@ -1,7 +1,12 @@
 <template>
   <v-card elevation="0">
-    <v-app-bar dense flat dark :color="edition_mode ? 'light-green' : 'light-blue'" >
-      <div class="text-capitalize mr-2 text-h6 text-md-h5">
+    <v-app-bar dense flat dark :color="edition_mode ? 'light-green' : 'light-blue'">
+      <v-app-bar-nav-icon v-if="edition_mode" @click.prevent="$router.push(`/builder`)">
+        <template v-slot:default>
+          <v-icon>mdi-home</v-icon>
+        </template>
+      </v-app-bar-nav-icon>
+      <div class="text-capitalize text-h6 text-md-h5">
         {{ appTitle }}
       </div>
 
@@ -9,7 +14,7 @@
       <v-dialog v-model="edit_dialog" persistent v-if="edition_mode">
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on">
-            <v-icon>mdi-pencil</v-icon>
+            <v-icon>mdi-lead-pencil</v-icon>
           </v-btn>
         </template>
         <builder-create @trigger="closeDialog" ref="create_dialog"></builder-create>

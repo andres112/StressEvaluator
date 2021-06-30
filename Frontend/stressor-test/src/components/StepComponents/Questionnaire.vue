@@ -91,7 +91,7 @@ export default {
     selectedCard: null,
     items: [
       { text: "Checkbox", icon: "mdi-checkbox-marked-outline", value: "checkbox" },
-      { text: "Radiogroup", icon: "mdi-radiobox-marked", value: "radio" },
+      { text: "Radiogroup", icon: "mdi-check-circle-outline", value: "radio" },
       { text: "Dropdown", icon: "mdi-form-dropdown", value: "dropdown" },
       { text: "Single Text", icon: "mdi-format-text", value: "single" },
       { text: "Long Text", icon: "mdi-text", value: "long" },
