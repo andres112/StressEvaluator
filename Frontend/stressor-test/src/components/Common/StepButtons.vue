@@ -25,6 +25,7 @@ export default {
   methods: {
     ...mapActions({ createStep: "builder/createStep", deleteStep: "builder/deleteStep" }),
     addStep() {
+      this.$emit("onSave", this.current_step._id)
       const new_step = {
         test_id: this.current_step.test_id,
         name: "New step",

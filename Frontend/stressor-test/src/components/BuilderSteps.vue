@@ -1,9 +1,9 @@
 <template>
   <v-card elevation="0">
-    <v-app-bar dense flat dark :color="edition_mode ? 'light-green' : 'light-blue'">
-      <v-app-bar-title class="text-capitalize mr-2">
+    <v-app-bar dense flat dark :color="edition_mode ? 'light-green' : 'light-blue'" >
+      <div class="text-capitalize mr-2 text-h6 text-md-h5">
         {{ appTitle }}
-      </v-app-bar-title>
+      </div>
 
       <!-- Editor button for test information edition - top-left side-->
       <v-dialog v-model="edit_dialog" persistent v-if="edition_mode">
@@ -18,7 +18,11 @@
       <v-spacer></v-spacer>
 
       <!-- Add and Delete step button - top-right side-->
-      <step-buttons v-if="edition_mode" @addStepTab="changeToLastTab"></step-buttons>
+      <step-buttons
+        v-if="edition_mode"
+        @addStepTab="changeToLastTab"
+        @onSave="saveWhenAdd"
+      ></step-buttons>
 
       <!-- Tabs -->
       <template v-slot:extension>
@@ -65,7 +69,7 @@
                 fab
                 x-large
                 :loading="saving"
-                @click.prevent="uploadStep($refs[item._id])"
+                @click.prevent="uploadStep(item._id)"
               >
                 <v-icon x-large>mdi-cloud-upload</v-icon>
               </v-btn>
@@ -151,8 +155,9 @@ export default {
     },
 
     // Update step info when user click on upload button
-    async uploadStep(comp, isTest = false) {
+    async uploadStep(ref_id, isTest = false) {
       this.saving = true;
+      const comp = this.$refs[ref_id];
       let payload = {
         test_id: this.current_step.test_id,
         _id: this.current_step._id,
@@ -179,8 +184,12 @@ export default {
     closeDialog(isSave) {
       this.edit_dialog = false;
       if (isSave) {
-        this.uploadStep(this.$refs.create_dialog, true);
+        this.uploadStep("create_dialog", true);
       }
+    },
+
+    saveWhenAdd(id) {
+      this.uploadStep(id);
     },
 
     // Assign the component according the type of step
@@ -213,6 +222,7 @@ export default {
       this.setNotifications(note);
     },
 
+    // Change automatically to the new tab after 500ms
     changeToLastTab() {
       const aux = this;
       setTimeout(function() {
