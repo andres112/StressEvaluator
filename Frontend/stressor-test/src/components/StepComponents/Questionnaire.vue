@@ -4,10 +4,21 @@
     <v-card-text v-if="edition_mode">
       <v-row>
         <v-col cols="3" sm="2" class="editor-toolbox">
-          <p class="mb-2 text-subtitle-2 text-sm-subtitle-1 text-md-h6 font-weight-bold">Toolbox</p>
-          <v-list flat class="editor-toolbox">
-            <v-list-item-group v-model="selectedItem" color="light-green">
-              <v-list-item v-for="(item, i) in items" :key="i" @click="addTool(item.value)">
+          <p
+            class="mb-2 text-subtitle-2 text-sm-subtitle-1 text-md-h6 font-weight-bold"
+          >
+            Toolbox
+          </p>
+          <v-list flat style="background-color:transparent">
+            <v-list-item-group
+              v-model="selectedItem"
+              color="light-green darken-2"
+            >
+              <v-list-item
+                v-for="(item, i) in items"
+                :key="i"
+                @click="addTool(item.value)"
+              >
                 <v-list-item-icon>
                   <v-icon v-text="item.icon"></v-icon>
                 </v-list-item-icon>
@@ -26,7 +37,7 @@
             Editor
           </h2>
           <v-row>
-            <v-col cols="12" class="editor-question" ref="editor">
+            <v-col cols="12" class="editor-content" ref="editor">
               <v-card
                 v-for="question in survey"
                 :key="question.id"
@@ -50,10 +61,20 @@
     </v-card-text>
 
     <!-- User Implementation section -->
-    <v-card-text v-else class="presenter-question container">
-      <v-card v-for="(question, item) in survey" :key="question.id" class="mb-4" shaped>
-        <v-subheader class="text-subtitle-1 blue--text">{{ `Question ${item + 1}` }} </v-subheader>
-        <component :is="getToolComponent(question.type)" :content="question"></component>
+    <v-card-text v-else class="presenter container">
+      <v-card
+        v-for="(question, item) in survey"
+        :key="question.id"
+        class="mb-4"
+        shaped
+      >
+        <v-subheader class="text-subtitle-1 blue--text"
+          >{{ `Question ${item + 1}` }}
+        </v-subheader>
+        <component
+          :is="getToolComponent(question.type)"
+          :content="question"
+        ></component>
       </v-card>
     </v-card-text>
   </v-card>
@@ -71,7 +92,7 @@ import LinearScale from "../SurveyTools/LinearScale.vue";
 import Grid from "../SurveyTools/Grid.vue";
 
 export default {
-  name:"Questionnaire",
+  name: "Questionnaire",
   components: {
     Checkbox,
     Radiogroup,
@@ -90,7 +111,11 @@ export default {
     selectedItem: null,
     selectedCard: null,
     items: [
-      { text: "Checkbox", icon: "mdi-checkbox-marked-outline", value: "checkbox" },
+      {
+        text: "Checkbox",
+        icon: "mdi-checkbox-marked-outline",
+        value: "checkbox",
+      },
       { text: "Radiogroup", icon: "mdi-check-circle-outline", value: "radio" },
       { text: "Dropdown", icon: "mdi-form-dropdown", value: "dropdown" },
       { text: "Single Text", icon: "mdi-format-text", value: "single" },
@@ -109,7 +134,13 @@ export default {
   methods: {
     addTool(tool) {
       const aux = this;
-      let q = { id: createNanoId(), question: null, type: tool, required: false, options: null };
+      let q = {
+        id: createNanoId(),
+        question: null,
+        type: tool,
+        required: false,
+        options: null,
+      };
       if (["checkbox", "radio", "dropdown"].includes(tool)) {
         q.options = [];
       }
@@ -171,24 +202,4 @@ export default {
   },
 };
 </script>
-<style scoped>
-.editor-toolbox {
-  background-color: #ccff90;
-}
-.editor-title {
-  position: sticky;
-  position: -webkit-sticky; /* for Safari */
-  top: 0%;
-  z-index: 2;
-}
-.editor-question {
-  height: 70vh;
-  max-height: 75vh;
-  overflow-y: auto;
-}
-.presenter-question {
-  height: 80vh;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-</style>
+<style scoped></style>

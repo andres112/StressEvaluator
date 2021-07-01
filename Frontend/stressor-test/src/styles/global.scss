@@ -1,0 +1,21 @@
+$sidebar-color: #ccff90;
+
+.editor-toolbox {
+  background-color: $sidebar-color;
+}
+.editor-title {
+  position: sticky;
+  position: -webkit-sticky; /* for Safari */
+  top: 0%;
+  z-index: 2;
+}
+.editor-content {
+  height: 70vh;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+.presenter {
+  height: 80vh;
+  max-height: 80vh;
+  overflow-y: auto;
+}
