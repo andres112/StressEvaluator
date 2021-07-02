@@ -34,6 +34,7 @@
         <v-tabs
           :background-color="edition_mode ? 'light-green' : 'light-blue'"
           dark
+          center-active
           v-model="current_tab"
         >
           <v-tab v-for="item in steps" :key="item._id">
@@ -113,10 +114,9 @@ export default {
       saving: false,
       edit_dialog: null,
       br: {
-        consent: { name: true, type: false, duration: false },
-        question: { name: true, type: true, duration: true },
-        stress: { name: true, type: true, duration: true },
-        new: { name: true, type: true, duration: true },
+        consent: { name: true, type: false, duration: false, stressor: false },
+        question: { name: true, type: true, duration: true, stressor: false },
+        stress: { name: true, type: true, duration: true, stressor: true },
       },
     };
   },
@@ -179,6 +179,7 @@ export default {
         payload["name"] = this.current_step.name;
         payload["type"] = this.current_step.type;
         payload["duration"] = this.current_step.duration;
+        payload["stressor"] = this.current_step.stressor;
         res = await this.updateStep(payload);
       }
       this.saving = await false;

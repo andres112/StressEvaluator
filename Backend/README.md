@@ -109,7 +109,8 @@ After the server is running, in http://localhost:5000/swagger/ It's possible to 
             {
                 "test_id": String,
                 "name": String,
-                "type": String, //"Consent, question or stress"
+                "type": String, //"consent, question or stress"
+                "stressor": String, //"Depends on stressorList.json file found in assets of the Front-end section"
                 "duration": Number,
                 "content": Object || Array // "Depend of component"
             }

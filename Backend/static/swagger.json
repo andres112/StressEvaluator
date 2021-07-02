@@ -511,6 +511,11 @@
             "format": "string",
             "example": "question"
           },
+          "stressor": {
+            "type": "string",
+            "format": "string",
+            "example": "arithmetic"
+          },
           "duration": {
             "type": "integer",
             "format": "int32",

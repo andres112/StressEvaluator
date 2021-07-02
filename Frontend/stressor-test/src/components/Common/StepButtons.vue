@@ -1,10 +1,10 @@
 <template>
   <div>
     <v-btn icon class="mt-1 mr-0">
-      <v-icon large @click.prevent="addStep()">mdi-plus-thick</v-icon>
+      <v-icon @click.prevent="addStep()">mdi-plus-thick</v-icon>
     </v-btn>
     <v-btn icon v-if="showDelete" class="mt-1 mr-0">
-      <v-icon large @click.prevent="delStep()">mdi-trash-can</v-icon>
+      <v-icon  @click.prevent="delStep()">mdi-trash-can</v-icon>
     </v-btn>
   </div>
 </template>

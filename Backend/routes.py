@@ -178,6 +178,7 @@ def get_all_steps(test_id):
                         'test_id': test_uuid,  # test_id correspond to the _id in mongodb
                         'name': request.json["name"],
                         'type': request.json["type"],
+                        'stressor': request.json["stressor"] if keyExist("stressor", request.json) else None,
                         'duration': request.json["duration"] if keyExist("duration", request.json) else 60,
                         'content': request.json["content"] if keyExist("content", request.json) else {}
                         }
@@ -226,7 +227,7 @@ def step_operations(test_id, step_id):
         if request.method == 'PUT':
             updated_step = {}
             # parameters allowed
-            __parameters = ['name', 'type', 'duration', 'content']
+            __parameters = ['name', 'type', 'duration', 'content', 'stressor']
             # build the data to send to db
             for param in __parameters:
                 if keyExist(param, request.json):

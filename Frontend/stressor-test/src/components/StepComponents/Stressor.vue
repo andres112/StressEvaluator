@@ -3,36 +3,16 @@
     <!-- Edition mode section -->
     <v-card-text v-if="edition_mode">
       <v-row>
-        <v-col cols="3" sm="2" class="editor-toolbox">
-          <p
-            class="mb-2 text-subtitle-2 text-sm-subtitle-1 text-md-h6 font-weight-bold"
-          >
-            Stressor
-          </p>
-          <v-select
-            class="mx-1"
-            v-model="stressor"
-            :items="dropdown_items"
-            label="Select stressor type"
-            solo
-            dense
-          ></v-select>
-          <v-divider></v-divider>
-          <p
-            class="mb-2 text-subtitle-2 text-sm-subtitle-1 text-md-h6 font-weight-bold"
-          >
-            Properties
-          </p>
-        </v-col>
-        <v-divider vertical class="my-2"></v-divider>
-        <v-col cols="9">
+        <v-col cols="12">
           <h2
             class="mb-4 text-subtitle-2 text-sm-subtitle-1 text-md-h6 font-weight-bold editor-title"
           >
             Editor
           </h2>
           <v-row>
-            <v-col cols="12" class="editor-content" ref="editor"> </v-col>
+            <v-col cols="12" class="editor-content" ref="editor">
+              <component :is="getComponent" ref="stressor"></component>
+            </v-col>
           </v-row>
         </v-col>
       </v-row>
@@ -45,8 +25,39 @@ import { mapState } from "vuex";
 
 export default {
   name: "Stressor",
+  created() {},
   computed: {
-    ...mapState({ edition_mode: (state) => state.settings.edition_mode }),
+    ...mapState({
+      edition_mode: (state) => state.settings.edition_mode,
+      current_step: (state) => state.builder.current_step,
+    }),
+    dynamicComp() {
+      const components = require.context(
+        "@/components/Repository",
+        false,
+        /.*\.vue$/
+      );
+      return components
+        .keys()
+        .map((file) => [file.replace(/(^.\/)|(\.vue$)/g, ""), components(file)])
+        .reduce((comps, [name, component]) => {
+          comps[name] = component.default || component;
+          return comps;
+        }, {});
+    },
+    getComponent() {
+      const selected_comp = this.dynamicComp;
+      console.log(selected_comp);
+      return Object.values(selected_comp).find(
+        (x) => x.meta?.value === this.current_step.stressor
+      );
+    },
+  },
+  methods: {
+    getContent() {
+      const properties = this.$refs.stressor.properties;
+      return { content: properties };
+    },
   },
 };
 </script>

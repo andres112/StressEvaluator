@@ -1,23 +1,27 @@
 <template>
   <v-row class="text-sm-center">
-    <v-col sm="4" md="3" cols="12" class="pb-1">
-      <label class="text-subtitle-1 text-sm-h6 font-weight-bold">Step Settings: </label>
+    <v-col sm="3" md="3" cols="12" class="pb-1">
+      <label class="text-subtitle-1 text-sm-h6 font-weight-bold"
+        >Step Settings:
+      </label>
     </v-col>
-    <v-col sm="8" cols="12">
+    <v-col sm="4" cols="12" class="px-0">
+      <v-text-field
+        v-model="current_step.name"
+        dense
+        label="Name"
+        outlined
+        clearable
+        color="light-green"
+        hint="5 char min"
+        class="mr-2"
+        counter
+        maxlength="25"
+        v-if="checkBR('name')"
+      ></v-text-field>
+    </v-col>
+    <v-col sm="5" cols="12" class="pl-0">
       <v-layout justify-space-around>
-        <v-text-field
-          v-model="current_step.name"
-          dense
-          label="Name"
-          outlined
-          clearable
-          color="light-green"
-          hint="5 char min"
-          class="mr-2"
-          counter
-          maxlength="25"
-          v-if="checkBR('name')"
-        ></v-text-field>
         <v-select
           v-model="current_step.type"
           :items="types"
@@ -42,13 +46,25 @@
           hint="0 is infinite "
           v-if="checkBR('duration')"
         ></v-text-field>
+        <v-select
+          v-model="current_step.stressor"
+          :items="stressor_list"
+          item-text="text"
+          item-value="value"
+          dense
+          label="Stressor"
+          outlined
+          color="light-green"
+          class="mr-2"
+          v-if="checkBR('stressor')"
+        ></v-select>
       </v-layout>
     </v-col>
   </v-row>
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState } from "vuex";
 
 export default {
   name: "BuilderStepSettings",
@@ -61,15 +77,16 @@ export default {
         { text: "Questionnaire", value: "question" },
         { text: "Stressor", value: "stress" },
       ],
+      stressor_list: [],
     };
+  },
+  created() {
+    this.stressor_list = require("@/assets/stressorList.json");
   },
   computed: {
     ...mapState({ current_step: (state) => state.builder.current_step }),
   },
   methods: {
-    ...mapActions({
-      updateStep: "builder/updateStep",
-    }),
     checkBR(el) {
       return this.br?.[el] ?? false;
     },
