@@ -2,6 +2,7 @@ $sidebar-color: #ccff90;
 
 .editor-toolbox {
   background-color: $sidebar-color;
+  overflow-y: auto;
 }
 .editor-title {
   position: sticky;
