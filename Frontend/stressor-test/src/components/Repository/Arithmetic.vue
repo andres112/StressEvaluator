@@ -1,6 +1,20 @@
 <template>
   <v-card flat>
-    <h1>{{properties.title}}</h1>
+    <v-card-text>
+      <v-row>
+        <!-- Propierties section -->
+        <v-col cols="10" sm="4" md="3" class="editor-toolbox">
+          <p
+            class="mb-2 text-subtitle-2 text-sm-subtitle-1 font-weight-bold"
+          >
+            Properties
+          </p>
+        </v-col>
+      </v-row>
+    </v-card-text>
+
+    <!-- Interactive component section -->
+    <!-- Readonly when editor mode is enabled -->
   </v-card>
 </template>
 
@@ -9,13 +23,16 @@ export default {
   name: "Arithmetic",
   data() {
     return {
-      properties: {title:"Arithmetic"},
+      properties: { title: "Arithmetic" },
     };
   },
-  // this meta parameter allows identify globally
-  // must be similar than stressorList.json
+  // This meta parameter allows identify this component globally
+  // Must be similar than stressorList.json
   meta: { text: "Mental Arithmetic", value: "arithmetic" },
-  methods: {},
+  methods: {
+    // Method for return error or hint and time of response
+    // Total of tasks shall be carried out in Stressor parent component
+  },
 };
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <v-container class="py-0 px-0">
+  <v-container class="py-0 px-0 pr-md-6">
     <div class="editor-node" :class="{ edition: edition_mode }" ref="editorNode"></div>
   </v-container>
 </template>

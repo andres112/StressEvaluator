@@ -1,2 +1,2 @@
-# mt_stress_detection
+# Simple Platform for Stress Evaluation
 

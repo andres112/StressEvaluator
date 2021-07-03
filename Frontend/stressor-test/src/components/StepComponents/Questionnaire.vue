@@ -5,7 +5,7 @@
       <v-row>
         <v-col cols="3" sm="2" class="editor-toolbox">
           <p
-            class="mb-2 text-subtitle-2 text-sm-subtitle-1 text-md-h6 font-weight-bold"
+            class="mb-2 text-subtitle-2 text-sm-subtitle-1 font-weight-bold"
           >
             Toolbox
           </p>
@@ -30,9 +30,9 @@
           </v-list>
         </v-col>
         <v-divider vertical class="my-2"></v-divider>
-        <v-col cols="9">
+        <v-col cols="9" class="pr-0">
           <h2
-            class="mb-4 text-subtitle-2 text-sm-subtitle-1 text-md-h6 font-weight-bold editor-title"
+            class="mb-4 text-subtitle-2 text-sm-subtitle-1 font-weight-bold editor-title"
           >
             Editor
           </h2>
