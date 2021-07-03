@@ -53,7 +53,7 @@
             <builder-step-settings :br="br[item.type]"></builder-step-settings>
           </v-card-text>
 
-          <v-divider class="mx-4"></v-divider>
+          <v-divider class="mx-4 mt-4"></v-divider>
 
           <!-- Step content section -->
           <v-card-text>

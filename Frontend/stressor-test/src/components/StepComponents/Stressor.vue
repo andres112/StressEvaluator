@@ -1,20 +1,18 @@
 <template>
   <v-card flat>
     <!-- Edition mode section -->
-    <v-card-text v-if="edition_mode">
+    <v-card-text>
+      <h2 class="mb-4 text-subtitle-1 text-md-h6 font-weight-bold">
+        {{ getStressorName }}
+      </h2>
+      <!-- Container for stressor component -->
       <v-row>
-        <v-col cols="12">
-          <h2
-            class="mb-4 text-subtitle-1 text-md-h6 font-weight-bold"
-          >
-            {{ getStressorName }}
-          </h2>
-          <!-- Container for stressor component -->
-          <v-row>
-            <v-col class="editor-content" ref="editor">
-              <component :is="getComponent" ref="stressor"></component>
-            </v-col>
-          </v-row>
+        <v-col class="editor-content" ref="editor">
+          <component
+            :is="getComponent"
+            :content="step_content"
+            ref="stressor"
+          ></component>
         </v-col>
       </v-row>
     </v-card-text>
@@ -26,17 +24,22 @@ import { mapState } from "vuex";
 
 export default {
   name: "Stressor",
+  props: {
+    step_content: Object,
+  },
   data() {
     return {
       metrics: null,
     };
   },
-  created() {},
+  created() {
+  },
   computed: {
     ...mapState({
       edition_mode: (state) => state.settings.edition_mode,
       current_step: (state) => state.builder.current_step,
     }),
+    // Import components automatically from @/components/Repository path
     dynamicComp() {
       const components = require.context(
         "@/components/Repository",
@@ -51,6 +54,7 @@ export default {
           return comps;
         }, {});
     },
+    // Get the specific component according stressor dropdown
     getComponent() {
       const selected_comp = this.dynamicComp;
       return Object.values(selected_comp).find(
