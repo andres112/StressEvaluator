@@ -4,9 +4,7 @@
     <v-card-text v-if="edition_mode">
       <v-row>
         <v-col cols="3" sm="2" class="editor-toolbox">
-          <p
-            class="mb-2 text-subtitle-2 text-sm-subtitle-1 font-weight-bold"
-          >
+          <p class="mb-2 text-subtitle-2 text-sm-subtitle-1 font-weight-bold">
             Toolbox
           </p>
           <v-list flat style="background-color:transparent">
@@ -74,6 +72,7 @@
         <component
           :is="getToolComponent(question.type)"
           :content="question"
+          :ref="`ans-${question.id}`"
         ></component>
       </v-card>
     </v-card-text>
@@ -103,11 +102,11 @@ export default {
     Grid,
   },
   props: {
-    step_content: Array,
+    step_content: Object,
   },
   data: () => ({
     survey: [],
-    answers: [],
+    answers: {},
     selectedItem: null,
     selectedCard: null,
     items: [
@@ -126,7 +125,18 @@ export default {
     ],
   }),
   mounted() {
-    this.survey = this.step_content;
+    this.survey = Array.isArray(this.step_content?.content) ? this.step_content.content : [];
+  },
+  created() {
+    if (!this.edition_mode) {
+      // Initialize answers variable for user response
+      this.answers = {
+        start_time: new Date(),
+        step_id: this.step_content._id,
+        end_time: null,
+        content: [],
+      };
+    }
   },
   computed: {
     ...mapState({ edition_mode: (state) => state.settings.edition_mode }),
@@ -190,8 +200,24 @@ export default {
     onDeleteQuestion(question_id) {
       this.survey = this.survey.filter((x) => x.id != question_id);
     },
+    // Get step configuration content in edition mode
     getContent() {
       return { content: this.survey };
+    },
+    // Get step answers in user implementation mode
+    getAnswer() {
+      const aux = this;
+      this.answers.end_time = new Date();
+      // Get all the answers given by user
+      this.answers.content = this.survey.map(function(x) {
+        return {
+          id: x.id,
+          question: x.question,
+          type: x.type,
+          answers: aux.$refs[`ans-${x.id}`][0].answer_selected,
+        };
+      });
+      return this.answers;
     },
     selectCard(qId) {
       this.selectedCard = qId;

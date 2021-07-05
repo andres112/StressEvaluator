@@ -37,7 +37,7 @@ export default {
     };
   },
   props: {
-    step_content: Array,
+    step_content: Object,
   },
   mounted() {
     this.initializeEditor();
@@ -56,9 +56,9 @@ export default {
       // Create the Quill instance
       this.editorInstance = new Quill(this.$refs.editorNode, this.editorOpts);
 
-      if (this.step_content) {
+      if (this.step_content.content) {
         // Set initial content that's going to be picked up by Quill
-        this.editorInstance.setContents(this.step_content);
+        this.editorInstance.setContents(this.step_content.content);
       }
 
       // Setup handler for whenever things change inside Quill

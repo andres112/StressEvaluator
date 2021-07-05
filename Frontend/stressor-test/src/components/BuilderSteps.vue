@@ -1,7 +1,16 @@
 <template>
+  <!-- FIXME- NOW :Deatache edition mode from implementation mode -->
   <v-card elevation="0">
-    <v-app-bar dense flat dark :color="edition_mode ? 'light-green' : 'light-blue'">
-      <v-app-bar-nav-icon v-if="edition_mode" @click.prevent="$router.push(`/builder`)">
+    <v-app-bar
+      dense
+      flat
+      dark
+      :color="edition_mode ? 'light-green' : 'light-blue'"
+    >
+      <v-app-bar-nav-icon
+        v-if="edition_mode"
+        @click.prevent="$router.push(`/builder`)"
+      >
         <template v-slot:default>
           <v-icon>mdi-home</v-icon>
         </template>
@@ -17,7 +26,10 @@
             <v-icon>mdi-lead-pencil</v-icon>
           </v-btn>
         </template>
-        <builder-create @trigger="closeDialog" ref="create_dialog"></builder-create>
+        <builder-create
+          @trigger="closeDialog"
+          ref="create_dialog"
+        ></builder-create>
       </v-dialog>
 
       <v-spacer></v-spacer>
@@ -53,18 +65,21 @@
             <builder-step-settings :br="br[item.type]"></builder-step-settings>
           </v-card-text>
 
-          <v-divider class="mx-4 mt-4"></v-divider>
+          <v-divider class="mx-4 mt-4" v-if="edition_mode"></v-divider>
 
           <!-- Step content section -->
           <v-card-text>
             <!-- load dinamically the component according item.type -->
             <component
               :is="currentComponent(item)"
-              :step_content="item.content"
+              :step_content="item"
               :ref="item._id"
             ></component>
           </v-card-text>
-          <v-card-text style="height: 100px; position: relative" v-if="edition_mode">
+          <v-card-text
+            style="height: 100px; position: relative"
+            v-if="edition_mode"
+          >
             <v-fab-transition>
               <v-btn
                 color="light-blue"
@@ -81,6 +96,17 @@
               </v-btn>
             </v-fab-transition>
           </v-card-text>
+          <v-card-actions class="d-flex justify-center" v-else>
+            <v-btn
+              color="light-blue"
+              dark
+              x-large
+              :loading="saving"
+              @click.prevent="saveAnswer(item._id)"
+            >
+              Submit
+            </v-btn>
+          </v-card-actions>
         </v-card>
       </v-tab-item>
     </v-tabs-items>
@@ -115,7 +141,7 @@ export default {
       edit_dialog: null,
       br: {
         consent: { name: true, type: false, duration: false, stressor: false },
-        question: { name: true, type: true, duration: true, stressor: false },
+        question: { name: true, type: true, duration: false, stressor: false },
         stress: { name: true, type: true, duration: true, stressor: true },
       },
     };
@@ -169,7 +195,9 @@ export default {
       };
       let res;
       // Execute function in child component for save specific content
-      const content = Array.isArray(comp) ? comp[0].getContent() : comp.getContent();
+      const content = Array.isArray(comp)
+        ? comp[0].getContent()
+        : comp.getContent();
       for (const item in content) {
         payload[item] = content[item];
       }
@@ -184,6 +212,18 @@ export default {
       }
       this.saving = await false;
       this.sendNotification(res);
+    },
+
+    async saveAnswer(ref_id) {
+      this.saving = true;
+      const comp = this.$refs[ref_id];
+
+      // Execute function in child component for save specific content
+      const content = Array.isArray(comp)
+        ? comp[0].getAnswer()
+        : comp.getAnswer();
+      console.log(content);
+      this.saving = false;
     },
 
     // Close the Test editior dialog
@@ -233,7 +273,7 @@ export default {
       const aux = this;
       setTimeout(function() {
         aux.current_tab = aux.steps.length - 1;
-      }, 500);
+      }, 750);
     },
   },
   watch: {

@@ -37,7 +37,7 @@ export const e_routes = [
         name: "Steps",
         component: Steps,
       },
-      // TODO: change for specific not found page
+      // Not found page
       {
         path: "*",
         component: Home,
