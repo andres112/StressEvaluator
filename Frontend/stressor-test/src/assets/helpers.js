@@ -12,3 +12,4 @@ export const removeEmpty = function(obj) {
 export const createNanoId = function () {
   return nanoid();
 };
+

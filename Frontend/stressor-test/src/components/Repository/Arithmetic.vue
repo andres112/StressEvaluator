@@ -14,6 +14,7 @@
           <p class="mb-6 text-subtitle-2 text-sm-subtitle-1 font-weight-bold">
             Properties
           </p>
+          <!-- Interval duration: The time interval used to solve the task -->
           <v-text-field
             v-model.number="properties.int_duration"
             dense
@@ -25,6 +26,7 @@
             suffix="sec"
             background-color="white"
           ></v-text-field>
+          <!-- Operation: Simple arithmetic operation -->
           <v-select
             v-model="properties.operation"
             :items="operation_list"
@@ -37,6 +39,7 @@
             class="mr-2 mr-md-6"
             background-color="white"
           ></v-select>
+          <!-- Seeds: those 3 optional numbers for operating the firts number in arithmetic operation -->
           <v-row>
             <v-col cols="4" class="pr-0">
               <v-text-field
@@ -76,13 +79,13 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-divider vertical class="my-2"></v-divider>
+        <v-divider vertical class="my-2" v-if="edition_mode"></v-divider>
         <!-- Interactive component section -->
         <!-- Readonly when editor mode is enabled -->
         <v-col
           cols="offset-xs12"
-          :sm="edition_mode ? 7 : 11"
-          :md="edition_mode ? 8 : 11"
+          :sm="edition_mode ? 7 : 12"
+          :md="edition_mode ? 8 : 12"
         >
           <p
             class="mb-6 text-subtitle-2 text-sm-subtitle-1 font-weight-bold"
@@ -90,20 +93,20 @@
           >
             Component
           </p>
-          <v-row justify="center" class="mb-6">
+          <v-row justify="center" class="my-6">
             <v-progress-circular
               :rotate="90"
               :size="300"
               :width="25"
-              color="orange"
+              :color="getColorTime"
               v-model="step_time"
             >
               <p class="text-h2 font-weight-bold">
-                {{ this.properties.int_duration - current_time }}
+                {{ properties.int_duration - elapsed_time }}
               </p>
             </v-progress-circular>
           </v-row>
-          <v-row justify="center" align="center">
+          <v-row justify="center" align="center" class="mb-4">
             <v-col
               cols="12"
               sm="10"
@@ -112,11 +115,12 @@
               xl="3"
               class="d-flex justify-content-around align-center"
             >
-              <h1 class="mr-2">1250</h1>
+              <h1 class="mr-2">{{ first_number }}</h1>
               <v-icon large class="mr-2">{{ getOperator }}</v-icon>
-              <h1 class="mr-2">45</h1>
+              <h1 class="mr-2">{{ second_number }}</h1>
               <v-icon large class="mr-4">mdi-equal</v-icon>
               <v-text-field
+                v-model.number="result"
                 dense
                 type="number"
                 color="light-green"
@@ -132,12 +136,24 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
+
+const buildProperty = function(obj) {
+  return {
+    ...{
+      int_duration: 30,
+      operation: "add",
+      seed: [],
+    },
+    ...obj,
+  };
+};
 
 export default {
   name: "Arithmetic",
   props: {
     content: Object,
+    isReady: Boolean,
   },
   data() {
     return {
@@ -147,14 +163,27 @@ export default {
         { value: "div", text: "Divide" },
         { value: "mul", text: "Multiply" },
       ],
+      seeds: [null, null, null],
+
       interval: {},
       step_time: 0,
-      current_time: 0,
-      seeds: [null, null, null],
+      elapsed_time: 0,
+
+      first_number: 0,
+      second_number: 0,
+      result: null,
+
       properties: {
         int_duration: 0,
         operation: "add",
         seed: [],
+      },
+
+      metrics: {
+        errors: 0,
+        hits: 0,
+        total: 0,
+        not_ans: 0,
       },
     };
   },
@@ -162,49 +191,119 @@ export default {
   // Must be similar than stressorList.json
   meta: { text: "Mental Arithmetic", value: "arithmetic" },
   mounted() {
-    //TODO: validate data comming from stressor component
-    this.properties = this.content;
+    this.properties = buildProperty(this.content);
     this.properties.seed.forEach((x, i) => (this.seeds[i] = x));
-    this.step_time = this.edition_mode ? 50 : 0;
-    //TODO: organize this in separate function, validate errors
-    if (!this.edition_mode) {
-      const rel_time = 100 / this.properties.int_duration;
-      this.interval = setInterval(() => {
-        if (this.step_time === 100) {
-          clearInterval(this.interval);
-          this.step_time = 0;
-          this.current_time = 0;
-          return;
-        }
-        this.current_time++;
-        this.step_time += rel_time;
-      }, 1000);
-    }
+    this.createFirstNumber();
+    this.getSecondNumber();
   },
   beforeDestroy() {
-    clearInterval(this.interval);
+    this.stopTimer();
   },
   computed: {
     ...mapState({
       edition_mode: (state) => state.settings.edition_mode,
     }),
     getOperator() {
-      if (this.properties.operation == "add") return "mdi-plus-thick";
-      if (this.properties.operation == "sub") return "mdi-minus-thick";
-      if (this.properties.operation == "mul") return "mdi-close-thick";
+      if (this.properties.operation == "add") return "mdi-plus";
+      if (this.properties.operation == "sub") return "mdi-minus";
+      if (this.properties.operation == "mul") return "mdi-close";
       if (this.properties.operation == "div") return "mdi-division";
+    },
+    getColorTime() {
+      if (this.step_time < 50) return "light-blue";
+      if (this.step_time < 85) return "yellow darken-1";
+      if (this.step_time <= 100) return "deep-orange accent-3";
+    },
+    getResult() {
+      if (this.properties.operation == "add")
+        return this.first_number + this.second_number;
+      if (this.properties.operation == "sub")
+        return this.first_number - this.second_number;
+      if (this.properties.operation == "mul")
+        return this.first_number * this.second_number;
+      if (this.properties.operation == "div")
+        return Math.trunc(this.first_number / this.second_number);
     },
   },
   methods: {
-    // Method for return error or hint and time of response
-    // Total of tasks shall be carried out in Stressor parent component
+    ...mapMutations({ setNotifications: "settings/setNotifications" }),
+    createFirstNumber() {
+      if (["sub", "div"].includes(this.properties.operation))
+        this.first_number = Math.floor(1000 + Math.random() * 9000);
+      if (["add", "mul"].includes(this.properties.operation))
+        this.first_number = Math.floor(1 + Math.random() * 999);
+    },
+    getSecondNumber() {
+      const len = this.properties.seed.length;
+      const item = Math.floor(Math.random() * len);
+      this.second_number = this.properties.seed[item];
+    },
+    validateResult() {
+      if (this.result > this.getResult) {
+        this.metrics.errors++;
+        this.stopTimer();
+        this.playTimer();
+        this.sendNotification("Incorrect!", "error");
+        return;
+      }
+      if (this.result == this.getResult) {
+        this.metrics.hits++;
+        this.stopTimer();
+        this.playTimer();
+        this.sendNotification("Correct!", "ok");
+        return;
+      }
+    },
+    playTimer() {
+      this.step_time = 0;
+      const rel_time = 100 / this.properties.int_duration;
+      this.interval = setInterval(() => {
+        if (this.step_time >= 100) {
+          this.clearData();
+          this.metrics.total++;
+          this.metrics.not_ans++;
+          this.sendNotification("Not Answered", "error");
+          return;
+        }
+        this.step_time += rel_time;
+        if (this.properties.int_duration - this.elapsed_time > 0)
+          this.elapsed_time++;
+      }, 1000);
+    },
+    stopTimer() {
+      this.clearData();
+      this.metrics.total++;
+      clearInterval(this.interval);
+    },
+    clearData() {
+      this.step_time = 0;
+      this.elapsed_time = 0;
+      this.result = null;
+      this.createFirstNumber();
+      this.getSecondNumber();
+    },
+    sendNotification(msg, type) {
+      const notification = {
+        isOn: true,
+        text: msg,
+        timeout: 1000,
+        status: type,
+      };
+      this.setNotifications(notification);
+    },
   },
   watch: {
     seeds: {
       handler() {
-        this.properties.seed = Object.values(this.seeds);
+        this.properties.seed = this.seeds.filter((x) => x != null);
       },
       deep: true,
+    },
+    isReady() {
+      if (this.isReady) this.playTimer();
+    },
+    result() {
+      this.validateResult();
     },
   },
 };
