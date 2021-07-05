@@ -39,7 +39,7 @@ export default {
   },
   data() {
     return {
-      metrics: null,
+      answers: {},
       waiting: false,
       waiting_msg: null,
       properties: {},
@@ -90,9 +90,16 @@ export default {
   },
   methods: {
     ...mapMutations({ setNotifications: "settings/setNotifications" }),
+    // Get step configuration content in edition mode
     getContent() {
       const properties = this.$refs.stressor.properties;
       return { content: properties };
+    },
+    // Get step answers in user implementation mode
+    getAnswer() {
+      this.answers.end_time = new Date();
+      this.answers.content = this.$refs.stressor.metrics;
+      return this.answers;
     },
     countDown() {
       this.waiting = true;
@@ -103,6 +110,13 @@ export default {
         if (contDown <= 0) {
           clearInterval(interval);
           this.waiting = false;
+          // Initialize answers variable for user response
+          this.answers = {
+            start_time: new Date(),
+            step_id: this.step_content._id,
+            end_time: null,
+            content: {},
+          };
         }
         contDown--;
       }, 1000);

@@ -235,6 +235,7 @@ export default {
     },
     getSecondNumber() {
       const len = this.properties.seed.length;
+      if (len <= 0) return (this.second_number = 0);
       const item = Math.floor(Math.random() * len);
       this.second_number = this.properties.seed[item];
     },
@@ -295,7 +296,7 @@ export default {
   watch: {
     seeds: {
       handler() {
-        this.properties.seed = this.seeds.filter((x) => x != null);
+        this.properties.seed = this.seeds.filter((x) => x != null && x != "");
       },
       deep: true,
     },

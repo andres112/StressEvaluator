@@ -3,54 +3,60 @@
     <home-button />
     <v-layout justify-center align-center>
       <v-card class="text-center mt-5" elevation="0">
-        <v-card-title class="text-md-h2 text-sm-h4 text-h5 font-weight-bold mb-6">
+        <v-card-title
+          class="text-md-h2 text-sm-h4 text-h5 font-weight-bold mb-6"
+        >
           Stress Evaluator - Builder
         </v-card-title>
         <v-card-text>
-          <v-col cols="12" class="mx-auto">
-            <v-text-field
-              v-model="id"
-              label="Evaluation Id"
-              outlined
-              clearable
-              color="light-green"
-              class="mb-1"
-              hint="UUID version 4 format"
-            ></v-text-field>
-          </v-col>
-          <v-row class="mx-auto">
-            <v-col md="6">
+          <v-form @submit.prevent="onSubmit()">
+            <v-col cols="12" class="mx-auto">
               <v-text-field
-                v-model="name"
-                label="Evaluation name"
+                v-model="id"
+                label="Evaluation Id"
                 outlined
                 clearable
                 color="light-green"
-                hint="3 charaters at least"
+                class="mb-1"
+                hint="UUID version 4 format"
               ></v-text-field>
             </v-col>
-            <v-col md="6">
-              <v-text-field
-                v-model="owner"
-                label="Evaluation owner"
-                outlined
-                clearable
-                color="light-green"
-                hint="3 charaters at least"
-              ></v-text-field>
-            </v-col>
-          </v-row>
+            <v-row class="mx-auto">
+              <v-col md="6">
+                <v-text-field
+                  v-model="name"
+                  label="Evaluation name"
+                  outlined
+                  clearable
+                  color="light-green"
+                  hint="3 charaters at least"
+                ></v-text-field>
+              </v-col>
+              <v-col md="6">
+                <v-text-field
+                  v-model="owner"
+                  label="Evaluation owner"
+                  outlined
+                  clearable
+                  color="light-green"
+                  hint="3 charaters at least"
+                ></v-text-field>
+              </v-col>
+            </v-row>
 
-          <v-btn
-            color="light-green"
-            class="mt-2 text-capitalize"
-            large
-            @click.prevent="onSubmit()"
-            elevation="2"
-          >
-            <v-icon color="white">mdi-magnify</v-icon>
-            <span class="text-h6 font-weight-bold mx-2 white--text">Search</span>
-          </v-btn>
+            <v-btn
+              color="light-green"
+              class="mt-2 text-capitalize"
+              large
+              elevation="2"
+              type="submit"
+            >
+              <v-icon color="white">mdi-magnify</v-icon>
+              <span class="text-h6 font-weight-bold mx-2 white--text"
+                >Search</span
+              >
+            </v-btn>
+          </v-form>
         </v-card-text>
       </v-card>
     </v-layout>
@@ -70,7 +76,11 @@
           <v-icon @click.prevent="onDelete(item)" color="deep-orange accent-4">
             mdi-trash-can
           </v-icon>
-          <v-icon @click.prevent="onContinue(item)" color="light-green" class="ml-2">
+          <v-icon
+            @click.prevent="onContinue(item)"
+            color="light-green"
+            class="ml-2"
+          >
             mdi-pencil
           </v-icon>
         </template>
