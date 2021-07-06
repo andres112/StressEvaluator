@@ -136,7 +136,7 @@ export default {
     ...mapActions({
       searchMultiple: "builder/searchMultipleEvaluations",
       searchOne: "builder/searchOneEvaluation",
-      setSelectedTest: "builder/setSelectedTest",
+      setSelectedEvaluation: "builder/setSelectedEvaluation",
       deleteEvaluation: "builder/deleteEvaluation",
     }),
     ...mapMutations({
@@ -158,7 +158,7 @@ export default {
       }
     },
     async onContinue(test) {
-      await this.setSelectedTest(test);
+      await this.setSelectedEvaluation(test);
       await this.$router.push(`/builder/steps`);
     },
     async onDelete(test) {

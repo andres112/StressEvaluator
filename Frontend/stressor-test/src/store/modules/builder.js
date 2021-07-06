@@ -9,7 +9,7 @@ const state = {
   steps: [],
 };
 const mutations = {
-  setSelectedTest(state, payload) {
+  setSelectedEvaluation(state, payload) {
     state.selected_test = { ...state.selected_test, ...payload };
   },
   setSteps(state, payload) {
@@ -27,6 +27,7 @@ const mutations = {
     state.selected_test = null;
     state.steps = [];
     state.current_step = null;
+    state.test_list = [];
   },
 };
 const actions = {
@@ -45,9 +46,11 @@ const actions = {
       });
       const res = await req.json();
       // fetch just create new test
-      const req_test = await fetch(process.env.VUE_APP_BUILDER_URL + "test/" + res.test_id);
+      const req_test = await fetch(
+        process.env.VUE_APP_BUILDER_URL + "test/" + res.test_id
+      );
       const res_test = await req_test.json();
-      dispatch("setSelectedTest", res_test);
+      dispatch("setSelectedEvaluation", res_test);
     } catch (error) {
       console.log(error);
     }
@@ -55,15 +58,18 @@ const actions = {
 
   async updateEvaluation({ commit }, payload) {
     try {
-      const req = await fetch(process.env.VUE_APP_BUILDER_URL + "test/" + payload.test_id, {
-        method: "PUT",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      commit("setSelectedTest", payload);
+      const req = await fetch(
+        process.env.VUE_APP_BUILDER_URL + "test/" + payload.test_id,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+      commit("setSelectedEvaluation", payload);
       return req;
     } catch (error) {
       console.log(error);
@@ -98,17 +104,40 @@ const actions = {
   },
   async deleteEvaluation({ commit, state }, test_id) {
     try {
-      const req = await fetch(process.env.VUE_APP_BUILDER_URL + "test/" + test_id, {
-        method: "DELETE",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      });
+      const req = await fetch(
+        process.env.VUE_APP_BUILDER_URL + "test/" + test_id,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
       if (req.status == 200) {
         const payload = state.test_list.filter((x) => x._id != test_id);
         commit("setTestList", payload);
       }
+      return req;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  async publishEvaluation({ commit }, test_id) {
+    try {
+      const req = await fetch(
+        process.env.VUE_APP_BUILDER_URL + "test/" + test_id,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ published: true }),
+        }
+      );
+      commit("settings/setPublishedMode", true, { root: true });
       return req;
     } catch (error) {
       console.log(error);
@@ -120,7 +149,8 @@ const actions = {
   // CRUD Steps section
   async createStep({ dispatch }, payload) {
     try {
-      const url = process.env.VUE_APP_BUILDER_URL + "test/" + payload.test_id + "/step";
+      const url =
+        process.env.VUE_APP_BUILDER_URL + "test/" + payload.test_id + "/step";
       const req = await fetch(url, {
         method: "POST",
         headers: {
@@ -131,9 +161,11 @@ const actions = {
       });
       const res = await req.json();
       // fetch just create new test
-      const req_test = await fetch(process.env.VUE_APP_BUILDER_URL + "test/" + res.test_id);
+      const req_test = await fetch(
+        process.env.VUE_APP_BUILDER_URL + "test/" + res.test_id
+      );
       const res_test = await req_test.json();
-      dispatch("setSelectedTest", res_test);
+      dispatch("setSelectedEvaluation", res_test);
     } catch (error) {
       console.log(error);
     }
@@ -141,7 +173,11 @@ const actions = {
   async updateStep({ commit }, payload) {
     try {
       const url =
-        process.env.VUE_APP_BUILDER_URL + "test/" + payload.test_id + "/step/" + payload._id;
+        process.env.VUE_APP_BUILDER_URL +
+        "test/" +
+        payload.test_id +
+        "/step/" +
+        payload._id;
       const req = await fetch(url, {
         method: "PUT",
         headers: {
@@ -158,7 +194,11 @@ const actions = {
   async deleteStep({ dispatch }, payload) {
     try {
       const url =
-        process.env.VUE_APP_BUILDER_URL + "test/" + payload.test_id + "/step/" + payload._id;
+        process.env.VUE_APP_BUILDER_URL +
+        "test/" +
+        payload.test_id +
+        "/step/" +
+        payload._id;
       const req = await fetch(url, {
         method: "DELETE",
         headers: {
@@ -168,18 +208,23 @@ const actions = {
       });
       const res = await req.json();
       // fetch just create new test
-      const req_test = await fetch(process.env.VUE_APP_BUILDER_URL + "test/" + res.test_id);
+      const req_test = await fetch(
+        process.env.VUE_APP_BUILDER_URL + "test/" + res.test_id
+      );
       const res_test = await req_test.json();
-      dispatch("setSelectedTest", res_test);
+      dispatch("setSelectedEvaluation", res_test);
     } catch (error) {
       console.log(error);
     }
   },
   //************************************************* */
 
-  async setSelectedTest({ commit }, payload) {
+  async setSelectedEvaluation({ commit }, payload) {
     try {
-      commit("setSelectedTest", payload);
+      // set retrieved evaluation
+      commit("setSelectedEvaluation", payload);
+      // update published mode with selected evaluation
+      commit("settings/setPublishedMode", payload?.published, { root: true });
       // fetch steps of selected test
       const req_steps = await fetch(
         process.env.VUE_APP_BUILDER_URL + "test/" + payload._id + "/step"
