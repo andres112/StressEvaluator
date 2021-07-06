@@ -1,6 +1,13 @@
 <template>
   <!-- FIXME- NOW :Deatache edition mode from implementation mode -->
   <v-card elevation="0">
+    <!-- Overlay menu -->
+    <step-overlay-menu
+      :menuOn="menu"
+      :saving="saving"
+      @onPublish="publishCurrentEvaluation"
+    ></step-overlay-menu>
+
     <v-app-bar
       dense
       flat
@@ -9,18 +16,22 @@
     >
       <v-app-bar-nav-icon
         v-if="edition_mode"
-        @click.prevent="$router.push(`/builder`)"
+        @click="menu.overlay = !menu.overlay"
+        large
       >
-        <template v-slot:default>
-          <v-icon>mdi-home</v-icon>
-        </template>
       </v-app-bar-nav-icon>
+
+      <!-- Test title -->
       <div class="text-capitalize text-h6 text-md-h5">
         {{ appTitle }}
       </div>
 
       <!-- Editor button for test information edition - top-left side-->
-      <v-dialog v-model="edit_dialog" persistent v-if="edition_mode">
+      <v-dialog
+        v-model="edit_dialog"
+        persistent
+        v-if="edition_mode && !published_mode"
+      >
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on">
             <v-icon>mdi-lead-pencil</v-icon>
@@ -36,7 +47,7 @@
 
       <!-- Add and Delete step button - top-right side-->
       <step-buttons
-        v-if="edition_mode"
+        v-if="edition_mode && !published_mode"
         @addStepTab="changeToLastTab"
         @onSave="saveWhenAdd"
       ></step-buttons>
@@ -46,8 +57,9 @@
         <v-tabs
           :background-color="edition_mode ? 'light-green' : 'light-blue'"
           dark
-          center-active
           v-model="current_tab"
+          :show-arrows="edition_mode"
+          :center-active="!edition_mode"
         >
           <v-tab v-for="item in steps" :key="item._id">
             {{ textLength(item.name) }}
@@ -78,7 +90,7 @@
           </v-card-text>
           <v-card-text
             style="height: 100px; position: relative"
-            v-if="edition_mode"
+            v-if="edition_mode && !published_mode"
           >
             <v-fab-transition>
               <v-btn
@@ -96,7 +108,10 @@
               </v-btn>
             </v-fab-transition>
           </v-card-text>
-          <v-card-actions class="d-flex justify-center" v-else>
+          <v-card-actions
+            class="d-flex justify-center"
+            v-else-if="!edition_mode"
+          >
             <v-btn
               color="light-blue"
               dark
@@ -118,6 +133,7 @@ import { mapState, mapActions, mapMutations } from "vuex";
 import BuilderCreate from "./BuilderCreate.vue";
 import BuilderStepSettings from "./Common/StepSettings.vue";
 import StepButtons from "./Common/StepButtons.vue";
+import StepOverlayMenu from "./Common/StepOverlayMenu.vue";
 
 // Step components
 import TextEditor from "./StepComponents/TextEditor.vue";
@@ -133,12 +149,14 @@ export default {
     BuilderCreate,
     BuilderStepSettings,
     StepButtons,
+    StepOverlayMenu,
   },
   data() {
     return {
       current_tab: 0,
       saving: false,
       edit_dialog: null,
+      menu: { overlay: false },
       br: {
         consent: { name: true, type: false, duration: false, stressor: false },
         question: { name: true, type: true, duration: false, stressor: false },
@@ -158,6 +176,7 @@ export default {
       steps: (state) => state.builder.steps,
       current_step: (state) => state.builder.current_step,
       edition_mode: (state) => state.settings.edition_mode,
+      published_mode: (state) => state.settings.published_mode,
     }),
     appTitle() {
       return this.textLength(this.selected_test.name);
@@ -167,6 +186,7 @@ export default {
     ...mapActions({
       updateStep: "builder/updateStep",
       updateEvaluation: "builder/updateEvaluation",
+      publishEvaluation: "builder/publishEvaluation",
     }),
     ...mapMutations({
       setEditionMode: "settings/setEditionMode",
@@ -214,10 +234,10 @@ export default {
       this.sendNotification(res);
     },
 
+    // FIXME: deatache to user implementation mode
     async saveAnswer(ref_id) {
       this.saving = true;
       const comp = this.$refs[ref_id];
-
       // Execute function in child component for save specific content
       const content = Array.isArray(comp)
         ? comp[0].getAnswer()
@@ -226,7 +246,16 @@ export default {
       this.saving = false;
     },
 
-    // Close the Test editior dialog
+    //Publish current evaluation
+    async publishCurrentEvaluation() {
+      this.saving = true;
+      const res = await this.publishEvaluation(this.current_step.test_id);
+      this.menu.overlay = false;
+      this.sendNotification(res);
+      this.saving = false;
+    },
+
+    // Close the Evaluation editior dialog
     closeDialog(isSave) {
       this.edit_dialog = false;
       if (isSave) {
