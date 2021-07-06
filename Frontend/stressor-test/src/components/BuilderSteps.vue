@@ -14,6 +14,7 @@
       dark
       :color="edition_mode ? 'light-green' : 'light-blue'"
     >
+      <!-- This button open the overlay menu -->
       <v-app-bar-nav-icon
         v-if="edition_mode"
         @click="menu.overlay = !menu.overlay"
@@ -234,7 +235,7 @@ export default {
       this.sendNotification(res);
     },
 
-    // FIXME: deatache to user implementation mode
+    // FIXME: deatach to user implementation mode
     async saveAnswer(ref_id) {
       this.saving = true;
       const comp = this.$refs[ref_id];
