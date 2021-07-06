@@ -2,73 +2,11 @@
   <!-- FIXME- NOW :Deatache edition mode from implementation mode -->
   <v-card elevation="0">
     <!-- Overlay menu -->
-    <v-overlay :value="menuOn" :opacity="0.9">
-      <v-btn
-        fab
-        small
-        text
-        absolute
-        right
-        top
-        color="deep-orange"
-        @click="menuOn = false"
-      >
-        <v-icon>mdi-close-thick</v-icon></v-btn
-      >
-      <v-layout
-        justify="center"
-        align="center"
-        column
-        class="my-4 pb-12"
-        v-show="menuOn"
-      >
-        <v-btn
-          text
-          class="text-h5 text-sm-h4 text-md-h3 font-weight-bold my-2"
-          dark
-          @click="$router.push(`/builder`)"
-          x-large
-        >
-          Home
-        </v-btn>
-        <v-btn
-          text
-          class="text-h5 text-sm-h4 text-md-h3 font-weight-bold my-2"
-          dark
-          x-large
-          @click.prevent="publishCurrentEvaluation()"
-          v-if="selected_test.published"
-          color="primary"
-        >
-          Publish Evaluation
-        </v-btn>
-        <v-btn
-          text
-          class="text-h5 text-sm-h4 text-md-h3 font-weight-bold my-2"
-          dark
-          x-large
-          @click.prevent="publishCurrentEvaluation()"
-          v-if="!selected_test.published"
-        >
-          Evaluation Link
-        </v-btn>
-        <v-btn
-          text
-          class="text-h5 text-sm-h4 text-md-h3 font-weight-bold my-2"
-          dark
-          x-large
-          @click.prevent="publishCurrentEvaluation()"
-          v-if="!selected_test.published"
-        >
-          Close Evaluation
-        </v-btn>
-        <v-progress-linear
-          indeterminate
-          v-if="saving"
-          color="light-green"
-        ></v-progress-linear>
-      </v-layout>
-    </v-overlay>
+    <step-overlay-menu
+      :menuOn="menu"
+      :saving="saving"
+      @onPublish="publishCurrentEvaluation"
+    ></step-overlay-menu>
 
     <v-app-bar
       dense
@@ -76,7 +14,11 @@
       dark
       :color="edition_mode ? 'light-green' : 'light-blue'"
     >
-      <v-app-bar-nav-icon v-if="edition_mode" @click="menuOn = !menuOn" large>
+      <v-app-bar-nav-icon
+        v-if="edition_mode"
+        @click="menu.overlay = !menu.overlay"
+        large
+      >
       </v-app-bar-nav-icon>
 
       <!-- Test title -->
@@ -191,6 +133,7 @@ import { mapState, mapActions, mapMutations } from "vuex";
 import BuilderCreate from "./BuilderCreate.vue";
 import BuilderStepSettings from "./Common/StepSettings.vue";
 import StepButtons from "./Common/StepButtons.vue";
+import StepOverlayMenu from "./Common/StepOverlayMenu.vue";
 
 // Step components
 import TextEditor from "./StepComponents/TextEditor.vue";
@@ -206,13 +149,14 @@ export default {
     BuilderCreate,
     BuilderStepSettings,
     StepButtons,
+    StepOverlayMenu,
   },
   data() {
     return {
       current_tab: 0,
       saving: false,
       edit_dialog: null,
-      menuOn: false,
+      menu: { overlay: false },
       br: {
         consent: { name: true, type: false, duration: false, stressor: false },
         question: { name: true, type: true, duration: false, stressor: false },
@@ -306,12 +250,12 @@ export default {
     async publishCurrentEvaluation() {
       this.saving = true;
       const res = await this.publishEvaluation(this.current_step.test_id);
-      this.menuOn = false;
+      this.menu.overlay = false;
       this.sendNotification(res);
       this.saving = false;
     },
 
-    // Close the Test editior dialog
+    // Close the Evaluation editior dialog
     closeDialog(isSave) {
       this.edit_dialog = false;
       if (isSave) {

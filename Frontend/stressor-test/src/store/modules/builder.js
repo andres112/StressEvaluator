@@ -137,7 +137,9 @@ const actions = {
           body: JSON.stringify({ published: true }),
         }
       );
-      commit("settings/setPublishedMode", true, { root: true });
+      if (req.status === 200) {
+        commit("settings/setPublishedMode", true, { root: true });
+      }
       return req;
     } catch (error) {
       console.log(error);
