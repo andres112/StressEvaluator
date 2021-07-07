@@ -55,7 +55,7 @@
         color="deep-orange"
         v-if="published_mode"
       >
-        Finish Evaluation
+        Close Evaluation
       </v-btn>
       <v-progress-linear
         indeterminate

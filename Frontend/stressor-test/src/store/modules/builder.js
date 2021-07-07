@@ -124,8 +124,12 @@ const actions = {
     }
   },
 
-  async publishEvaluation({ commit }, test_id) {
+  async publishEvaluation({ commit, dispatch }, test_id) {
     try {
+      const payload = {
+        published: true,
+        test_link: `${process.env.VUE_APP_PRESENTER_URL}${test_id}`,
+      };
       const req = await fetch(
         process.env.VUE_APP_BUILDER_URL + "test/" + test_id,
         {
@@ -134,11 +138,19 @@ const actions = {
             Accept: "application/json",
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ published: true }),
+          body: JSON.stringify(payload),
         }
       );
       if (req.status === 200) {
-        commit("settings/setPublishedMode", true, { root: true });
+        commit("settings/setPublishedMode", true, {
+          root: true,
+        });
+        // fetch the updated test
+        const req_test = await fetch(
+          process.env.VUE_APP_BUILDER_URL + "test/" + test_id
+        );
+        const res_test = await req_test.json();
+        dispatch("setSelectedEvaluation", res_test);
       }
       return req;
     } catch (error) {
@@ -162,7 +174,7 @@ const actions = {
         body: JSON.stringify(payload),
       });
       const res = await req.json();
-      // fetch just create new test
+      // fetch the updated test
       const req_test = await fetch(
         process.env.VUE_APP_BUILDER_URL + "test/" + res.test_id
       );
