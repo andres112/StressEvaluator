@@ -252,8 +252,8 @@ export default {
       this.saving = true;
       const res = await this.publishEvaluation(this.current_step.test_id);
       this.menu.overlay = false;
-      this.sendNotification(res);
       this.saving = false;
+      await this.sendNotification(res);
     },
 
     // Close the Evaluation editior dialog
