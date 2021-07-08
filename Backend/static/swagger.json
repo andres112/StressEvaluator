@@ -486,6 +486,10 @@
             "type": "boolean",
             "format": "boolean",
             "example": false
+          },
+          "test_link": {
+            "type": "string",
+            "format": "string"
           }
         }
       },

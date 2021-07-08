@@ -6,6 +6,7 @@
       :menuOn="menu"
       :saving="saving"
       @onPublish="publishCurrentEvaluation"
+      @onClose="closeCurrentEvaluation"
     ></step-overlay-menu>
 
     <v-app-bar
@@ -48,9 +49,10 @@
 
       <!-- Add and Delete step button - top-right side-->
       <step-buttons
-        v-if="edition_mode && !published_mode"
+        v-if="edition_mode"
         @addStepTab="changeToLastTab"
         @onSave="saveWhenAdd"
+        :isPublished="published_mode"
       ></step-buttons>
 
       <!-- Tabs -->
@@ -188,6 +190,7 @@ export default {
       updateStep: "builder/updateStep",
       updateEvaluation: "builder/updateEvaluation",
       publishEvaluation: "builder/publishEvaluation",
+      closeEvaluation: "builder/closeEvaluation",
     }),
     ...mapMutations({
       setEditionMode: "settings/setEditionMode",
@@ -232,7 +235,7 @@ export default {
         res = await this.updateStep(payload);
       }
       this.saving = await false;
-      this.sendNotification(res);
+      this.sendNotificationStep(res);
     },
 
     // FIXME: deatach to user implementation mode
@@ -253,7 +256,16 @@ export default {
       const res = await this.publishEvaluation(this.current_step.test_id);
       this.menu.overlay = false;
       this.saving = false;
-      await this.sendNotification(res);
+      await this.sendNotificationStep(res);
+    },
+
+    // Close current evaluation
+    async closeCurrentEvaluation() {
+      this.saving = true;
+      const res = await this.closeEvaluation(this.current_step.test_id);
+      this.menu.overlay = false;
+      this.saving = false;
+      this.$router.push("/builder");
     },
 
     // Close the Evaluation editior dialog
@@ -281,7 +293,7 @@ export default {
       }
     },
 
-    sendNotification(res) {
+    sendNotificationStep(res) {
       const note = { isOn: true, text: null, timeout: 3000, status: "info" };
       if (res.status == 200) {
         note.status = "ok";
