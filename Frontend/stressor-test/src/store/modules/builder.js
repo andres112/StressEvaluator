@@ -128,7 +128,7 @@ const actions = {
     try {
       const payload = {
         published: true,
-        test_link: `${process.env.VUE_APP_PRESENTER_URL}${test_id}`,
+        test_link: `${process.env.VUE_APP_PRESENTER_URL}presenter/${test_id}`,
       };
       const req = await fetch(
         process.env.VUE_APP_BUILDER_URL + "test/" + test_id,
@@ -267,10 +267,7 @@ const actions = {
       );
       const res_steps = await req_steps.json();
       commit("setSteps", res_steps);
-      // when load a test set the first step by default
-      if (res_steps.length == 1) {
-        commit("setCurrentStep", res_steps[0]);
-      }
+      commit("setCurrentStep", res_steps[0]);
     } catch (error) {
       console.log(error);
     }

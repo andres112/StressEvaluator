@@ -1,10 +1,11 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import { e_routes } from "@/router/evaluator_routes";
+import { b_routes } from "@/router/builder_routes";
+import { p_routes } from "@/router/presenter_routes";
 
 Vue.use(VueRouter);
 
-const routes = [...e_routes];
+const routes = [...b_routes, ...p_routes];
 
 const router = new VueRouter({
   mode: "history",
