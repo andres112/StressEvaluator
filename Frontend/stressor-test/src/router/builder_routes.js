@@ -1,10 +1,10 @@
 import store from "@/store/index.js";
-import Home from "@/views/Evaluator/Home.vue";
-import Create from "@/views/Evaluator/Create.vue";
-import Modify from "@/views/Evaluator/Modify.vue";
-import Steps from "@/views/Evaluator/Steps.vue";
+import Home from "@/views/Builder/Home.vue";
+import Create from "@/views/Builder/Create.vue";
+import Modify from "@/views/Builder/Modify.vue";
+import Steps from "@/views/Builder/Steps.vue";
 
-export const e_routes = [
+export const b_routes = [
   {
     path: "/builder",
     component: {
