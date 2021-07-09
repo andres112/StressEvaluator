@@ -76,6 +76,7 @@ def create():
                             'owner': request.json["owner"],
                             'number_of_steps': 0,
                             'steps': [id_consent],
+                            'test_link':None,
                             'published': False,
                             'closed': False,
                             'creation_date': datetime.datetime.now()}
@@ -132,7 +133,7 @@ def test_operations(test_id):
         if request.method == 'PUT':
             updated_test = {}
             # parameters allowed
-            __parameters = ['name', 'description', 'owner', 'published', 'closed']
+            __parameters = ['name', 'description', 'owner', 'published', 'closed', 'test_link']
             # build the data to send to db
             for param in __parameters:
                 if keyExist(param, request.json):

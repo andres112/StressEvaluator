@@ -157,6 +157,28 @@ const actions = {
       console.log(error);
     }
   },
+
+  async closeEvaluation({ commit }, test_id) {
+    try {
+      const payload = {
+        closed: true,
+      };
+      const req = await fetch(
+        process.env.VUE_APP_BUILDER_URL + "test/" + test_id,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+      return req;
+    } catch (error) {
+      console.log(error);
+    }
+  },
   //************************************************* */
 
   //************************************************* */
@@ -246,7 +268,9 @@ const actions = {
       const res_steps = await req_steps.json();
       commit("setSteps", res_steps);
       // when load a test set the first step by default
-      commit("setCurrentStep", res_steps[0]);
+      if (res_steps.length == 1) {
+        commit("setCurrentStep", res_steps[0]);
+      }
     } catch (error) {
       console.log(error);
     }

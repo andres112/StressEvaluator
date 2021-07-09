@@ -73,16 +73,57 @@
         :items-per-page="10"
       >
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon @click.prevent="onDelete(item)" color="deep-orange accent-4">
-            mdi-trash-can
-          </v-icon>
-          <v-icon
-            @click.prevent="onContinue(item)"
-            color="light-green"
-            class="ml-2"
+          <span
+            v-if="item.closed"
+            class="mx-auto font-weight-bold text-subtitle-1 deep-orange--text text--accent-4"
           >
-            mdi-pencil
-          </v-icon>
+            Closed
+          </span>
+          <v-layout v-else>
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon
+                  @click.prevent="onDelete(item)"
+                  color="deep-orange accent-4"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  mdi-trash-can
+                </v-icon>
+              </template>
+              <span>Delete</span>
+            </v-tooltip>
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon
+                  @click.prevent="onContinue(item)"
+                  color="light-green"
+                  class="ml-2"
+                  v-if="!item.published"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  mdi-pencil
+                </v-icon>
+              </template>
+              <span>Edit</span>
+            </v-tooltip>
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon
+                  v-if="item.published"
+                  @click.prevent="onContinue(item)"
+                  color="light-blue darken-2"
+                  class="ml-2"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  mdi-eye
+                </v-icon>
+              </template>
+              <span>Published</span>
+            </v-tooltip>
+          </v-layout>
         </template>
       </v-data-table>
     </v-card>

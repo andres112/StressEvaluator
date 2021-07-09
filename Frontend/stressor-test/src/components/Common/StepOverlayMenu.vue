@@ -44,6 +44,7 @@
         dark
         x-large
         v-if="published_mode"
+        @click="copyLink()"
       >
         Evaluation Link
       </v-btn>
@@ -54,6 +55,7 @@
         x-large
         color="deep-orange"
         v-if="published_mode"
+        @click="$emit('onClose')"
       >
         Close Evaluation
       </v-btn>
@@ -67,14 +69,29 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
+import { copyToClipboard } from "@/assets/helpers.js";
 
 export default {
   props: { menuOn: Object, saving: Boolean },
   computed: {
     ...mapState({
       published_mode: (state) => state.settings.published_mode,
+      selected_test: (state) => state.builder.selected_test,
     }),
+  },
+  methods: {
+    ...mapMutations({ setNotifications: "settings/setNotifications" }),
+    copyLink() {
+      copyToClipboard(this.selected_test.test_link);
+      const note = {
+        isOn: true,
+        text: "Link copied to clipboard",
+        timeout: 3000,
+        status: "info",
+      };
+      this.setNotifications(note);
+    },
   },
 };
 </script>
