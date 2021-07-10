@@ -277,7 +277,7 @@ def create_session(test_id):
         if request.method == 'POST':
             new_session = {'_id': request.json["session_id"],
                            'test_id': test_uuid,  # test_id correspond to the _id in mongodb
-                           'consent': False,
+                           'consent': None,
                            'creation_date': datetime.datetime.now(),
                            'close_date': None,
                            'responses': []}
@@ -355,4 +355,16 @@ def test_results(test_id):
                 return make_response(jsonify([item for item in results]), 200)
     except BulkWriteError as e:
         return make_response(jsonify(message="Error sending answer",
+                                     details=e.details), 500)
+
+
+#### Just for development DELETE for production
+@endpoint.route("/delete_all_sessions", methods=['GET'])
+def __delete_session():
+    try:
+        if request.method == 'GET':
+            Result.remove({})
+        return make_response(jsonify(message="Deleted"), 200)
+    except BulkWriteError as e:
+        return make_response(jsonify(message="Error deleting",
                                      details=e.details), 500)

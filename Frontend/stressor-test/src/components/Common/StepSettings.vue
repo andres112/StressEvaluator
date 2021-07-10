@@ -78,6 +78,7 @@ export default {
       types: [
         { text: "Questionnaire", value: "question" },
         { text: "Stressor", value: "stress" },
+        { text: "Information", value: "info" },
       ],
       stressor_list: [],
     };

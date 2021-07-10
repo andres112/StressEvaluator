@@ -57,8 +57,7 @@ export default {
   },
   computed: {
     ...mapState({
-      edition_mode: (state) => state.settings.edition_mode,
-      current_step: (state) => state.builder.current_step,
+      edition_mode: (state) => state.settings.edition_mode
     }),
     // Import components automatically from @/components/Repository path
     dynamicComp() {
@@ -80,7 +79,7 @@ export default {
       const selected_comp = this.dynamicComp;
       return (
         Object.values(selected_comp).find(
-          (x) => x.meta?.value === this.current_step.stressor
+          (x) => x.meta?.value === this.step_content.stressor
         ) ?? NoComponent
       );
     },

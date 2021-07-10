@@ -9,31 +9,34 @@
       @onClose="closeCurrentEvaluation"
     ></step-overlay-menu>
 
-    <v-app-bar
+    <!-- CLEAN: <v-app-bar
       dense
       flat
       dark
       :color="edition_mode ? 'light-green' : 'light-blue'"
-    >
+    > -->
+    <v-app-bar dense flat dark color="light-green">
       <!-- This button open the overlay menu -->
-      <v-app-bar-nav-icon
+      <!-- CLEAN:<v-app-bar-nav-icon
         v-if="edition_mode"
         @click="menu.overlay = !menu.overlay"
         large
-      >
+      > -->
+      <v-app-bar-nav-icon @click="menu.overlay = !menu.overlay" x-large>
       </v-app-bar-nav-icon>
 
       <!-- Test title -->
       <div class="text-capitalize text-h6 text-md-h5">
-        {{ appTitle }}
+        {{ getNewLengthText(selected_test.name) }}
       </div>
 
       <!-- Editor button for test information edition - top-left side-->
-      <v-dialog
+      <!-- CLEAN: <v-dialog
         v-model="edit_dialog"
         persistent
         v-if="edition_mode && !published_mode"
-      >
+      > -->
+      <v-dialog v-model="edit_dialog" persistent v-if="!published_mode">
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on">
             <v-icon>mdi-lead-pencil</v-icon>
@@ -45,27 +48,48 @@
         ></builder-create>
       </v-dialog>
 
+      <!-- Small indicator when evaluation is published -->
+      <v-chip
+        class="font-weight-bold ml-4"
+        color="light-blue darken-2"
+        v-if="published_mode"
+        small
+      >
+        Published
+      </v-chip>
+
       <v-spacer></v-spacer>
 
       <!-- Add and Delete step button - top-right side-->
-      <step-buttons
+      <!-- CLEAN: <step-buttons
         v-if="edition_mode"
         @addStepTab="changeToLastTab"
         @onSave="saveWhenAdd"
         :isPublished="published_mode"
+      ></step-buttons> -->
+      <step-buttons
+        @addStepTab="changeToLastTab"
+        @onSave="saveWhenAdd"
+        v-if="!published_mode"
       ></step-buttons>
 
       <!-- Tabs -->
       <template v-slot:extension>
-        <v-tabs
+        <!-- CLEAN: <v-tabs
           :background-color="edition_mode ? 'light-green' : 'light-blue'"
           dark
           v-model="current_tab"
           :show-arrows="edition_mode"
           :center-active="!edition_mode"
+        > -->
+        <v-tabs
+          background-color="light-green"
+          dark
+          v-model="current_tab"
+          show-arrows
         >
           <v-tab v-for="item in steps" :key="item._id">
-            {{ textLength(item.name) }}
+            {{ getNewLengthText(item.name) }}
           </v-tab>
         </v-tabs>
       </template>
@@ -76,11 +100,13 @@
       <v-tab-item v-for="item in steps" :key="item._id">
         <v-card>
           <!-- Step setting section -->
-          <v-card-text class="pb-0" v-if="edition_mode">
+          <!-- CLEAN: <v-card-text class="pb-0" v-if="edition_mode"> -->
+          <v-card-text class="pb-0">
             <builder-step-settings :br="br[item.type]"></builder-step-settings>
           </v-card-text>
 
-          <v-divider class="mx-4 mt-4" v-if="edition_mode"></v-divider>
+          <!-- CLEAN: <v-divider class="mx-4 mt-4" v-if="edition_mode"></v-divider> -->
+          <v-divider class="mx-4 mt-4"></v-divider>
 
           <!-- Step content section -->
           <v-card-text>
@@ -91,9 +117,13 @@
               :ref="item._id"
             ></component>
           </v-card-text>
-          <v-card-text
+          <!-- CLEAN: <v-card-text
             style="height: 100px; position: relative"
             v-if="edition_mode && !published_mode"
+          > -->
+          <v-card-text
+            style="height: 100px; position: relative"
+            v-if="!published_mode"
           >
             <v-fab-transition>
               <v-btn
@@ -111,9 +141,9 @@
               </v-btn>
             </v-fab-transition>
           </v-card-text>
-          <v-card-actions
+          <!-- TODO: please move to presenter-evaluation.vue -->
+          <!-- <v-card-actions
             class="d-flex justify-center"
-            v-else-if="!edition_mode"
           >
             <v-btn
               color="light-blue"
@@ -124,7 +154,7 @@
             >
               Submit
             </v-btn>
-          </v-card-actions>
+          </v-card-actions> -->
         </v-card>
       </v-tab-item>
     </v-tabs-items>
@@ -133,6 +163,7 @@
 
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
+import { textLength } from "@/assets/helpers";
 import BuilderCreate from "./BuilderCreate.vue";
 import BuilderStepSettings from "./Common/StepSettings.vue";
 import StepButtons from "./Common/StepButtons.vue";
@@ -160,15 +191,13 @@ export default {
       saving: false,
       edit_dialog: null,
       menu: { overlay: false },
-      br: {
-        consent: { name: true, type: false, duration: false, stressor: false },
-        question: { name: true, type: true, duration: false, stressor: false },
-        stress: { name: true, type: true, duration: true, stressor: true },
-      },
+      br: {},
     };
   },
   created() {
     this.setEditionMode(true);
+    //Set business rules for step types
+    this.br = require("@/assets/typesBusinessRules.json");
   },
   destroyed() {
     this.setEditionMode(false);
@@ -178,12 +207,9 @@ export default {
       selected_test: (state) => state.builder.selected_test,
       steps: (state) => state.builder.steps,
       current_step: (state) => state.builder.current_step,
-      edition_mode: (state) => state.settings.edition_mode,
+      // CLEAN: edition_mode: (state) => state.settings.edition_mode,
       published_mode: (state) => state.settings.published_mode,
     }),
-    appTitle() {
-      return this.textLength(this.selected_test.name);
-    },
   },
   methods: {
     ...mapActions({
@@ -197,16 +223,11 @@ export default {
       setCurrentStep: "builder/setCurrentStep",
       setNotifications: "settings/setNotifications",
     }),
-    textLength(text) {
-      const LENGTHS = new Map([
-        ["xs", 10],
-        ["sm", 20],
-        ["md", 30],
-        ["lg", 50],
-        ["xl", 75],
-      ]);
-      const len = LENGTHS.get(this.$vuetify.breakpoint.name);
-      return text.length > len ? `${text.slice(0, len)}...` : text;
+
+    //Adapt the text length according screen size
+    getNewLengthText(text) {
+      const new_text = textLength(text, this);
+      return new_text;
     },
 
     // Update step info when user click on upload button
@@ -238,17 +259,17 @@ export default {
       this.sendNotificationStep(res);
     },
 
-    // FIXME: deatach to user implementation mode
-    async saveAnswer(ref_id) {
-      this.saving = true;
-      const comp = this.$refs[ref_id];
-      // Execute function in child component for save specific content
-      const content = Array.isArray(comp)
-        ? comp[0].getAnswer()
-        : comp.getAnswer();
-      console.log(content);
-      this.saving = false;
-    },
+    // TODO: Move to presenter-evaluation
+    // async saveAnswer(ref_id) {
+    //   this.saving = true;
+    //   const comp = this.$refs[ref_id];
+    //   // Execute function in child component for save specific content
+    //   const content = Array.isArray(comp)
+    //     ? comp[0].getAnswer()
+    //     : comp.getAnswer();
+    //   console.log(content);
+    //   this.saving = false;
+    // },
 
     //Publish current evaluation
     async publishCurrentEvaluation() {
@@ -269,20 +290,21 @@ export default {
     },
 
     // Close the Evaluation editior dialog
-    closeDialog(isSave) {
+    closeDialog(isSaved) {
       this.edit_dialog = false;
-      if (isSave) {
+      if (isSaved) {
         this.uploadStep("create_dialog", true);
       }
     },
 
+    // When user add new step, automatically update current step
     saveWhenAdd(id) {
       this.uploadStep(id);
     },
 
     // Assign the component according the type of step
     currentComponent(item) {
-      if (item.type === "consent") {
+      if (item.type === "consent" || item.type == "info") {
         return TextEditor;
       }
       if (item.type === "question") {

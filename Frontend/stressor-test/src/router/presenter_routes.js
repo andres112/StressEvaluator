@@ -1,3 +1,4 @@
+import store from "@/store/index.js";
 import HomePresenter from "@/views/Presenter/Home.vue";
 import Evaluation from "@/views/Presenter/Evaluation.vue";
 
@@ -20,9 +21,16 @@ export const p_routes = [
         name: "Evaluation",
         component: Evaluation,
         beforeEnter: (to, from, next) => {
-          // TODO: Create user session
-          console.log(to);
-          next();
+          store
+            .dispatch("presenter/getEvaluation", to.params.test_id)
+            .then((res) => {
+              if (res.status === 200) next();
+              else next("/");
+            })
+            .catch((err) => {
+              console.error(err);
+              next("/");
+            });
         },
       },
       // Not found page
