@@ -23,7 +23,9 @@
       <v-card-text class="pb-6">
         <v-row justify="center">
           <v-col cols="12" md="7" lg="6" class="text-subtitle-1 text-sm-h6">
-            <p class="text-md-justify">{{ evaluation.description }}</p>
+            <p class="description text-md-justify pr-4">
+              {{ evaluation.description }}
+            </p>
           </v-col>
           <v-col cols="12" md="5">
             <v-card shaped color="light-blue lighten-5">
@@ -54,6 +56,7 @@
               dark
               block
               @click.prevent="start()"
+              :loading="loading"
             >
               <v-icon left large>
                 mdi-play
@@ -75,6 +78,7 @@ export default {
   name: "PresenterIntroduction",
   data() {
     return {
+      loading: false,
       personal_info: ["owner", "organization", "email"],
     };
   },
@@ -84,9 +88,11 @@ export default {
   methods: {
     ...mapActions({ createSession: "presenter/createSession" }),
     async start() {
+      this.loading = true;
       const test_id = this.evaluation._id;
       const res = await this.createSession(test_id);
       if (res?.session_id) {
+        this.loading = false;
         this.$router.push(`/presenter/${test_id}/session/${res.session_id}`);
       }
     },
@@ -94,4 +100,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss">
+.description {
+  white-space: pre-wrap;
+}
+</style>

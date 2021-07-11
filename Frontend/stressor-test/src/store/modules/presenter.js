@@ -2,11 +2,15 @@ import { createNanoId } from "@/assets/helpers.js";
 
 const state = {
   evaluation: null,
+  current_step: null,
 };
 const getters = {};
 const mutations = {
   setEvaluation(state, payload) {
     state.evaluation = payload;
+  },
+  setCurrentStep(state, payload) {
+    state.current_step = payload;
   },
   clearStates(state) {
     state.evaluation = null;
@@ -14,7 +18,7 @@ const mutations = {
 };
 const actions = {
   // Create session for user evaluation
-  async createSession({ commit }, test_id) {
+  async createSession({ dispatch, state }, test_id) {
     try {
       const session_id = createNanoId();
       const payload = {
@@ -31,13 +35,19 @@ const actions = {
         body: JSON.stringify(payload),
       });
       const res = await req.json();
+      // get the first step which is the evaluation's informed consent
+      const step_payload = {
+        test_id: test_id,
+        step_id: state.evaluation.steps[0],
+      };
+      await dispatch("getStep", step_payload);
       return res;
     } catch (error) {
       console.log(error);
     }
   },
   // Get the evaluation by identifier
-  async getEvaluation({ commit, dispatch }, test_id) {
+  async getEvaluation({ commit }, test_id) {
     try {
       const url = process.env.VUE_APP_BASE_URL + "test/" + test_id;
       const req = await fetch(url);
@@ -53,7 +63,22 @@ const actions = {
       console.log(error);
     }
   },
-  // TODO: get step by step identifier and evaluation id
+  // Get step by step identifier and evaluation id
+  async getStep({ commit }, payload) {
+    try {
+      const url =
+        process.env.VUE_APP_BASE_URL +
+        "test/" +
+        payload.test_id +
+        "/step/" +
+        payload.step_id;
+      const req = await fetch(url);
+      const res = await req.json();
+      commit("setCurrentStep", res);
+    } catch (error) {
+      console.log(error);
+    }
+  },
   // TODO: send step answers after saving or timesup
 };
 
