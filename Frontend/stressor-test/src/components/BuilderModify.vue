@@ -3,11 +3,10 @@
     <home-button />
     <v-layout justify-center align-center>
       <v-card class="text-center mt-5" elevation="0">
-        <v-card-title
-          class="text-md-h2 text-sm-h4 text-h5 font-weight-bold mb-6"
-        >
-          Stress Evaluator - Builder
+        <v-card-title class="text-md-h2 text-sm-h4 text-h5 font-weight-bold">
+          Stress Evaluator
         </v-card-title>
+        <p class="text-subtitle-2 mb-6 green--text">Builder Mode</p>
         <v-card-text>
           <v-form @submit.prevent="onSubmit()">
             <v-col cols="12" class="mx-auto">
@@ -80,19 +79,46 @@
             Closed
           </span>
           <v-layout v-else>
-            <v-tooltip top>
+            <v-dialog v-model="isDeleting" persistent max-width="300px">
               <template v-slot:activator="{ on, attrs }">
-                <v-icon
-                  @click.prevent="onDelete(item)"
-                  color="deep-orange accent-4"
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  mdi-trash-can
-                </v-icon>
+                <span v-bind="attrs" v-on="on">
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon
+                        color="deep-orange accent-4"
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        mdi-trash-can
+                      </v-icon>
+                    </template>
+                    <span>Delete</span>
+                  </v-tooltip>
+                </span>
               </template>
-              <span>Delete</span>
-            </v-tooltip>
+              <v-card>
+                <v-card-title class="text-h5 deep-orange--text text--accent-4">
+                  Danger Zone!
+                </v-card-title>
+                <v-card-text
+                  >Are you sure you want to delete the selected evaluation?.
+                  This action cann't be undone.</v-card-text
+                >
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="grey" text @click="isDeleting = false">
+                    Cancel
+                  </v-btn>
+                  <v-btn
+                    color="deep-orange accent-4"
+                    text
+                    @click.prevent="onDelete(item)"
+                  >
+                    Delete
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
                 <v-icon
@@ -148,6 +174,7 @@ export default {
         { text: "Owner", value: "owner" },
         { text: "Actions", value: "actions", sortable: false },
       ],
+      isDeleting: false,
       id: null,
       name: null,
       owner: null,
@@ -183,6 +210,7 @@ export default {
     ...mapMutations({
       setTestList: "builder/setTestList",
       cleanStates: "builder/cleanStates",
+      setNotifications: "settings/setNotifications",
     }),
     onSubmit() {
       if (!this.validate) return;
@@ -203,7 +231,15 @@ export default {
       await this.$router.push(`/builder/steps`);
     },
     async onDelete(test) {
+      this.isDeleting = false;
+      const msg = {
+        isOn: true,
+        text: "Evaluation removed successfully",
+        timeout: 4000,
+        status: "info",
+      };
       await this.deleteEvaluation(test._id);
+      await this.setNotifications(msg);
     },
   },
   watch: {
