@@ -1,14 +1,25 @@
 <template>
   <v-layout justify-center align-center fill-height>
     <home-button v-if="!edition_mode" />
-    <v-card class="text-center" elevation="0" :loading="loading" loader-height="2">
-      <v-card-title class="text-md-h2 text-sm-h4 text-h5 font-weight-bold mb-6">
-        Stress Evaluator-Create
+    <v-card
+      class="text-center"
+      elevation="0"
+      :loading="loading"
+      loader-height="2"
+    >
+      <v-card-title class="text-md-h2 text-sm-h4 text-h5 font-weight-bold">
+        Stress Evaluator
       </v-card-title>
+      <p class="text-subtitle-2 mb-4 green--text">Builder Mode</p>
       <v-card-text>
         <v-col md="11" class="mx-auto">
-          <v-form v-model="valid" ref="create_form">
+          <v-form
+            v-model="valid"
+            ref="create_form"
+            enctype="multipart/form-data"
+          >
             <v-text-field
+              dense
               v-model="evaluation.name"
               :rules="[rules.required, rules.minLength]"
               label="Evaluation Name"
@@ -17,10 +28,11 @@
               color="light-green"
               counter
               maxlength="75"
-              class="mb-3"
+              class="mb-2"
               required
             ></v-text-field>
             <v-text-field
+              dense
               v-model="evaluation.owner"
               :rules="[rules.required]"
               label="Evaluation Owner"
@@ -29,7 +41,29 @@
               color="light-green"
               counter
               maxlength="50"
-              class="mb-3"
+              class="mb-2"
+              required
+            ></v-text-field>
+            <v-text-field
+              dense
+              v-model="evaluation.organization"
+              label="Organization"
+              outlined
+              clearable
+              color="light-green"
+              counter
+              maxlength="50"
+              class="mb-2"
+            ></v-text-field>
+            <v-text-field
+              dense
+              v-model="evaluation.email"
+              :rules="[rules.required, rules.email]"
+              label="Email"
+              outlined
+              clearable
+              color="light-green"
+              class="mb-2"
               required
             ></v-text-field>
             <v-textarea
@@ -109,12 +143,23 @@ export default {
   data() {
     return {
       valid: false,
-      evaluation: { name: null, description: null, owner: null },
+      evaluation: {
+        name: null,
+        description: null,
+        owner: null,
+        organization: null,
+        email: null,
+      },
       loading: null,
       rules: {
         required: (value) => !!value || "Required.",
-        minLength: (value) => (value && value.length >= 5) || "Min. 5 characters.",
-        counter_desc: (value) => (value && value.length <= 750) || "Max. 750 characters.",
+        minLength: (value) =>
+          (value && value.length >= 5) || "Min. 5 characters.",
+        counter_desc: (value) =>
+          (value && value.length <= 750) || "Max. 750 characters.",
+        email: (value) => {
+          return /.+@.+\..+/.test(value) || "E-mail must be valid";
+        },
       },
     };
   },

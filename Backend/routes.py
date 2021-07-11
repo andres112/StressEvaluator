@@ -1,9 +1,9 @@
 from flask import Blueprint, make_response, jsonify, request, abort
 import datetime
-import uuid
+
 from pymongo.errors import *
 from helpers import *
-from db_config import Test, Step, Result
+from db_config import db, Test, Step, Result
 
 endpoint = Blueprint("endpoint", __name__, static_folder='static')
 
@@ -36,16 +36,16 @@ def get_all_test():
             name = request.args.get('name')
             owner = request.args.get('owner')
             tests = {}
-            if (name is not None and owner is not None):
+            if name is not None and owner is not None:
                 tests = Test.find({'$and': [
                     {"name": {"$regex": name, "$options": 'i'}},
                     {"owner": {"$regex": owner, "$options": 'i'}}
                 ]})
-            elif (owner is not None):
+            elif owner is not None:
                 tests = Test.find(
                     {"owner": {"$regex": owner, "$options": 'i'}}
                 )
-            elif (name is not None):
+            elif name is not None:
                 tests = Test.find(
                     {"name": {"$regex": name, "$options": 'i'}}
                 )
@@ -69,14 +69,17 @@ def create():
             def_consent = getDefaultRes('consent')
             id_consent = uuid.uuid4()
 
-            if all(k in request.json for k in ("name", "description", "owner")):
+            if all(k in request.json for k in ("name", "description", "owner", "email")):
                 new_test = {'_id': uuid.uuid4(),  # test_id correspond to the _id in mongodb
                             'name': request.json["name"],
                             'description': request.json["description"],
                             'owner': request.json["owner"],
+                            'organization': request.json["organization"] if keyExist("organization",
+                                                                                     request.json) else None,
+                            "email": request.json["email"] if keyExist("email", request.json) else None,
                             'number_of_steps': 0,
                             'steps': [id_consent],
-                            'test_link':None,
+                            'test_link': None,
                             'published': False,
                             'closed': False,
                             'creation_date': datetime.datetime.now()}
@@ -133,7 +136,8 @@ def test_operations(test_id):
         if request.method == 'PUT':
             updated_test = {}
             # parameters allowed
-            __parameters = ['name', 'description', 'owner', 'published', 'closed', 'test_link']
+            __parameters = ['name', 'description', 'owner', 'organization', 'email',
+                            'published', 'closed', 'test_link']
             # build the data to send to db
             for param in __parameters:
                 if keyExist(param, request.json):
@@ -358,8 +362,8 @@ def test_results(test_id):
                                      details=e.details), 500)
 
 
-#### Just for development DELETE for production
-@endpoint.route("/delete_all_sessions", methods=['GET'])
+# Just for development DELETE for production
+@endpoint.route("/del_all", methods=['GET'])
 def __delete_session():
     try:
         if request.method == 'GET':

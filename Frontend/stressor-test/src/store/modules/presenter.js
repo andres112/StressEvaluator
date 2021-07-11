@@ -13,11 +13,12 @@ const mutations = {
   },
 };
 const actions = {
-  // TODO: create session for user evaluation
+  // Create session for user evaluation
   async createSession({ commit }, test_id) {
     try {
+      const session_id = createNanoId();
       const payload = {
-        session_id: createNanoId(),
+        session_id: session_id,
         test_id: test_id,
       };
       const url = process.env.VUE_APP_BASE_URL + "create_session/" + test_id;
@@ -29,13 +30,13 @@ const actions = {
         },
         body: JSON.stringify(payload),
       });
-      console.log(await req.json());
-      return req;
+      const res = await req.json();
+      return res;
     } catch (error) {
       console.log(error);
     }
   },
-  // TODO: get the evaluation by identifier
+  // Get the evaluation by identifier
   async getEvaluation({ commit, dispatch }, test_id) {
     try {
       const url = process.env.VUE_APP_BASE_URL + "test/" + test_id;
@@ -45,9 +46,6 @@ const actions = {
         commit("setEvaluation", null);
       } else {
         commit("setEvaluation", res);
-        const req_session = await dispatch("createSession", test_id);
-        // return response of create session
-        return req_session;
       }
       // return response of get evaluation
       return req;

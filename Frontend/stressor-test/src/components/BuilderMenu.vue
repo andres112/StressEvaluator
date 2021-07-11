@@ -1,9 +1,10 @@
 <template>
   <v-layout justify-center align-center fill-height>
     <v-card class="text-center" elevation="0">
-      <v-card-title class="text-md-h1 text-sm-h3 text-h4 font-weight-bold mb-6">
+      <v-card-title class="text-md-h1 text-sm-h3 text-h4 font-weight-bold">
         Stress Evaluator
       </v-card-title>
+      <p class="text-subtitle-2 mb-6 green--text">Builder Mode</p>
       <v-card-text>
         <v-col cols="8" md="4" class="mx-auto">
           <v-btn

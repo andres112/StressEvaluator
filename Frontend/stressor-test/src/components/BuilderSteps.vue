@@ -15,7 +15,7 @@
       dark
       :color="edition_mode ? 'light-green' : 'light-blue'"
     > -->
-    <v-app-bar dense flat dark color="light-green">
+    <v-app-bar dense dark color="light-green">
       <!-- This button open the overlay menu -->
       <!-- CLEAN:<v-app-bar-nav-icon
         v-if="edition_mode"

@@ -1,27 +1,28 @@
 <template>
   <v-card elevation="0">
-    <v-app-bar dense flat dark color="light-blue">
+    <v-app-bar dark color="light-blue">
       <!-- Test title -->
-      <div class="text-capitalize text-h6 text-md-h5">
-        {{ getNewLengthText(evaluation.name) }}
-      </div>
+      <v-list-item two-line class="my-4 pl-0">
+        <v-list-item-content>
+          <v-list-item-title
+            class="text-capitalize text-h6 text-md-h5 font-weight-bold"
+          >
+            {{ getNewLengthText(evaluation.name) }}
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            <strong>Evaluation id:</strong>
+            {{ getNewLengthText(evaluation._id) }}
+          </v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
 
-      <!-- Tabs -->
-      <template v-slot:extension>
-        <v-tabs
-          background-color="light-blue"
-          dark
-          v-model="current_tab"
-          center-active
-        >
-          <!-- <v-tab v-for="item in steps" :key="item._id">
-            {{ textLength(item.name) }}
-          </v-tab> -->
-        </v-tabs>
-      </template>
+      <v-spacer></v-spacer>
+      <div class="text-subtitle-2 text-sm-subtitle-1 text-md-h6">
+        1 of {{ evaluation.number_of_steps }} Tasks
+      </div>
     </v-app-bar>
     <!-- TODO: Step with type 'consent', will modify session element and responses -->
-    {{ evaluation }}
+    <pre>{{ evaluation }}</pre>
   </v-card>
 </template>
 
@@ -30,6 +31,7 @@ import { mapState } from "vuex";
 import { textLength } from "@/assets/helpers";
 
 export default {
+  name: "PresenterEvaluation",
   data() {
     return {
       current_tab: 0,
