@@ -392,7 +392,7 @@
         }
       }
     },
-    "/send_step/{test_id}/session/{session_id}": {
+    "/test/{test_id}/session/{session_id}": {
       "post": {
         "tags": ["Implementation"],
         "summary": "Send the answer to questionnaires or stressors from user",
@@ -434,6 +434,48 @@
             "description": "Resource not found."
           }
         }
+      },
+      "put": {
+        "tags": ["Implementation"],
+        "summary": "Update existent session in test",
+        "parameters": [
+          {
+            "name": "test_id",
+            "in": "path",
+            "description": "Test id",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "session_id",
+            "in": "path",
+            "description": "Session id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "description": "Update session configuration",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Session"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Failed. Bad request."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
       }
     }
   },
@@ -456,6 +498,16 @@
             "type": "string",
             "format": "string",
             "example": "Test owner"
+          },
+          "organization": {
+            "type": "string",
+            "format": "string",
+            "example": "Organization"
+          },
+          "email": {
+            "type": "string",
+            "format": "string",
+            "example": "Email"
           },
           "description": {
             "type": "string",
@@ -546,6 +598,10 @@
           "consent": {
             "type": "boolean",
             "format": "boolean"
+          },
+          "current_step": {
+            "type": "integer",
+            "format": "int32"
           },
           "responses": {
             "type": "array",

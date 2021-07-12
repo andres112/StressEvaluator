@@ -282,6 +282,7 @@ def create_session(test_id):
             new_session = {'_id': request.json["session_id"],
                            'test_id': test_uuid,  # test_id correspond to the _id in mongodb
                            'consent': None,
+                           'current_step': None,
                            'creation_date': datetime.datetime.now(),
                            'close_date': None,
                            'responses': []}
@@ -298,8 +299,8 @@ def create_session(test_id):
                                      details=e.details), 500)
 
 
-@endpoint.route('/send_step/<test_id>/session/<session_id>', methods=['POST'])
-def session_send_step(test_id, session_id):
+@endpoint.route('/test/<test_id>/session/<session_id>', methods=['POST', 'PUT'])
+def session_step(test_id, session_id):
     try:
         if test_id is None or session_id is None:
             abort(400)
@@ -329,6 +330,26 @@ def session_send_step(test_id, session_id):
                                 session_id=session_id), 200)
             else:
                 abort(400)
+
+        if request.method == 'PUT':
+            updated_session = {}
+            # parameters allowed
+            __parameters = ['consent', 'current_step', 'close_date']
+            # build the data to send to db
+            for param in __parameters:
+                if keyExist(param, request.json):
+                    updated_session[param] = request.json[param]
+            # update session in db
+            step = Result.update_one({'_id': session_id, 'test_id': test_uuid},
+                                     {'$set': updated_session})
+            if step.matched_count == 0:
+                return make_response(jsonify(message="Session not found"), 404)
+            elif step.modified_count == 0:
+                return make_response(jsonify(message="Session not updated. Similar to current value"), 304)
+            else:
+                return make_response(
+                    jsonify(message=f"Session updated successfully", test_id=test_uuid, session_id=session_id), 200)
+
     except BulkWriteError as e:
         return make_response(jsonify(message="Error sending answer",
                                      details=e.details), 500)

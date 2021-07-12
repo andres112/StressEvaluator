@@ -35,10 +35,11 @@ const actions = {
         body: JSON.stringify(payload),
       });
       const res = await req.json();
-      // get the first step which is the evaluation's informed consent
+      // Get the first step which is the evaluation's informed consent
       const step_payload = {
         test_id: test_id,
         step_id: state.evaluation.steps[0],
+        session_id: session_id,
       };
       await dispatch("getStep", step_payload);
       return res;
@@ -73,8 +74,26 @@ const actions = {
         "/step/" +
         payload.step_id;
       const req = await fetch(url);
-      const res = await req.json();
-      commit("setCurrentStep", res);
+      if (req?.status == 200) {
+        const res = await req.json();
+        commit("setCurrentStep", res);
+        // Url for session updating
+        const session_url =
+          process.env.VUE_APP_BASE_URL +
+          "test/" +
+          payload.test_id +
+          "/session/" +
+          payload.session_id;
+        // Every time one step is retrieved, the current_step parameter is updated in session
+        await fetch(session_url, {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ current_step: payload.step_id }),
+        });
+      }
     } catch (error) {
       console.log(error);
     }
