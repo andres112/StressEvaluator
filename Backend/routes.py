@@ -334,7 +334,7 @@ def session_step(test_id, session_id):
         if request.method == 'PUT':
             updated_session = {}
             # parameters allowed
-            __parameters = ['consent', 'current_step', 'close_date']
+            __parameters = ['consent', 'current_step']
             # build the data to send to db
             for param in __parameters:
                 if keyExist(param, request.json):
@@ -349,6 +349,32 @@ def session_step(test_id, session_id):
             else:
                 return make_response(
                     jsonify(message=f"Session updated successfully", test_id=test_uuid, session_id=session_id), 200)
+
+    except BulkWriteError as e:
+        return make_response(jsonify(message="Error sending answer",
+                                     details=e.details), 500)
+
+
+@endpoint.route('/close_session/<test_id>/session/<session_id>', methods=['GET'])
+def close_session(test_id, session_id):
+    try:
+        if test_id is None or session_id is None:
+            abort(400)
+            return
+
+        test_uuid = test_id
+        if isUUID(test_id):
+            # convert test_id to test_uuid
+            test_uuid = uuid.UUID(test_id)
+
+        if request.method == 'GET':
+            step = Result.update_one({'_id': session_id, 'test_id': test_uuid},
+                                     {'$set': {'close_date': datetime.datetime.now()}})
+            if step.matched_count == 0:
+                return make_response(jsonify(message="Session not found"), 404)
+            else:
+                return make_response(
+                    jsonify(message=f"Session closed successfully", test_id=test_uuid, session_id=session_id), 200)
 
     except BulkWriteError as e:
         return make_response(jsonify(message="Error sending answer",

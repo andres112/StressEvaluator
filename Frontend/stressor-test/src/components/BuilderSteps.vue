@@ -9,19 +9,8 @@
       @onClose="closeCurrentEvaluation"
     ></step-overlay-menu>
 
-    <!-- CLEAN: <v-app-bar
-      dense
-      flat
-      dark
-      :color="edition_mode ? 'light-green' : 'light-blue'"
-    > -->
     <v-app-bar dense dark color="light-green">
       <!-- This button open the overlay menu -->
-      <!-- CLEAN:<v-app-bar-nav-icon
-        v-if="edition_mode"
-        @click="menu.overlay = !menu.overlay"
-        large
-      > -->
       <v-app-bar-nav-icon @click="menu.overlay = !menu.overlay" x-large>
       </v-app-bar-nav-icon>
 
@@ -31,12 +20,11 @@
       </div>
 
       <!-- Editor button for test information edition - top-left side-->
-      <!-- CLEAN: <v-dialog
+      <v-dialog
         v-model="edit_dialog"
         persistent
-        v-if="edition_mode && !published_mode"
-      > -->
-      <v-dialog v-model="edit_dialog" persistent v-if="!published_mode">
+        v-if="!published_mode"
+      >
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on">
             <v-icon>mdi-lead-pencil</v-icon>
@@ -61,12 +49,6 @@
       <v-spacer></v-spacer>
 
       <!-- Add and Delete step button - top-right side-->
-      <!-- CLEAN: <step-buttons
-        v-if="edition_mode"
-        @addStepTab="changeToLastTab"
-        @onSave="saveWhenAdd"
-        :isPublished="published_mode"
-      ></step-buttons> -->
       <step-buttons
         @addStepTab="changeToLastTab"
         @onSave="saveWhenAdd"
@@ -75,13 +57,6 @@
 
       <!-- Tabs -->
       <template v-slot:extension>
-        <!-- CLEAN: <v-tabs
-          :background-color="edition_mode ? 'light-green' : 'light-blue'"
-          dark
-          v-model="current_tab"
-          :show-arrows="edition_mode"
-          :center-active="!edition_mode"
-        > -->
         <v-tabs
           background-color="light-green"
           dark
@@ -100,12 +75,10 @@
       <v-tab-item v-for="item in steps" :key="item._id">
         <v-card>
           <!-- Step setting section -->
-          <!-- CLEAN: <v-card-text class="pb-0" v-if="edition_mode"> -->
           <v-card-text class="pb-0">
             <builder-step-settings :br="br[item.type]"></builder-step-settings>
           </v-card-text>
 
-          <!-- CLEAN: <v-divider class="mx-4 mt-4" v-if="edition_mode"></v-divider> -->
           <v-divider class="mx-4 mt-4"></v-divider>
 
           <!-- Step content section -->
@@ -117,10 +90,6 @@
               :ref="item._id"
             ></component>
           </v-card-text>
-          <!-- CLEAN: <v-card-text
-            style="height: 100px; position: relative"
-            v-if="edition_mode && !published_mode"
-          > -->
           <v-card-text
             style="height: 100px; position: relative"
             v-if="!published_mode"
@@ -141,20 +110,6 @@
               </v-btn>
             </v-fab-transition>
           </v-card-text>
-          <!-- TODO: please move to presenter-evaluation.vue -->
-          <!-- <v-card-actions
-            class="d-flex justify-center"
-          >
-            <v-btn
-              color="light-blue"
-              dark
-              x-large
-              :loading="saving"
-              @click.prevent="saveAnswer(item._id)"
-            >
-              Submit
-            </v-btn>
-          </v-card-actions> -->
         </v-card>
       </v-tab-item>
     </v-tabs-items>
@@ -207,7 +162,6 @@ export default {
       selected_test: (state) => state.builder.selected_test,
       steps: (state) => state.builder.steps,
       current_step: (state) => state.builder.current_step,
-      // CLEAN: edition_mode: (state) => state.settings.edition_mode,
       published_mode: (state) => state.settings.published_mode,
     }),
   },

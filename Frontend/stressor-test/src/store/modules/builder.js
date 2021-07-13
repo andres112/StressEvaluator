@@ -265,9 +265,15 @@ const actions = {
       const req_steps = await fetch(
         process.env.VUE_APP_BASE_URL + "test/" + payload._id + "/step"
       );
-      const res_steps = await req_steps.json();
-      commit("setSteps", res_steps);
-      commit("setCurrentStep", res_steps[0]);
+      if (req_steps?.status == 200) {
+        const res_steps = await req_steps.json();
+        // First ensure the order of the steps
+        const step_array = payload?.steps.map(function(step_id) {
+          return res_steps.find((x) => x._id === step_id);
+        });
+        commit("setSteps", step_array);
+        commit("setCurrentStep", step_array[0]);
+      }
     } catch (error) {
       console.log(error);
     }

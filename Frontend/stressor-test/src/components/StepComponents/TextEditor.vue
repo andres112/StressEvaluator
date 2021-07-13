@@ -1,6 +1,10 @@
 <template>
   <v-container class="py-0 px-0 pr-md-6">
-    <div class="editor-node" :class="{ edition: edition_mode }" ref="editorNode"></div>
+    <div
+      class="editor-node"
+      :class="{ edition: edition_mode }"
+      ref="editorNode"
+    ></div>
   </v-container>
 </template>
 
@@ -21,7 +25,7 @@ const toolbarOptions = [
 ];
 
 export default {
-  name:"TextEditor",
+  name: "TextEditor",
   data() {
     return {
       editorDelta: null,
@@ -43,12 +47,15 @@ export default {
     this.initializeEditor();
   },
   computed: {
-    ...mapState({ edition_mode: (state) => state.settings.edition_mode }),
+    ...mapState({
+      edition_mode: (state) => state.settings.edition_mode,
+      published_mode: (state) => state.settings.published_mode,
+    }),
   },
   methods: {
     initializeEditor() {
       // Validate if edition_mode
-      if (!this.edition_mode) {
+      if (!this.edition_mode || this.published_mode) {
         this.editorOpts.readOnly = true;
         this.editorOpts.theme = "bubble";
       }
@@ -86,12 +93,12 @@ export default {
 
 <style lang="scss" scoped>
 .editor-node {
-  height: 80vh;
-  min-height: 80vh;
+  height: 78vh;
+  min-height: 78vh;
   overflow-y: auto;
   &.edition {
     height: 70vh;
-  min-height: 70vh;
+    min-height: 70vh;
   }
 }
 .ql-editor {

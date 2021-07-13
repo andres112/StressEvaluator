@@ -477,13 +477,43 @@
           }
         }
       }
+    },
+    "/close_session/<test_id>/session/<session_id>": {
+      "get": {
+        "tags": ["Implementation"],
+        "summary": "Close the session of evaluation",
+        "parameters": [
+          {
+            "name": "test_id",
+            "in": "path",
+            "description": "Test id",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "session_id",
+            "in": "path",
+            "description": "Session id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
       "Test": {
         "type": "object",
-        "required": ["name", "description"],
+        "required": ["name", "description", "owner", "email"],
         "properties": {
           "test_id": {
             "type": "string",

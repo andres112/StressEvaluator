@@ -80,7 +80,7 @@
             </v-textarea>
           </v-form>
         </v-col>
-        <v-col cols="8" md="4" class="mx-auto">
+        <v-col cols="8" class="mx-auto">
           <!-- Edition mode deactivated -->
           <v-btn
             color="light-green"
@@ -96,35 +96,35 @@
             </span>
           </v-btn>
           <!-- Edition mode activated -->
-          <v-btn
-            color="light-green"
-            class="mt-2 text-capitalize"
-            large
-            dark
-            block
-            @click.prevent="sendEvent(true)"
-            v-if="edition_mode"
-          >
-            <v-icon left>
-              mdi-content-save
-            </v-icon>
-            <span class="text-subtitle-1 font-weight-bold mx-2">
-              Save
-            </span>
-          </v-btn>
-          <v-btn
-            color="deep-orange accent-4"
-            class="mt-2 text-capitalize"
-            large
-            dark
-            block
-            @click.prevent="sendEvent(false)"
-            v-if="edition_mode"
-          >
-            <span class="text-subtitle-1 font-weight-bold mx-2">
-              Cancel
-            </span>
-          </v-btn>
+          <v-row justify="center" align="center" class="my-2">
+            <v-btn
+              color="deep-orange accent-4"
+              class="mr-2 text-capitalize"
+              large
+              dark
+              @click.prevent="sendEvent(false)"
+              v-if="edition_mode"
+            >
+              <span class="text-subtitle-1 font-weight-bold mx-2">
+                Cancel
+              </span>
+            </v-btn>
+            <v-btn
+              color="light-green"
+              class="text-capitalize"
+              large
+              dark
+              @click.prevent="sendEvent(true)"
+              v-if="edition_mode"
+            >
+              <v-icon left>
+                mdi-content-save
+              </v-icon>
+              <span class="text-subtitle-1 font-weight-bold mx-2">
+                Save
+              </span>
+            </v-btn>
+          </v-row>
         </v-col>
       </v-card-text>
     </v-card>

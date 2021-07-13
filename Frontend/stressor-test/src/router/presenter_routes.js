@@ -2,6 +2,7 @@ import store from "@/store/index.js";
 import Home from "@/views/Presenter/Home.vue";
 import Evaluation from "@/views/Presenter/Evaluation.vue";
 import Introduction from "@/views/Presenter/Introduction.vue";
+import Acknowledge from "@/views/Presenter/Acknowledge.vue";
 
 export const p_routes = [
   {
@@ -14,7 +15,7 @@ export const p_routes = [
     children: [
       {
         path: "/",
-        name: "Home",
+        name: "HomePresenter",
         component: Home,
       },
       {
@@ -22,7 +23,6 @@ export const p_routes = [
         name: "Introduction",
         component: Introduction,
         beforeEnter: (to, from, next) => {
-          //FIXME: Here just retrieve the evaluation
           store
             .dispatch("presenter/getEvaluation", to.params.test_id)
             .then((res) => {
@@ -39,6 +39,11 @@ export const p_routes = [
         path: "/presenter/:test_id/session/:session_id",
         name: "Evaluation",
         component: Evaluation,
+      },
+      {
+        path: "/acknowledge",
+        name: "Acknowledge",
+        component: Acknowledge,
       },
       // Not found page
       {

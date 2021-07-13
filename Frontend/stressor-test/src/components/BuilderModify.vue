@@ -79,7 +79,7 @@
             Closed
           </span>
           <v-layout v-else>
-            <v-dialog v-model="isDeleting" persistent max-width="300px">
+            <v-dialog v-model="isDeleting" persistent max-width="350px">
               <template v-slot:activator="{ on, attrs }">
                 <span v-bind="attrs" v-on="on">
                   <v-tooltip top>

@@ -20,6 +20,7 @@
             counter
             maxlength="25"
             v-if="checkBR('name')"
+            :disabled="published_mode"
           ></v-text-field>
           <v-select
             v-model="current_step.type"
@@ -32,6 +33,7 @@
             color="light-green"
             class="mr-2"
             v-if="checkBR('type')"
+            :disabled="published_mode"
           ></v-select>
         </v-layout>
         <v-layout flex-column flex-sm-row justify-space-between>
@@ -46,6 +48,7 @@
             color="light-green"
             class="mr-2"
             v-if="checkBR('stressor')"
+            :disabled="published_mode"
           ></v-autocomplete>
           <v-text-field
             v-model.number="current_step.duration"
@@ -58,6 +61,7 @@
             suffix="sec"
             hint="0 is infinite "
             v-if="checkBR('duration')"
+            :disabled="published_mode"
           ></v-text-field>
         </v-layout>
       </v-layout>
@@ -87,7 +91,10 @@ export default {
     this.stressor_list = require("@/assets/stressorList.json");
   },
   computed: {
-    ...mapState({ current_step: (state) => state.builder.current_step }),
+    ...mapState({
+      current_step: (state) => state.builder.current_step,
+      published_mode: (state) => state.settings.published_mode,
+    }),
   },
   methods: {
     checkBR(el) {
