@@ -77,7 +77,7 @@ def create():
                             'organization': request.json["organization"] if keyExist("organization",
                                                                                      request.json) else None,
                             "email": request.json["email"] if keyExist("email", request.json) else None,
-                            'number_of_steps': 0,
+                            'number_of_steps': 1,  # this is 1 because the informed consent is added by default
                             'steps': [id_consent],
                             'test_link': None,
                             'published': False,
@@ -313,11 +313,12 @@ def session_step(test_id, session_id):
 
         # session_id is not converted to uuid
         if request.method == 'POST':
-            if all(k in request.json for k in ("step_id", "content", "start_time", "end_time")):
+            if all(k in request.json for k in ("step_id", "content", "start_time", "end_time", "type")):
                 new_answer = {'step_id': uuid.UUID(request.json["step_id"]),  # test_id correspond to the _id in mongodb
                               'content': request.json["content"],
                               'start_time': request.json["start_time"],
-                              'end_time': request.json["end_time"]}
+                              'end_time': request.json["end_time"],
+                              'type': request.json["type"]}
                 result = Result.update_one(
                     {'_id': session_id, 'test_id': test_uuid}, {'$push': {'responses': new_answer}})
                 if result.matched_count == 0:

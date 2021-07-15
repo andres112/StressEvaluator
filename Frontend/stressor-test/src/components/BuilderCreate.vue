@@ -6,13 +6,14 @@
       elevation="0"
       :loading="loading"
       loader-height="2"
+      min-width="50%"
     >
-      <v-card-title class="text-md-h2 text-sm-h4 text-h5 font-weight-bold">
+      <v-card-title class="d-flex justify-center text-md-h2 text-sm-h4 text-h5 font-weight-bold">
         Stress Evaluator
       </v-card-title>
       <p class="text-subtitle-2 mb-4 green--text">Builder Mode</p>
       <v-card-text>
-        <v-col md="11" class="mx-auto">
+        <v-col md="12" class="mx-auto">
           <v-form
             v-model="valid"
             ref="create_form"
@@ -80,7 +81,7 @@
             </v-textarea>
           </v-form>
         </v-col>
-        <v-col cols="8" class="mx-auto">
+        <v-col cols="6" class="mx-auto">
           <!-- Edition mode deactivated -->
           <v-btn
             color="light-green"

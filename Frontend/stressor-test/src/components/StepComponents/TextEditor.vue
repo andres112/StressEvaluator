@@ -22,6 +22,7 @@ const toolbarOptions = [
   [{ script: "sub" }, { script: "super" }], // superscript/subscript
   [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
   ["link", "blockquote", "code-block"],
+  ['clean'] //clean the format
 ];
 
 export default {

@@ -7,10 +7,18 @@
     <v-card elevation="0" class="container">
       <v-row justify="center">
         <v-col cols="12" lg="11">
-          <v-list-item two-line class="mb-4">
+          <v-list-item three-line class="mb-4">
             <v-list-item-content>
               <v-list-item-title class="text-md-h4 text-h5 font-weight-bold">
                 {{ evaluation.name }}
+                <v-chip
+                  class="font-weight-bold ml-2"
+                  color="deep-orange accent-4"
+                  v-if="evaluation.closed"
+                  dark
+                >
+                  Closed
+                </v-chip>
               </v-list-item-title>
               <v-list-item-subtitle>
                 <strong>Evaluation id:</strong> {{ evaluation._id }}
@@ -23,6 +31,13 @@
       <v-card-text class="pb-6">
         <v-row justify="center">
           <v-col cols="12" md="7" lg="6" class="text-subtitle-1 text-sm-h6">
+            <p
+              class="text-md-justify deep-orange--text text--accent-4"
+              v-if="evaluation.closed"
+            >
+              The evaluation is closed and no further responses will be
+              accepted.
+            </p>
             <p class="description text-md-justify pr-4">
               {{ evaluation.description }}
             </p>
@@ -51,12 +66,12 @@
           <v-col cols="10" sm="6" md="4" lg="2">
             <v-btn
               color="light-blue"
-              class="my-4 text-capitalize"
+              class="my-4 text-capitalize white--text"
               x-large
-              dark
               block
               @click.prevent="start()"
               :loading="loading"
+              :disabled="evaluation.closed"
             >
               <v-icon left large>
                 mdi-play

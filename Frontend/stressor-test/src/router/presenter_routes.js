@@ -49,6 +49,9 @@ export const p_routes = [
       {
         path: "*",
         component: Home,
+        beforeEnter: (to, from, next) => {
+          next("/");
+        },
       },
     ],
   },

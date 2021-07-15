@@ -50,13 +50,6 @@ const actions = {
       };
       await dispatch("getStep", step_payload);
 
-      // After step is retrieved update the session
-      const session_payload = {
-        test_id: payload.test_id,
-        session_id: payload.session_id,
-        current_step: step_payload.step_id,
-      };
-      await dispatch("updateSession", session_payload);
       return res;
     } catch (error) {
       console.log(error);
@@ -67,13 +60,13 @@ const actions = {
   async updateSession({ commit }, payload) {
     try {
       // Url for session updating
-      const session_url =
+      const url =
         process.env.VUE_APP_BASE_URL +
         "test/" +
         payload.test_id +
         "/session/" +
         payload.session_id;
-      const req = await fetch(session_url, {
+      const req = await fetch(url, {
         method: "PUT",
         headers: {
           Accept: "application/json",
@@ -102,8 +95,35 @@ const actions = {
       console.log(error);
     }
   },
+  //************************************************* */
 
-  // TODO: send step answers after saving or timesup
+  //************************************************* */
+  // Step response section
+  // Update session responses
+  async updateResponses({ commit }, payload) {
+    try {
+      // Url for session updating
+      const url =
+        process.env.VUE_APP_BASE_URL +
+        "test/" +
+        payload.test_id +
+        "/session/" +
+        payload.session_id;
+      if (payload?.response) {
+        const req = await fetch(url, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload.response),
+        });
+        return req;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
   //************************************************* */
 
   // Get the evaluation by identifier
@@ -127,7 +147,7 @@ const actions = {
   },
 
   // Get step by step identifier and evaluation id
-  async getStep({ commit, dispatch }, payload) {
+  async getStep({ commit, dispatch, state }, payload) {
     try {
       const url =
         process.env.VUE_APP_BASE_URL +
@@ -137,7 +157,14 @@ const actions = {
         payload.step_id;
       const req = await fetch(url);
       if (req?.status == 200) {
-        const res = await req.json();
+        const res = await req.json();        
+        // After step is retrieved update the session
+        const new_step = {
+          test_id: payload.test_id,
+          session_id: state.session_id,
+          current_step: payload.step_id,
+        };
+        await dispatch("updateSession", new_step);
         commit("setCurrentStep", res);
       }
       return req;

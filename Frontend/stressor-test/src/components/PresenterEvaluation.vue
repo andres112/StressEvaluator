@@ -17,9 +17,8 @@
       </v-list-item>
 
       <v-spacer></v-spacer>
-      <!-- TODO: the current task -->
       <div class="text-subtitle-2 text-sm-subtitle-1 text-md-h6">
-        {{ currentTask }} of {{ evaluation.number_of_steps }} Tasks
+        {{ currentStep }} of {{ evaluation.number_of_steps }} Steps
       </div>
     </v-app-bar>
 
@@ -49,6 +48,7 @@
         x-large
         dark
         v-if="current_step.type === 'info'"
+        @click.prevent="nextStep()"
       >
         <span class="text-h6 font-weight-bold mx-2">
           Continue
@@ -60,7 +60,9 @@
         class="text-capitalize"
         x-large
         dark
-        v-if="current_step.type === 'question'"
+        :loading="sending"
+        v-if="['question', 'stress'].includes(current_step.type)"
+        @click.prevent="sendResponse()"
       >
         <span class="text-h6 font-weight-bold mx-2">
           Submit
@@ -84,6 +86,7 @@
         class="mx-2 text-capitalize"
         x-large
         dark
+        :loading="sending"
         @click.prevent="sendConsent(true)"
         v-if="current_step.type === 'consent'"
       >
@@ -109,6 +112,7 @@ export default {
   components: { TextEditor, Questionnaire, Stressor },
   data() {
     return {
+      sending: false,
     };
   },
   computed: {
@@ -124,15 +128,16 @@ export default {
         return this.evaluation.steps[next_index];
       } else return null;
     },
-    currentTask(){
-      return this.evaluation.steps.indexOf(this.current_step._id) + 1
-    }
+    currentStep() {
+      return this.evaluation.steps.indexOf(this.current_step._id) + 1;
+    },
   },
   methods: {
     ...mapActions({
       updateSession: "presenter/updateSession",
       getStep: "presenter/getStep",
       closeSession: "presenter/closeSession",
+      updateResponses: "presenter/updateResponses",
     }),
     //Adapt the text length according screen size
     getNewLengthText(text) {
@@ -152,28 +157,58 @@ export default {
       }
     },
 
-    async sendConsent(res) {
-      const step_update = {
-        test_id: this.current_step.test_id,
-        step_id: this.getNextStep,
-      };
-      const session_update = {
-        test_id: this.current_step.test_id,
-        session_id: this.session_id,
-        current_step: step_update.step_id,
-        consent: res,
-      };
-      // If consent is true get the next step, but close the evaluation
-      if (res) {
-        const session_res = await this.updateSession(session_update);
-        const step_res = await this.getStep(step_update);
+    // Go the next step
+    async nextStep() {
+      const nextStep = this.getNextStep;
+      if (nextStep) {
+        const step_update = {
+          test_id: this.current_step.test_id,
+          step_id: nextStep,
+        };
+        await this.getStep(step_update);
       } else {
-        session_update.current_step = null;
-        const session_res = await this.updateSession(session_update);
         this.closeEvaluation();
       }
     },
 
+    // Update session for informed consent response
+    async sendConsent(res) {
+      const session_update = {
+        test_id: this.current_step.test_id,
+        session_id: this.session_id,
+        consent: res,
+      };
+      // If consent is true get the next step, otherwise close the evaluation
+      if (res) {
+        this.sending = true;
+        const res = await this.updateSession(session_update);
+        if (res?.status == 200) await this.nextStep();
+        this.sending = false;
+      } else {
+        this.closeEvaluation();
+      }
+    },
+
+    // Send Questionnaire and Stressor user responses
+    async sendResponse() {
+      this.sending = true;
+      const comp = this.$refs[this.current_step._id];
+      // Execute function in child component for save specific content
+      const content = Array.isArray(comp)
+        ? comp[0].getAnswer()
+        : comp.getAnswer();
+      const payload = {
+        test_id: this.current_step.test_id,
+        session_id: this.session_id,
+        response: content,
+      };
+      // send the content to the server and wait for response
+      const res = await this.updateResponses(payload);
+      if (res?.status == 200) await this.nextStep();
+      this.sending = false;
+    },
+
+    // Trigger the event for closing the evaluation session.
     async closeEvaluation() {
       const close_info = {
         test_id: this.current_step.test_id,

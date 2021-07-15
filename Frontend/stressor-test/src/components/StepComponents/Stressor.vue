@@ -57,7 +57,7 @@ export default {
   },
   computed: {
     ...mapState({
-      edition_mode: (state) => state.settings.edition_mode
+      edition_mode: (state) => state.settings.edition_mode,
     }),
     // Import components automatically from @/components/Repository path
     dynamicComp() {
@@ -100,6 +100,8 @@ export default {
       this.answers.content = this.$refs.stressor.metrics;
       return this.answers;
     },
+
+    // Initinial step contdown
     countDown() {
       this.waiting = true;
       const msg = ["Go!", "Set", "Ready"];
@@ -113,6 +115,7 @@ export default {
           this.answers = {
             start_time: new Date(),
             step_id: this.step_content._id,
+            type: this.step_content.type,
             end_time: null,
             content: {},
           };

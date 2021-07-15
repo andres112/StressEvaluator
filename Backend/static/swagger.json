@@ -35,7 +35,9 @@
   "paths": {
     "/find_test": {
       "get": {
-        "tags": ["Test"],
+        "tags": [
+          "Test"
+        ],
         "summary": "Find all tests according searching parameters",
         "parameters": [
           {
@@ -43,14 +45,18 @@
             "in": "query",
             "description": "Test name",
             "required": false,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "owner",
             "in": "query",
             "description": "Test owner",
             "required": false,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -65,7 +71,9 @@
     },
     "/test": {
       "post": {
-        "tags": ["Test"],
+        "tags": [
+          "Test"
+        ],
         "summary": "Create a new test",
         "requestBody": {
           "description": "New test configuration",
@@ -90,7 +98,10 @@
     },
     "/test/{test_id}": {
       "get": {
-        "tags": ["Test", "Implementation"],
+        "tags": [
+          "Test",
+          "Implementation"
+        ],
         "summary": "Find a test by ID",
         "parameters": [
           {
@@ -98,7 +109,9 @@
             "in": "path",
             "description": "Test id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -111,7 +124,9 @@
         }
       },
       "put": {
-        "tags": ["Test"],
+        "tags": [
+          "Test"
+        ],
         "summary": "Update some details of test",
         "parameters": [
           {
@@ -119,7 +134,9 @@
             "in": "path",
             "description": "Test id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -146,7 +163,9 @@
         }
       },
       "delete": {
-        "tags": ["Test"],
+        "tags": [
+          "Test"
+        ],
         "summary": "Remove a test by ID",
         "parameters": [
           {
@@ -154,7 +173,9 @@
             "in": "path",
             "description": "Test id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -169,7 +190,9 @@
     },
     "/test/{test_id}/step": {
       "get": {
-        "tags": ["Step"],
+        "tags": [
+          "Step"
+        ],
         "summary": "Find all steps from a test by test ID",
         "parameters": [
           {
@@ -177,7 +200,9 @@
             "in": "path",
             "description": "Test id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -190,7 +215,9 @@
         }
       },
       "post": {
-        "tags": ["Step"],
+        "tags": [
+          "Step"
+        ],
         "summary": "Add new steps to the test",
         "parameters": [
           {
@@ -198,7 +225,9 @@
             "in": "path",
             "description": "Test id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -227,7 +256,10 @@
     },
     "/test/{test_id}/step/{step_id}": {
       "get": {
-        "tags": ["Step", "Implementation"],
+        "tags": [
+          "Step",
+          "Implementation"
+        ],
         "summary": "Find a step from a test by step ID",
         "parameters": [
           {
@@ -235,14 +267,18 @@
             "in": "path",
             "description": "Test id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "step_id",
             "in": "path",
             "description": "Step id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -255,7 +291,9 @@
         }
       },
       "put": {
-        "tags": ["Step"],
+        "tags": [
+          "Step"
+        ],
         "summary": "Update existent step in test",
         "parameters": [
           {
@@ -263,14 +301,18 @@
             "in": "path",
             "description": "Test id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "step_id",
             "in": "path",
             "description": "Step id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -297,7 +339,9 @@
         }
       },
       "delete": {
-        "tags": ["Step"],
+        "tags": [
+          "Step"
+        ],
         "summary": "Remove existent step in test",
         "parameters": [
           {
@@ -305,14 +349,18 @@
             "in": "path",
             "description": "Test id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "step_id",
             "in": "path",
             "description": "Step id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -327,7 +375,9 @@
     },
     "/test_results/{test_id}": {
       "get": {
-        "tags": ["Result"],
+        "tags": [
+          "Result"
+        ],
         "summary": "Get responses from a test by ID",
         "parameters": [
           {
@@ -335,14 +385,18 @@
             "in": "path",
             "description": "Test id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "full_data",
             "in": "query",
             "description": "Complete user session data",
             "required": false,
-            "schema": { "type": "boolean" }
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -357,7 +411,9 @@
     },
     "/create_session/{test_id}": {
       "post": {
-        "tags": ["Implementation"],
+        "tags": [
+          "Implementation"
+        ],
         "summary": "Create the user session for test implementation",
         "parameters": [
           {
@@ -365,7 +421,9 @@
             "in": "path",
             "description": "Test id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -394,7 +452,9 @@
     },
     "/test/{test_id}/session/{session_id}": {
       "post": {
-        "tags": ["Implementation"],
+        "tags": [
+          "Implementation"
+        ],
         "summary": "Send the answer to questionnaires or stressors from user",
         "parameters": [
           {
@@ -402,14 +462,18 @@
             "in": "path",
             "description": "Test id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "session_id",
             "in": "path",
             "description": "Session id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -436,7 +500,9 @@
         }
       },
       "put": {
-        "tags": ["Implementation"],
+        "tags": [
+          "Implementation"
+        ],
         "summary": "Update existent session in test",
         "parameters": [
           {
@@ -444,14 +510,18 @@
             "in": "path",
             "description": "Test id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "session_id",
             "in": "path",
             "description": "Session id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -480,7 +550,9 @@
     },
     "/close_session/<test_id>/session/<session_id>": {
       "get": {
-        "tags": ["Implementation"],
+        "tags": [
+          "Implementation"
+        ],
         "summary": "Close the session of evaluation",
         "parameters": [
           {
@@ -488,14 +560,18 @@
             "in": "path",
             "description": "Test id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "session_id",
             "in": "path",
             "description": "Session id",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -513,7 +589,12 @@
     "schemas": {
       "Test": {
         "type": "object",
-        "required": ["name", "description", "owner", "email"],
+        "required": [
+          "name",
+          "description",
+          "owner",
+          "email"
+        ],
         "properties": {
           "test_id": {
             "type": "string",
@@ -577,7 +658,11 @@
       },
       "Step": {
         "type": "object",
-        "required": ["name", "type", "duration"],
+        "required": [
+          "name",
+          "type",
+          "duration"
+        ],
         "properties": {
           "step_id": {
             "type": "string",
@@ -614,7 +699,10 @@
       },
       "Session": {
         "type": "object",
-        "required": ["session_id", "test_id"],
+        "required": [
+          "session_id",
+          "test_id"
+        ],
         "properties": {
           "session_id": {
             "type": "string",
@@ -649,7 +737,13 @@
       },
       "Session_Step": {
         "type": "object",
-        "required": ["step_id", "content", "start_time", "end_time"],
+        "required": [
+          "step_id",
+          "content",
+          "start_time",
+          "end_time",
+          "type"
+        ],
         "properties": {
           "step_id": {
             "type": "string",
@@ -666,6 +760,11 @@
           "end_time": {
             "type": "string",
             "format": "date-time"
+          },
+          "type": {
+            "type": "string",
+            "format": "string",
+            "example": "question"
           }
         }
       }

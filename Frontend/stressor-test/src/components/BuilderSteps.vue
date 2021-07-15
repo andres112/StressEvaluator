@@ -1,5 +1,4 @@
 <template>
-  <!-- FIXME- NOW :Deatache edition mode from implementation mode -->
   <v-card elevation="0">
     <!-- Overlay menu -->
     <step-overlay-menu
@@ -15,7 +14,7 @@
       </v-app-bar-nav-icon>
 
       <!-- Test title -->
-      <div class="text-capitalize text-h6 text-md-h5">
+      <div class="text-capitalize text-h6 text-md-h5 mr-2">
         {{ getNewLengthText(selected_test.name) }}
       </div>
 
@@ -42,6 +41,7 @@
         color="light-blue darken-2"
         v-if="published_mode"
         small
+        dark
       >
         Published
       </v-chip>
@@ -212,18 +212,6 @@ export default {
       this.saving = await false;
       this.sendNotificationStep(res);
     },
-
-    // TODO: Move to presenter-evaluation
-    // async saveAnswer(ref_id) {
-    //   this.saving = true;
-    //   const comp = this.$refs[ref_id];
-    //   // Execute function in child component for save specific content
-    //   const content = Array.isArray(comp)
-    //     ? comp[0].getAnswer()
-    //     : comp.getAnswer();
-    //   console.log(content);
-    //   this.saving = false;
-    // },
 
     //Publish current evaluation
     async publishCurrentEvaluation() {

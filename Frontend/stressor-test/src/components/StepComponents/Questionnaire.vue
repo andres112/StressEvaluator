@@ -125,7 +125,9 @@ export default {
     ],
   }),
   mounted() {
-    this.survey = Array.isArray(this.step_content?.content) ? this.step_content.content : [];
+    this.survey = Array.isArray(this.step_content?.content)
+      ? this.step_content.content
+      : [];
   },
   created() {
     if (!this.edition_mode) {
@@ -133,6 +135,7 @@ export default {
       this.answers = {
         start_time: new Date(),
         step_id: this.step_content._id,
+        type: this.step_content.type,
         end_time: null,
         content: [],
       };
