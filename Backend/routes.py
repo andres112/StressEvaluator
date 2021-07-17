@@ -1,9 +1,9 @@
 from flask import Blueprint, make_response, jsonify, request, abort
 import datetime
-import uuid
+
 from pymongo.errors import *
 from helpers import *
-from db_config import Test, Step, Result
+from db_config import db, Test, Step, Result
 
 endpoint = Blueprint("endpoint", __name__, static_folder='static')
 
@@ -36,16 +36,16 @@ def get_all_test():
             name = request.args.get('name')
             owner = request.args.get('owner')
             tests = {}
-            if (name is not None and owner is not None):
+            if name is not None and owner is not None:
                 tests = Test.find({'$and': [
                     {"name": {"$regex": name, "$options": 'i'}},
                     {"owner": {"$regex": owner, "$options": 'i'}}
                 ]})
-            elif (owner is not None):
+            elif owner is not None:
                 tests = Test.find(
                     {"owner": {"$regex": owner, "$options": 'i'}}
                 )
-            elif (name is not None):
+            elif name is not None:
                 tests = Test.find(
                     {"name": {"$regex": name, "$options": 'i'}}
                 )
@@ -69,14 +69,17 @@ def create():
             def_consent = getDefaultRes('consent')
             id_consent = uuid.uuid4()
 
-            if all(k in request.json for k in ("name", "description", "owner")):
+            if all(k in request.json for k in ("name", "description", "owner", "email")):
                 new_test = {'_id': uuid.uuid4(),  # test_id correspond to the _id in mongodb
                             'name': request.json["name"],
                             'description': request.json["description"],
                             'owner': request.json["owner"],
-                            'number_of_steps': 0,
+                            'organization': request.json["organization"] if keyExist("organization",
+                                                                                     request.json) else None,
+                            "email": request.json["email"] if keyExist("email", request.json) else None,
+                            'number_of_steps': 1,  # this is 1 because the informed consent is added by default
                             'steps': [id_consent],
-                            'test_link':None,
+                            'test_link': None,
                             'published': False,
                             'closed': False,
                             'creation_date': datetime.datetime.now()}
@@ -101,7 +104,6 @@ def create():
                                      details=e.details), 500)
 
 
-# TODO: Pending the published flag validation
 @endpoint.route('/test/<test_id>', methods=['GET', 'DELETE', 'PUT'])
 def test_operations(test_id):
     try:
@@ -133,7 +135,8 @@ def test_operations(test_id):
         if request.method == 'PUT':
             updated_test = {}
             # parameters allowed
-            __parameters = ['name', 'description', 'owner', 'published', 'closed', 'test_link']
+            __parameters = ['name', 'description', 'owner', 'organization', 'email',
+                            'published', 'closed', 'test_link']
             # build the data to send to db
             for param in __parameters:
                 if keyExist(param, request.json):
@@ -180,7 +183,7 @@ def get_all_steps(test_id):
                         'name': request.json["name"],
                         'type': request.json["type"],
                         'stressor': request.json["stressor"] if keyExist("stressor", request.json) else None,
-                        'duration': request.json["duration"] if keyExist("duration", request.json) else 60,
+                        'duration': request.json["duration"] if keyExist("duration", request.json) else 0,
                         'content': request.json["content"] if keyExist("content", request.json) else {}
                         }
             # create step in current test
@@ -277,7 +280,8 @@ def create_session(test_id):
         if request.method == 'POST':
             new_session = {'_id': request.json["session_id"],
                            'test_id': test_uuid,  # test_id correspond to the _id in mongodb
-                           'consent': False,
+                           'consent': None,
+                           'current_step': None,
                            'creation_date': datetime.datetime.now(),
                            'close_date': None,
                            'responses': []}
@@ -294,8 +298,8 @@ def create_session(test_id):
                                      details=e.details), 500)
 
 
-@endpoint.route('/send_step/<test_id>/session/<session_id>', methods=['POST'])
-def session_send_step(test_id, session_id):
+@endpoint.route('/test/<test_id>/session/<session_id>', methods=['POST', 'PUT'])
+def session_step(test_id, session_id):
     try:
         if test_id is None or session_id is None:
             abort(400)
@@ -308,11 +312,12 @@ def session_send_step(test_id, session_id):
 
         # session_id is not converted to uuid
         if request.method == 'POST':
-            if all(k in request.json for k in ("step_id", "content", "start_time", "end_time")):
+            if all(k in request.json for k in ("step_id", "content", "start_time", "end_time", "type")):
                 new_answer = {'step_id': uuid.UUID(request.json["step_id"]),  # test_id correspond to the _id in mongodb
                               'content': request.json["content"],
                               'start_time': request.json["start_time"],
-                              'end_time': request.json["end_time"]}
+                              'end_time': request.json["end_time"],
+                              'type': request.json["type"]}
                 result = Result.update_one(
                     {'_id': session_id, 'test_id': test_uuid}, {'$push': {'responses': new_answer}})
                 if result.matched_count == 0:
@@ -325,6 +330,52 @@ def session_send_step(test_id, session_id):
                                 session_id=session_id), 200)
             else:
                 abort(400)
+
+        if request.method == 'PUT':
+            updated_session = {}
+            # parameters allowed
+            __parameters = ['consent', 'current_step']
+            # build the data to send to db
+            for param in __parameters:
+                if keyExist(param, request.json):
+                    updated_session[param] = request.json[param]
+            # update session in db
+            step = Result.update_one({'_id': session_id, 'test_id': test_uuid},
+                                     {'$set': updated_session})
+            if step.matched_count == 0:
+                return make_response(jsonify(message="Session not found"), 404)
+            elif step.modified_count == 0:
+                return make_response(jsonify(message="Session not updated. Similar to current value"), 304)
+            else:
+                return make_response(
+                    jsonify(message=f"Session updated successfully", test_id=test_uuid, session_id=session_id), 200)
+
+    except BulkWriteError as e:
+        return make_response(jsonify(message="Error sending answer",
+                                     details=e.details), 500)
+
+
+@endpoint.route('/close_session/<test_id>/session/<session_id>', methods=['GET'])
+def close_session(test_id, session_id):
+    try:
+        if test_id is None or session_id is None:
+            abort(400)
+            return
+
+        test_uuid = test_id
+        if isUUID(test_id):
+            # convert test_id to test_uuid
+            test_uuid = uuid.UUID(test_id)
+
+        if request.method == 'GET':
+            step = Result.update_one({'_id': session_id, 'test_id': test_uuid},
+                                     {'$set': {'close_date': datetime.datetime.now()}})
+            if step.matched_count == 0:
+                return make_response(jsonify(message="Session not found"), 404)
+            else:
+                return make_response(
+                    jsonify(message=f"Session closed successfully", test_id=test_uuid, session_id=session_id), 200)
+
     except BulkWriteError as e:
         return make_response(jsonify(message="Error sending answer",
                                      details=e.details), 500)
@@ -355,4 +406,16 @@ def test_results(test_id):
                 return make_response(jsonify([item for item in results]), 200)
     except BulkWriteError as e:
         return make_response(jsonify(message="Error sending answer",
+                                     details=e.details), 500)
+
+
+# Just for development DELETE for production
+@endpoint.route("/del_all", methods=['GET'])
+def __delete_session():
+    try:
+        if request.method == 'GET':
+            Result.remove({})
+        return make_response(jsonify(message="Deleted"), 200)
+    except BulkWriteError as e:
+        return make_response(jsonify(message="Error deleting",
                                      details=e.details), 500)
