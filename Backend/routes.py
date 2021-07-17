@@ -104,7 +104,6 @@ def create():
                                      details=e.details), 500)
 
 
-# TODO: Pending the published flag validation
 @endpoint.route('/test/<test_id>', methods=['GET', 'DELETE', 'PUT'])
 def test_operations(test_id):
     try:
@@ -184,7 +183,7 @@ def get_all_steps(test_id):
                         'name': request.json["name"],
                         'type': request.json["type"],
                         'stressor': request.json["stressor"] if keyExist("stressor", request.json) else None,
-                        'duration': request.json["duration"] if keyExist("duration", request.json) else 60,
+                        'duration': request.json["duration"] if keyExist("duration", request.json) else 0,
                         'content': request.json["content"] if keyExist("content", request.json) else {}
                         }
             # create step in current test

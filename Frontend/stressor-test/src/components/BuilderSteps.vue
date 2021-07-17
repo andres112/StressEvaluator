@@ -201,8 +201,12 @@ export default {
       } else {
         payload["name"] = this.current_step.name;
         payload["type"] = this.current_step.type;
-        payload["duration"] = this.current_step.duration;
-        payload["stressor"] = this.current_step.stressor;
+        payload["duration"] =
+          this.current_step.type == "stress" ? this.current_step.duration : 0;
+        payload["stressor"] =
+          this.current_step.type == "stress"
+            ? this.current_step.stressor
+            : null;
         res = await this.updateStep(payload);
       }
       this.saving = await false;

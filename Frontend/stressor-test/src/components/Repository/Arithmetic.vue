@@ -14,72 +14,74 @@
           <p class="mb-6 text-subtitle-2 text-sm-subtitle-1 font-weight-bold">
             Properties
           </p>
-          <!-- Interval duration: The time interval used to solve the task -->
-          <v-text-field
-            v-model.number="properties.int_duration"
-            :rules="[rules.required, rules.maxInterval, rules.globalRelation]"
-            dense
-            type="number"
-            label="Interval Duration"
-            outlined
-            color="light-green"
-            class="mr-2 mr-md-6 mb-2"
-            suffix="sec"
-            background-color="white"
-          ></v-text-field>
-          <!-- Operation: Simple arithmetic operation -->
-          <v-select
-            v-model="properties.operation"
-            :items="operation_list"
-            item-text="text"
-            item-value="value"
-            dense
-            label="Opeartion"
-            outlined
-            color="light-green"
-            class="mr-2 mr-md-6 mb-2"
-            background-color="white"
-          ></v-select>
-          <!-- Seeds: those 3 optional numbers for operating the firts number in arithmetic operation -->
-          <v-row class="mb-2">
-            <v-col cols="4" class="pr-0">
-              <v-text-field
-                v-model.number="seeds[0]"
-                :rules="[rules.required]"
-                dense
-                type="number"
-                label="Seed 1"
-                outlined
-                color="light-green"
-                class="mr-2"
-                background-color="white"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="4" class="px-0">
-              <v-text-field
-                v-model.number="seeds[1]"
-                dense
-                type="number"
-                label="Seed 2"
-                outlined
-                color="light-green"
-                class="mr-2"
-                background-color="white"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="4" class="pl-0">
-              <v-text-field
-                v-model.number="seeds[2]"
-                dense
-                type="number"
-                label="Seed 3"
-                outlined
-                color="light-green"
-                class="mr-2"
-                background-color="white"
-              ></v-text-field>
-            </v-col>
-          </v-row>
+          <v-form v-model="valid" ref="properties_settings">
+            <!-- Interval duration: The time interval used to solve the task -->
+            <v-text-field
+              v-model.number="properties.int_duration"
+              :rules="[rules.required, rules.maxInterval, rules.globalRelation]"
+              dense
+              type="number"
+              label="Interval Duration"
+              outlined
+              color="light-green"
+              class="mr-2 mr-md-6 mb-2"
+              suffix="sec"
+              background-color="white"
+            ></v-text-field>
+            <!-- Operation: Simple arithmetic operation -->
+            <v-select
+              v-model="properties.operation"
+              :items="operation_list"
+              item-text="text"
+              item-value="value"
+              dense
+              label="Opeartion"
+              outlined
+              color="light-green"
+              class="mr-2 mr-md-6 mb-2"
+              background-color="white"
+            ></v-select>
+            <!-- Seeds: those 3 optional numbers for operating the firts number in arithmetic operation -->
+            <v-row class="mb-2">
+              <v-col cols="4" class="pr-0">
+                <v-text-field
+                  v-model.number="seeds[0]"
+                  :rules="[rules.required]"
+                  dense
+                  type="number"
+                  label="Seed 1"
+                  outlined
+                  color="light-green"
+                  class="mr-2"
+                  background-color="white"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4" class="px-0">
+                <v-text-field
+                  v-model.number="seeds[1]"
+                  dense
+                  type="number"
+                  label="Seed 2"
+                  outlined
+                  color="light-green"
+                  class="mr-2"
+                  background-color="white"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4" class="pl-0">
+                <v-text-field
+                  v-model.number="seeds[2]"
+                  dense
+                  type="number"
+                  label="Seed 3"
+                  outlined
+                  color="light-green"
+                  class="mr-2"
+                  background-color="white"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-form>
         </v-col>
         <v-divider vertical class="my-2" v-if="edition_mode"></v-divider>
         <!-- Interactive component section -->
@@ -162,7 +164,7 @@ export default {
       rules: {
         required: (value) => !!value || "Required.",
         maxInterval: (value) => value <= 300 || "Max. time 300s",
-        globalRelation: (value) => this.globalTime % value == 0 || "This must be multiple and less than step duration",
+        globalRelation: this.timeValidation,
       },
       operation_list: [
         { value: "add", text: "Add" },
@@ -305,6 +307,13 @@ export default {
       };
       this.setNotifications(notification);
     },
+
+    timeValidation(value) {
+      return (
+        this.globalTime % value == 0 ||
+        "This must be multiple and smaller than step duration"
+      );
+    },
   },
   watch: {
     seeds: {
@@ -312,6 +321,10 @@ export default {
         this.properties.seed = this.seeds.filter((x) => x != null && x != "");
       },
       deep: true,
+    },
+    async globalTime() {
+      await this.$nextTick();
+      this.$refs.properties_settings.validate();
     },
     isReady() {
       if (this.isReady) this.playTimer();
