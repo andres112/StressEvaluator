@@ -17,6 +17,7 @@
             :is="getComponent"
             :content="properties"
             :isReady="!waiting"
+            :globalTime="current_step.duration"
             ref="stressor"
           ></component>
         </v-col>
@@ -35,7 +36,7 @@ export default {
     NoComponent,
   },
   props: {
-    step_content: Object,
+    step_data: Object,
   },
   data() {
     return {
@@ -47,9 +48,8 @@ export default {
   },
   created() {
     this.properties =
-      typeof this.step_content.content === "object" &&
-      !!this.step_content.content
-        ? this.step_content.content
+      typeof this.step_data.content === "object" && !!this.step_data.content
+        ? this.step_data.content
         : {};
     if (!this.edition_mode) {
       this.countDown();
@@ -58,6 +58,7 @@ export default {
   computed: {
     ...mapState({
       edition_mode: (state) => state.settings.edition_mode,
+      current_step: (state) => state.builder.current_step,
     }),
     // Import components automatically from @/components/Repository path
     dynamicComp() {
@@ -79,20 +80,22 @@ export default {
       const selected_comp = this.dynamicComp;
       return (
         Object.values(selected_comp).find(
-          (x) => x.meta?.value === this.step_content.stressor
+          (x) => x.meta?.value === this.step_data.stressor
         ) ?? NoComponent
       );
     },
     getStressorName() {
       return this.getComponent?.meta?.text ?? "Please select a Stressor.";
     },
+    comp_properties() {
+      return this.$refs.stressor.properties;
+    },
   },
   methods: {
     ...mapMutations({ setNotifications: "settings/setNotifications" }),
     // Get step configuration content in edition mode
     getContent() {
-      const properties = this.$refs.stressor.properties;
-      return { content: properties };
+      return { content: this.comp_properties };
     },
     // Get step answers in user implementation mode
     getAnswer() {
@@ -114,8 +117,8 @@ export default {
           // Initialize answers variable for user response
           this.answers = {
             start_time: new Date(),
-            step_id: this.step_content._id,
-            type: this.step_content.type,
+            step_id: this.step_data._id,
+            type: this.step_data.type,
             end_time: null,
             content: {},
           };

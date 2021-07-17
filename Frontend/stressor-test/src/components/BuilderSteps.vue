@@ -19,11 +19,7 @@
       </div>
 
       <!-- Editor button for test information edition - top-left side-->
-      <v-dialog
-        v-model="edit_dialog"
-        persistent
-        v-if="!published_mode"
-      >
+      <v-dialog v-model="edit_dialog" persistent v-if="!published_mode">
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on">
             <v-icon>mdi-lead-pencil</v-icon>
@@ -86,7 +82,7 @@
             <!-- load dinamically the component according item.type -->
             <component
               :is="currentComponent(item)"
-              :step_content="item"
+              :step_data="item"
               :ref="item._id"
             ></component>
           </v-card-text>

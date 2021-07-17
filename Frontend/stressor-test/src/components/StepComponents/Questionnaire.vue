@@ -102,7 +102,7 @@ export default {
     Grid,
   },
   props: {
-    step_content: Object,
+    step_data: Object,
   },
   data: () => ({
     survey: [],
@@ -125,8 +125,8 @@ export default {
     ],
   }),
   mounted() {
-    this.survey = Array.isArray(this.step_content?.content)
-      ? this.step_content.content
+    this.survey = Array.isArray(this.step_data?.content?.questions)
+      ? this.step_data.content.questions
       : [];
   },
   created() {
@@ -134,8 +134,8 @@ export default {
       // Initialize answers variable for user response
       this.answers = {
         start_time: new Date(),
-        step_id: this.step_content._id,
-        type: this.step_content.type,
+        step_id: this.step_data._id,
+        type: this.step_data.type,
         end_time: null,
         content: [],
       };
@@ -205,7 +205,7 @@ export default {
     },
     // Get step configuration content in edition mode
     getContent() {
-      return { content: this.survey };
+      return { content: { questions: this.survey } };
     },
     // Get step answers in user implementation mode
     getAnswer() {

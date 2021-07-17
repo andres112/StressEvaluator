@@ -38,7 +38,7 @@
               The evaluation is closed and no further responses will be
               accepted.
             </p>
-            <p class="description text-md-justify pr-4">
+            <p class="description pr-4">
               {{ evaluation.description }}
             </p>
           </v-col>
@@ -118,5 +118,6 @@ export default {
 <style lang="scss">
 .description {
   white-space: pre-wrap;
+  text-align: justify;
 }
 </style>

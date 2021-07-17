@@ -22,7 +22,7 @@ const toolbarOptions = [
   [{ script: "sub" }, { script: "super" }], // superscript/subscript
   [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
   ["link", "blockquote", "code-block"],
-  ['clean'] //clean the format
+  ["clean"], //clean the format
 ];
 
 export default {
@@ -42,7 +42,7 @@ export default {
     };
   },
   props: {
-    step_content: Object,
+    step_data: Object,
   },
   mounted() {
     this.initializeEditor();
@@ -64,9 +64,9 @@ export default {
       // Create the Quill instance
       this.editorInstance = new Quill(this.$refs.editorNode, this.editorOpts);
 
-      if (this.step_content.content) {
+      if (this.step_data.content) {
         // Set initial content that's going to be picked up by Quill
-        this.editorInstance.setContents(this.step_content.content);
+        this.editorInstance.setContents(this.step_data.content);
       }
 
       // Setup handler for whenever things change inside Quill

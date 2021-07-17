@@ -17,12 +17,13 @@
           <!-- Interval duration: The time interval used to solve the task -->
           <v-text-field
             v-model.number="properties.int_duration"
+            :rules="[rules.required, rules.maxInterval, rules.globalRelation]"
             dense
             type="number"
             label="Interval Duration"
             outlined
             color="light-green"
-            class="mr-2 mr-md-6"
+            class="mr-2 mr-md-6 mb-2"
             suffix="sec"
             background-color="white"
           ></v-text-field>
@@ -36,14 +37,15 @@
             label="Opeartion"
             outlined
             color="light-green"
-            class="mr-2 mr-md-6"
+            class="mr-2 mr-md-6 mb-2"
             background-color="white"
           ></v-select>
           <!-- Seeds: those 3 optional numbers for operating the firts number in arithmetic operation -->
-          <v-row>
+          <v-row class="mb-2">
             <v-col cols="4" class="pr-0">
               <v-text-field
                 v-model.number="seeds[0]"
+                :rules="[rules.required]"
                 dense
                 type="number"
                 label="Seed 1"
@@ -138,14 +140,13 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 
+// Build the stressor's properties only with parameter
 const buildProperty = function(obj) {
+  const { int_duration = 30, operation = "add", seed = [] } = obj;
   return {
-    ...{
-      int_duration: 30,
-      operation: "add",
-      seed: [],
-    },
-    ...obj,
+    int_duration: int_duration,
+    operation: operation,
+    seed: seed,
   };
 };
 
@@ -154,9 +155,15 @@ export default {
   props: {
     content: Object,
     isReady: Boolean,
+    globalTime: Number,
   },
   data() {
     return {
+      rules: {
+        required: (value) => !!value || "Required.",
+        maxInterval: (value) => value <= 300 || "Max. time 300s",
+        globalRelation: (value) => this.globalTime % value == 0 || "This must be multiple and less than step duration",
+      },
       operation_list: [
         { value: "add", text: "Add" },
         { value: "sub", text: "Subtract" },
@@ -190,7 +197,7 @@ export default {
   // This meta parameter allows identify this component globally
   // Must be similar than stressorList.json
   meta: { text: "Mental Arithmetic", value: "arithmetic" },
-  mounted() {
+  created() {
     this.properties = buildProperty(this.content);
     this.properties.seed.forEach((x, i) => (this.seeds[i] = x));
     this.createFirstNumber();
@@ -227,18 +234,21 @@ export default {
   },
   methods: {
     ...mapMutations({ setNotifications: "settings/setNotifications" }),
+    // Create the first number of the operation according operation choosen
     createFirstNumber() {
       if (["sub", "div"].includes(this.properties.operation))
         this.first_number = Math.floor(1000 + Math.random() * 9000);
       if (["add", "mul"].includes(this.properties.operation))
         this.first_number = Math.floor(1 + Math.random() * 999);
     },
+    // Get the second number randomly from seeds
     getSecondNumber() {
       const len = this.properties.seed.length;
       if (len <= 0) return (this.second_number = 0);
       const item = Math.floor(Math.random() * len);
       this.second_number = this.properties.seed[item];
     },
+    // Validate result ingressed by user
     validateResult() {
       if (this.result > this.getResult) {
         this.metrics.errors++;
@@ -255,6 +265,7 @@ export default {
         return;
       }
     },
+    // Time representation in circular progress.
     playTimer() {
       this.step_time = 0;
       const rel_time = 100 / this.properties.int_duration;
@@ -271,11 +282,13 @@ export default {
           this.elapsed_time++;
       }, 1000);
     },
+    // Stop current interval
     stopTimer() {
       this.clearData();
       this.metrics.total++;
       clearInterval(this.interval);
     },
+    // Clear values, usually after stop interval
     clearData() {
       this.step_time = 0;
       this.elapsed_time = 0;

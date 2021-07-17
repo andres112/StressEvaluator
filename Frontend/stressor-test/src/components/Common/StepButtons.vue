@@ -33,7 +33,7 @@ export default {
         test_id: this.current_step.test_id,
         name: "New step",
         type: "question",
-        content: [],
+        content: { questions: [] },
       };
       this.createStep(new_step);
       this.$emit("addStepTab");

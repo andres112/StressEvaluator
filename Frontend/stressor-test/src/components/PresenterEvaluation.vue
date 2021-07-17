@@ -34,7 +34,7 @@
     <v-card-text
       ><component
         :is="currentComponent(current_step)"
-        :step_content="current_step"
+        :step_data="current_step"
         :ref="current_step._id"
       ></component
     ></v-card-text>
