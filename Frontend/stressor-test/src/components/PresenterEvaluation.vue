@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
 import { textLength } from "@/assets/helpers";
 
 // Step components
@@ -139,6 +139,7 @@ export default {
       closeSession: "presenter/closeSession",
       updateResponses: "presenter/updateResponses",
     }),
+    ...mapMutations({ setNotifications: "settings/setNotifications" }),
     //Adapt the text length according screen size
     getNewLengthText(text) {
       const new_text = textLength(text, this);
@@ -179,14 +180,16 @@ export default {
         consent: res,
       };
       // If consent is true get the next step, otherwise close the evaluation
+      this.sending = true;
+      const update_res = await this.updateSession(session_update);
       if (res) {
-        this.sending = true;
-        const res = await this.updateSession(session_update);
-        if (res?.status == 200) await this.nextStep();
-        this.sending = false;
+        update_res?.status == 200
+          ? await this.nextStep()
+          : this.sendNotification();
       } else {
         this.closeEvaluation();
       }
+      this.sending = false;
     },
 
     // Send Questionnaire and Stressor user responses
@@ -205,6 +208,7 @@ export default {
       // send the content to the server and wait for response
       const res = await this.updateResponses(payload);
       if (res?.status == 200) await this.nextStep();
+      else this.sendNotification();
       this.sending = false;
     },
 
@@ -218,6 +222,19 @@ export default {
       if (server_res?.status == 200) {
         this.$router.push("/acknowledge");
       }
+    },
+
+    sendNotification(text, time = 5000, type = "error") {
+      text =
+        text ??
+        "Something went wrong! please try again.If the problem persists, please contact the evaluator.";
+      const msg = {
+        isOn: true,
+        text: text,
+        timeout: time,
+        status: type,
+      };
+      this.setNotifications(msg);
     },
   },
 };
