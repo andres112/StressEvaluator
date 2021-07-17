@@ -2,8 +2,8 @@ import uuid
 from db_config import DefaultRes
 
 
-def keyExist(parameter, object):
-    return parameter in object
+def keyExist(parameter, element):
+    return parameter in element
 
 
 def isUUID(text):

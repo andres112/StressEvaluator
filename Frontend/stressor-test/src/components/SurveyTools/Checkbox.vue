@@ -6,7 +6,7 @@
     <v-row align="center" v-for="opt in content.options" :key="opt.value">
       <v-col cols="10" class="d-flex" :class="{ 'pb-0': !edition_mode }">
         <v-checkbox
-          dense
+          :dense="edition_mode"
           v-model="answer_selected"
           hide-details
           class="ml-2 mt-0"

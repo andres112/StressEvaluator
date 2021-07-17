@@ -1,5 +1,8 @@
-import HomePresenter from "@/views/Presenter/Home.vue";
+import store from "@/store/index.js";
+import Home from "@/views/Presenter/Home.vue";
 import Evaluation from "@/views/Presenter/Evaluation.vue";
+import Introduction from "@/views/Presenter/Introduction.vue";
+import Acknowledge from "@/views/Presenter/Acknowledge.vue";
 
 export const p_routes = [
   {
@@ -13,22 +16,42 @@ export const p_routes = [
       {
         path: "/",
         name: "HomePresenter",
-        component: HomePresenter,
+        component: Home,
       },
       {
         path: "/presenter/:test_id",
+        name: "Introduction",
+        component: Introduction,
+        beforeEnter: (to, from, next) => {
+          store
+            .dispatch("presenter/getEvaluation", to.params.test_id)
+            .then((res) => {
+              if (res.status === 200) next();
+              else next("/");
+            })
+            .catch((err) => {
+              console.error(err);
+              next("/");
+            });
+        },
+      },
+      {
+        path: "/presenter/:test_id/session/:session_id",
         name: "Evaluation",
         component: Evaluation,
-        beforeEnter: (to, from, next) => {
-          // TODO: Create user session
-          console.log(to);
-          next();
-        },
+      },
+      {
+        path: "/acknowledge",
+        name: "Acknowledge",
+        component: Acknowledge,
       },
       // Not found page
       {
         path: "*",
-        component: HomePresenter,
+        component: Home,
+        beforeEnter: (to, from, next) => {
+          next("/");
+        },
       },
     ],
   },

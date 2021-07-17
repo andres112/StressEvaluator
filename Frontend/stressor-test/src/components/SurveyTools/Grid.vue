@@ -1,6 +1,9 @@
 <template>
   <v-container fluid>
-    <p class="text-subtitle-2 green--text" v-if="edition_mode && content.type == 'radiogrid'">
+    <p
+      class="text-subtitle-2 green--text"
+      v-if="edition_mode && content.type == 'radiogrid'"
+    >
       Radiogroup Grid
     </p>
     <p
@@ -42,7 +45,11 @@
         </v-row>
         <br />
         <div v-if="edition_mode">
-          <a class="text-subtitle-2 ml-2" color="light-green" @click="addItem('rows')">
+          <a
+            class="text-subtitle-2 ml-2"
+            color="light-green"
+            @click="addItem('rows')"
+          >
             + Add Row
           </a>
         </div>
@@ -76,7 +83,11 @@
         </v-row>
         <br />
         <div v-if="edition_mode">
-          <a class="text-subtitle-2 ml-2" color="light-green" @click="addItem('columns')">
+          <a
+            class="text-subtitle-2 ml-2"
+            color="light-green"
+            @click="addItem('columns')"
+          >
             + Add Column
           </a>
         </div>
@@ -91,21 +102,32 @@
             <thead>
               <tr>
                 <th class="text-left"></th>
-                <th class="text-left" v-for="column in content.options.columns" :key="column.value">
+                <th
+                  class="text-center text-subtitle-2 text-md-subtitle-1"
+                  v-for="column in content.options.columns"
+                  :key="column.value"
+                >
                   {{ column.text }}
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="row in content.options.rows" :key="row.value">
-                <td>{{ row.text }}</td>
-                <td v-for="column in content.options.columns" :key="column.value">
+                <td class="text-left text-subtitle-2 text-md-subtitle-1">
+                  {{ row.text }}
+                </td>
+                <td
+                  v-for="column in content.options.columns"
+                  :key="column.value"
+                  class="text-center"
+                >
                   <input
                     v-if="content.type == 'radiogrid'"
                     type="radio"
                     :value="column.text"
                     :name="row.value"
                     @change="setAnswer(row, column)"
+                    class="presenter-input"
                   />
                   <input
                     type="checkbox"
@@ -113,6 +135,7 @@
                     v-else-if="content.type == 'checkboxgrid'"
                     @change="setAnswer(row, column)"
                     :value="column.text"
+                    class="presenter-input"
                   />
                 </td>
               </tr>
@@ -122,7 +145,12 @@
       </v-col>
     </v-row>
     <div class="d-inline-flex" v-if="edition_mode">
-      <v-checkbox dense v-model="content.required" class="ml-1" label="Required"></v-checkbox>
+      <v-checkbox
+        dense
+        v-model="content.required"
+        class="ml-1"
+        label="Required"
+      ></v-checkbox>
     </div>
   </v-container>
 </template>
@@ -139,7 +167,8 @@ export default {
   },
   data() {
     return {
-      answer_selected: null,
+      answer_selected: [],
+      answer_map: null,
     };
   },
   created() {
@@ -151,10 +180,12 @@ export default {
         this.addItem("columns");
       }
     } else {
-      this.answer_selected = new Map();
+      this.answers_map = new Map();
       this.content.options.rows.forEach((row) => {
-        if (this.content.type == "checkboxgrid") this.answer_selected.set(row.text, []);
-        if (this.content.type == "radiogrid") this.answer_selected.set(row.text, null);
+        if (this.content.type == "checkboxgrid")
+          this.answers_map.set(row.text, []);
+        if (this.content.type == "radiogrid")
+          this.answers_map.set(row.text, null);
       });
     }
   },
@@ -170,11 +201,13 @@ export default {
       this.content.options[item].push(new_option);
     },
     deleteItem(item, option_id) {
-      this.content.options[item] = this.content.options[item].filter((x) => x.value != option_id);
+      this.content.options[item] = this.content.options[item].filter(
+        (x) => x.value != option_id
+      );
     },
     setAnswer(key, value = null) {
       if (this.content.type == "checkboxgrid") {
-        let current = this.answer_selected.get(key.text);
+        let current = this.answers_map.get(key.text);
         const checked = this.$refs[`${key.value}-${value.value}`][0].checked;
         if (checked && !current.includes(value.text)) {
           current.push(value.text);
@@ -186,7 +219,8 @@ export default {
       if (this.content.type == "radiogrid") {
         value = value.text;
       }
-      this.answer_selected.set(key.text, value);
+      this.answers_map.set(key.text, value);
+      this.answer_selected = Array.from(this.answers_map);
     },
   },
 };

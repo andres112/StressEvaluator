@@ -1,0 +1,16 @@
+{
+  "consent": {
+    "name": true,
+    "type": false,
+    "duration": false,
+    "stressor": false
+  },
+  "question": {
+    "name": true,
+    "type": true,
+    "duration": false,
+    "stressor": false
+  },
+  "stress": { "name": true, "type": true, "duration": true, "stressor": true },
+  "info": { "name": true, "type": true, "duration": false, "stressor": false }
+}

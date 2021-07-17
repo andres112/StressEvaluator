@@ -12,11 +12,20 @@ $sidebar-color: #ccff90;
 }
 .editor-content {
   height: auto;
+  min-height: 70vh;
   max-height: 70vh;
   overflow-y: auto;
 }
 .presenter {
-  height: 80vh;
-  max-height: 80vh;
+  height: auto;
+  min-height: 78vh;
+  max-height: 78vh;
   overflow-y: auto;
+}
+
+input{
+  &.presenter-input{
+    transform:scale(1.75);
+    cursor:pointer;
+  }
 }
