@@ -164,7 +164,9 @@ export default {
       rules: {
         required: (value) => !!value || "Required.",
         maxInterval: (value) => value <= 300 || "Max. time 300s",
-        globalRelation: this.timeValidation,
+        globalRelation: (value) =>
+          this.globalTime % value == 0 ||
+          "This must be multiple and smaller than step duration",
       },
       operation_list: [
         { value: "add", text: "Add" },
@@ -285,7 +287,9 @@ export default {
       }, 1000);
     },
     // Stop current interval
-    stopTimer() {
+    stopTimer(ext = false) {
+      // Validate if stop timer is done for external source (global time)
+      if (ext) this.metrics.not_ans++;
       this.clearData();
       this.metrics.total++;
       clearInterval(this.interval);
@@ -308,12 +312,7 @@ export default {
       this.setNotifications(notification);
     },
 
-    timeValidation(value) {
-      return (
-        this.globalTime % value == 0 ||
-        "This must be multiple and smaller than step duration"
-      );
-    },
+    numberOfAttempts() {},
   },
   watch: {
     seeds: {
@@ -322,9 +321,12 @@ export default {
       },
       deep: true,
     },
+    // For asynchronous validation of global time
     async globalTime() {
-      await this.$nextTick();
-      this.$refs.properties_settings.validate();
+      if (this.edition_mode) {
+        await this.$nextTick();
+        this.$refs.properties_settings.validate();
+      }
     },
     isReady() {
       if (this.isReady) this.playTimer();

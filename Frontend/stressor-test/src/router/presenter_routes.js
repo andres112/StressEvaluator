@@ -26,7 +26,7 @@ export const p_routes = [
           store
             .dispatch("presenter/getEvaluation", to.params.test_id)
             .then((res) => {
-              if (res.status === 200) next();
+              if (res?._id && res.published) next();
               else next("/");
             })
             .catch((err) => {
