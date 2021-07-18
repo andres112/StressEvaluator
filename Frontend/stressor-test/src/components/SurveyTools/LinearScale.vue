@@ -4,7 +4,14 @@
     <question :content="content" @onDeleteQuestion="deleteQuestion"></question>
 
     <v-row align="center" class="mt-8">
-      <v-col cols="12" sm="10" md="6" lg="4" class="pb-0 mr-4" v-if="edition_mode">
+      <v-col
+        cols="12"
+        sm="10"
+        md="6"
+        lg="4"
+        class="pb-0 mr-4"
+        v-if="edition_mode"
+      >
         <v-slider
           v-model="content.options"
           color="light-green"
@@ -17,10 +24,9 @@
         ></v-slider>
       </v-col>
       <v-col cols="12" md="6" class="d-flex align-center">
-        <label class="mr-2 text-subtitle-2  text-sm-h6">1</label>
         <v-rating
           :dense="$vuetify.breakpoint.smAndDown"
-          :x-small="$vuetify.breakpoint.xsOnly"
+          :small="$vuetify.breakpoint.xsOnly"
           :large="$vuetify.breakpoint.mdAndUp"
           :readonly="edition_mode"
           color="light-blue"
@@ -31,14 +37,23 @@
           v-model="answer_selected"
         >
         </v-rating>
-        <label class="ml-2 text-subtitle-2  text-sm-h6">{{ content.options }}</label>
+        <label
+          class="ml-6 text-subtitle-h6  text-sm-h5 font-weight-bold"
+          v-if="!edition_mode"
+          >{{ answer_selected }}</label
+        >
       </v-col>
     </v-row>
 
     <!-- Question settings -->
     <div v-if="edition_mode">
       <div class="d-inline-flex">
-        <v-checkbox dense v-model="content.required" class="ml-1" label="Required"></v-checkbox>
+        <v-checkbox
+          dense
+          v-model="content.required"
+          class="ml-1"
+          label="Required"
+        ></v-checkbox>
       </div>
     </div>
   </v-container>

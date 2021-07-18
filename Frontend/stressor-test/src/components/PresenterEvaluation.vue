@@ -69,20 +69,6 @@
           Submit
         </span>
       </v-btn>
-      <!-- Submit button: Send stressor metrics to the server -->
-      <v-btn
-        color="light-green"
-        class="text-capitalize"
-        x-large
-        dark
-        v-if="current_step.type === 'stress'"
-        @click.prevent="sendResponse()"
-        :disabled="!stressed"
-      >
-        <span class="text-h6 font-weight-bold mx-2">
-          Continue
-        </span>
-      </v-btn>
       <!-- Accept and Reject buttons: Boolean event i.e. informed consent step -->
       <v-btn
         color="deep-orange accent-4"
@@ -115,7 +101,7 @@
 
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
-import { textLength, navigationType } from "@/assets/helpers";
+import { textLength } from "@/assets/helpers";
 
 // Step components
 import TextEditor from "./StepComponents/TextEditor.vue";
@@ -128,15 +114,15 @@ export default {
   data() {
     return {
       sending: false,
-      stressed: false,
+      isRunning: false
     };
   },
-  mounted() {
-    // If page is reloaded or rendered after back button close session
-    if (this.isCurrentEval) {      
-      this.$router.push("/");
-      return;
-    }
+   beforeMount() {
+    window.addEventListener("beforeunload", this.preventNav)
+  },
+
+  beforeDestroy() {
+    window.removeEventListener("beforeunload", this.preventNav);
   },
   computed: {
     ...mapState({
@@ -154,9 +140,6 @@ export default {
     currentStep() {
       return this.evaluation.steps.indexOf(this.current_step._id) + 1;
     },
-    isCurrentEval() {
-      return navigationType() == 1 || navigationType() == 2;
-    },
   },
   methods: {
     ...mapActions({
@@ -166,8 +149,17 @@ export default {
       updateResponses: "presenter/updateResponses",
     }),
     ...mapMutations({
-      setNotifications: "settings/setNotifications",      
+      setNotifications: "settings/setNotifications",
+      clearStates: "presenter/clearStates",
     }),
+
+    //Prevent reload and navigation at evaluation time
+    preventNav(event) {
+      if (this.isRunning) return
+      event.preventDefault()
+      event.returnValue = ""
+    },
+
     //Adapt the text length according screen size
     getNewLengthText(text) {
       const new_text = textLength(text, this);
@@ -188,7 +180,6 @@ export default {
 
     // Go the next step
     async nextStep() {
-      this.stressed = false;
       const nextStep = this.getNextStep;
       if (nextStep) {
         const step_update = {
@@ -249,13 +240,14 @@ export default {
       };
       const server_res = await this.closeSession(close_info);
       if (server_res?.status == 200) {
+        this.clearStates();
         this.$router.push("/acknowledge");
       }
     },
 
-    // Function triggered when stressor is finished
+    // Function triggered when stressor is finished automatically
     finalizeStep() {
-      this.stressed = true;
+      this.sendResponse();
     },
 
     sendNotification(text, time = 5000, type = "error") {

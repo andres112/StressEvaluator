@@ -106,8 +106,9 @@ export default {
     // Initinial step contdown
     countDown() {
       this.waiting = true;
-      const msg = ["Go!", "Set", "Ready"];
+      const msg = ["Go!", "Set"];
       let contDown = msg.length;
+      this.waiting_msg = "Ready"
       const interval = setInterval(() => {
         this.waiting_msg = msg[contDown - 1];
         if (contDown <= 0) {

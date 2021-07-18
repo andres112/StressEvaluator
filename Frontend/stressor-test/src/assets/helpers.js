@@ -33,16 +33,3 @@ export const copyToClipboard = function(msg) {
   document.execCommand("copy");
   document.body.removeChild(tempInput);
 };
-
-export const navigationType = function() {
-  // Detect the type of navigation to implement actions
-  let res = 0;
-  if (window.performance.getEntriesByType("navigation")) {
-    const p = window.performance.getEntriesByType("navigation")[0].type;
-    if (p == "navigate") res = 0;
-    if (p == "reload") res = 1;
-    if (p == "back_forward") res = 2;
-    if (p == "prerender") res = 3;
-  }
-  return res;
-};

@@ -274,16 +274,15 @@ export default {
       this.step_time = 0;
       const rel_time = 100 / this.properties.int_duration;
       this.interval = setInterval(() => {
+        this.elapsed_time++;
         if (this.step_time >= 100) {
-          this.clearData();
+          this.clearData(rel_time, 1);
           this.metrics.total++;
           this.metrics.not_ans++;
           this.sendNotification("Not Answered", "error");
           return;
         }
         this.step_time += rel_time;
-        if (this.properties.int_duration - this.elapsed_time > 0)
-          this.elapsed_time++;
       }, 1000);
     },
     // Stop current interval
@@ -295,9 +294,9 @@ export default {
       clearInterval(this.interval);
     },
     // Clear values, usually after stop interval
-    clearData() {
-      this.step_time = 0;
-      this.elapsed_time = 0;
+    clearData(st = 0, et = 0) {
+      this.step_time = st;
+      this.elapsed_time = et;
       this.result = null;
       this.createFirstNumber();
       this.getSecondNumber();
@@ -311,8 +310,6 @@ export default {
       };
       this.setNotifications(notification);
     },
-
-    numberOfAttempts() {},
   },
   watch: {
     seeds: {
