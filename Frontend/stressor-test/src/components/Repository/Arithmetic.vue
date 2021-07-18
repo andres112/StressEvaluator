@@ -164,7 +164,9 @@ export default {
       rules: {
         required: (value) => !!value || "Required.",
         maxInterval: (value) => value <= 300 || "Max. time 300s",
-        globalRelation: this.timeValidation,
+        globalRelation: (value) =>
+          this.globalTime % value == 0 ||
+          "This must be multiple and smaller than step duration",
       },
       operation_list: [
         { value: "add", text: "Add" },
@@ -272,28 +274,29 @@ export default {
       this.step_time = 0;
       const rel_time = 100 / this.properties.int_duration;
       this.interval = setInterval(() => {
+        this.elapsed_time++;
         if (this.step_time >= 100) {
-          this.clearData();
+          this.clearData(rel_time, 1);
           this.metrics.total++;
           this.metrics.not_ans++;
           this.sendNotification("Not Answered", "error");
           return;
         }
         this.step_time += rel_time;
-        if (this.properties.int_duration - this.elapsed_time > 0)
-          this.elapsed_time++;
       }, 1000);
     },
     // Stop current interval
-    stopTimer() {
+    stopTimer(ext = false) {
+      // Validate if stop timer is done for external source (global time)
+      if (ext) this.metrics.not_ans++;
       this.clearData();
       this.metrics.total++;
       clearInterval(this.interval);
     },
     // Clear values, usually after stop interval
-    clearData() {
-      this.step_time = 0;
-      this.elapsed_time = 0;
+    clearData(st = 0, et = 0) {
+      this.step_time = st;
+      this.elapsed_time = et;
       this.result = null;
       this.createFirstNumber();
       this.getSecondNumber();
@@ -307,13 +310,6 @@ export default {
       };
       this.setNotifications(notification);
     },
-
-    timeValidation(value) {
-      return (
-        this.globalTime % value == 0 ||
-        "This must be multiple and smaller than step duration"
-      );
-    },
   },
   watch: {
     seeds: {
@@ -322,9 +318,12 @@ export default {
       },
       deep: true,
     },
+    // For asynchronous validation of global time
     async globalTime() {
-      await this.$nextTick();
-      this.$refs.properties_settings.validate();
+      if (this.edition_mode) {
+        await this.$nextTick();
+        this.$refs.properties_settings.validate();
+      }
     },
     isReady() {
       if (this.isReady) this.playTimer();

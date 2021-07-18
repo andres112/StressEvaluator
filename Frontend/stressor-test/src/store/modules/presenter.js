@@ -140,7 +140,7 @@ const actions = {
         commit("setEvaluation", res);
       }
       // return response of get evaluation
-      return req;
+      return res;
     } catch (error) {
       console.log(error);
     }

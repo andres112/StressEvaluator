@@ -36,6 +36,7 @@
         :is="currentComponent(current_step)"
         :step_data="current_step"
         :ref="current_step._id"
+        @onEnd="finalizeStep"
       ></component
     ></v-card-text>
 
@@ -54,14 +55,14 @@
           Continue
         </span>
       </v-btn>
-      <!-- Submit button: Send data to the server -->
+      <!-- Submit button: Send questionnaire answers to the server -->
       <v-btn
         color="light-green"
         class="text-capitalize"
         x-large
         dark
         :loading="sending"
-        v-if="['question', 'stress'].includes(current_step.type)"
+        v-if="current_step.type == 'question'"
         @click.prevent="sendResponse()"
       >
         <span class="text-h6 font-weight-bold mx-2">
@@ -113,7 +114,15 @@ export default {
   data() {
     return {
       sending: false,
+      isRunning: false
     };
+  },
+   beforeMount() {
+    window.addEventListener("beforeunload", this.preventNav)
+  },
+
+  beforeDestroy() {
+    window.removeEventListener("beforeunload", this.preventNav);
   },
   computed: {
     ...mapState({
@@ -139,7 +148,18 @@ export default {
       closeSession: "presenter/closeSession",
       updateResponses: "presenter/updateResponses",
     }),
-    ...mapMutations({ setNotifications: "settings/setNotifications" }),
+    ...mapMutations({
+      setNotifications: "settings/setNotifications",
+      clearStates: "presenter/clearStates",
+    }),
+
+    //Prevent reload and navigation at evaluation time
+    preventNav(event) {
+      if (this.isRunning) return
+      event.preventDefault()
+      event.returnValue = ""
+    },
+
     //Adapt the text length according screen size
     getNewLengthText(text) {
       const new_text = textLength(text, this);
@@ -185,7 +205,7 @@ export default {
       if (res) {
         update_res?.status == 200
           ? await this.nextStep()
-          : this.sendNotification();
+          : this.sendNotification(); // send notification with parameters by default
       } else {
         this.closeEvaluation();
       }
@@ -208,7 +228,7 @@ export default {
       // send the content to the server and wait for response
       const res = await this.updateResponses(payload);
       if (res?.status == 200) await this.nextStep();
-      else this.sendNotification();
+      else this.sendNotification(); // send notification with parameters by default
       this.sending = false;
     },
 
@@ -220,8 +240,14 @@ export default {
       };
       const server_res = await this.closeSession(close_info);
       if (server_res?.status == 200) {
+        this.clearStates();
         this.$router.push("/acknowledge");
       }
+    },
+
+    // Function triggered when stressor is finished automatically
+    finalizeStep() {
+      this.sendResponse();
     },
 
     sendNotification(text, time = 5000, type = "error") {

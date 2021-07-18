@@ -17,7 +17,7 @@
             :is="getComponent"
             :content="properties"
             :isReady="!waiting"
-            :globalTime="current_step.duration"
+            :globalTime="step_data.duration"
             ref="stressor"
           ></component>
         </v-col>
@@ -58,7 +58,6 @@ export default {
   computed: {
     ...mapState({
       edition_mode: (state) => state.settings.edition_mode,
-      current_step: (state) => state.builder.current_step,
     }),
     // Import components automatically from @/components/Repository path
     dynamicComp() {
@@ -107,24 +106,38 @@ export default {
     // Initinial step contdown
     countDown() {
       this.waiting = true;
-      const msg = ["Go!", "Set", "Ready"];
+      const msg = ["Go!", "Set"];
       let contDown = msg.length;
+      this.waiting_msg = "Ready"
       const interval = setInterval(() => {
         this.waiting_msg = msg[contDown - 1];
         if (contDown <= 0) {
           clearInterval(interval);
           this.waiting = false;
-          // Initialize answers variable for user response
-          this.answers = {
-            start_time: new Date(),
-            step_id: this.step_data._id,
-            type: this.step_data.type,
-            end_time: null,
-            content: {},
-          };
+          this.playControl();
         }
         contDown--;
       }, 1000);
+    },
+
+    //Control the times (global and interval) in presenter time
+    playControl() {
+      // Initialize answers variable for user response
+      this.answers = {
+        start_time: new Date(),
+        step_id: this.step_data._id,
+        type: this.step_data.type,
+        end_time: null,
+        content: {},
+      };
+      // Initialize interval for step global time duration
+      const stressor_time = setInterval(() => {
+        // When time ends, stop internal stressor interval time
+        clearInterval(stressor_time);
+        // Execute stopTimer in stressor child (stopTimer and startTimer are madatory on children)
+        this.$refs.stressor.stopTimer(true);
+        this.$emit("onEnd");
+      }, this.step_data.duration * 1000);
     },
   },
 };

@@ -85,6 +85,7 @@ const actions = {
       } else {
         commit("setTestList", [res]);
       }
+      return req;
     } catch (error) {
       console.log(error);
     }
