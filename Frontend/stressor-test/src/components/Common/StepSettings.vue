@@ -52,6 +52,7 @@
           ></v-autocomplete>
           <v-text-field
             v-model.number="current_step.duration"
+            :rules="[rules.min]"
             dense
             type="number"
             label="Duration"
@@ -59,7 +60,6 @@
             color="light-green"
             class="mr-2"
             suffix="sec"
-            hint="0 is infinite "
             v-if="checkBR('duration')"
             :disabled="published_mode"
           ></v-text-field>
@@ -75,7 +75,7 @@ import { mapState } from "vuex";
 export default {
   name: "BuilderStepSettings",
   props: {
-    br: Object,
+    br: Object,    
   },
   data() {
     return {
@@ -85,6 +85,7 @@ export default {
         { text: "Information", value: "info" },
       ],
       stressor_list: [],
+      rules: { min: (value) => value > 0 || "Wrong value!" },
     };
   },
   created() {

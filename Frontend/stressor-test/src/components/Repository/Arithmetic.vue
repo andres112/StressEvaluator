@@ -14,7 +14,7 @@
           <p class="mb-6 text-subtitle-2 text-sm-subtitle-1 font-weight-bold">
             Properties
           </p>
-          <v-form v-model="valid" ref="properties_settings">
+          <v-form ref="properties_settings">
             <!-- Interval duration: The time interval used to solve the task -->
             <v-text-field
               v-model.number="properties.int_duration"
