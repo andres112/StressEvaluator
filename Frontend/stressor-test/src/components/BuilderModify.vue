@@ -72,6 +72,7 @@
         :items-per-page="10"
       >
         <template v-slot:[`item.actions`]="{ item }">
+          <!-- Label for closed evaluation indicator -->
           <span
             v-if="item.closed"
             class="mx-auto font-weight-bold text-subtitle-1 deep-orange--text text--accent-4"
@@ -79,7 +80,8 @@
             Closed
           </span>
           <v-layout v-else>
-            <v-dialog v-model="isDeleting" persistent max-width="350px">
+            <!-- Dialog or modal for evaluation deletion confirmation -->
+            <v-dialog v-model="isDeleting" persistent max-width="350px" v-if="!item.published">
               <template v-slot:activator="{ on, attrs }">
                 <span v-bind="attrs" v-on="on">
                   <v-tooltip top>
@@ -119,6 +121,7 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
+
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
                 <v-icon

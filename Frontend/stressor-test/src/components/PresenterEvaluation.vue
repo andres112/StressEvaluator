@@ -114,16 +114,9 @@ export default {
   data() {
     return {
       sending: false,
-      isRunning: false,
     };
   },
-  beforeMount() {
-    window.addEventListener("beforeunload", this.preventNav);
-  },
 
-  beforeDestroy() {
-    window.removeEventListener("beforeunload", this.preventNav);
-  },
   computed: {
     ...mapState({
       evaluation: (state) => state.presenter.evaluation,
@@ -152,13 +145,6 @@ export default {
       setNotifications: "settings/setNotifications",
       clearStates: "presenter/clearStates",
     }),
-
-    //Prevent reload and navigation at evaluation time
-    preventNav(event) {
-      if (this.isRunning) return;
-      event.preventDefault();
-      event.returnValue = "";
-    },
 
     //Adapt the text length according screen size
     getNewLengthText(text) {
@@ -260,17 +246,28 @@ export default {
     validateQuestionnaire(answers) {
       let invalid = true;
       this.current_step.content?.questions.forEach((q) => {
-        // TODO: validation only for null response, is pending yet the checkbox, grids
-        // and when the answer is given and then removed for each type
         if (q.required) {
           const ans = answers?.content.find((x) => x.id === q.id);
-          !!ans.answers ? null : (invalid = false);
+          this.validateAnswer(ans) ? null : (invalid = false);
         }
       });
       return invalid;
     },
+    validateAnswer(ans) {
+      if (ans?.answers && ans?.answers.length > 0) {
+        // Validate special types of radiodrid and checkboxgrid
+        if (ans.type === "radiogrid" || ans.type === "checkboxgrid") {
+          return ans.answers.every((x) => x[1] !== null && x[1].length > 0);
+        }
+        return true;
+      } else if (ans.type === "rating") {
+        return ans.answers > 0;
+      } else {
+        return false;
+      }
+    },
 
-    sendNotification(text, time = 5000, type = "error") {
+    sendNotification(text, time = 3000, type = "error") {
       text =
         text ??
         "Something went wrong! please try again.If the problem persists, please contact the evaluator.";

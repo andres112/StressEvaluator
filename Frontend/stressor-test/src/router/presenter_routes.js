@@ -39,6 +39,11 @@ export const p_routes = [
         path: "/presenter/:test_id/session/:session_id",
         name: "Evaluation",
         component: Evaluation,
+        beforeEnter: (to, from, next) => {
+          if (from.name == "Introduction") next();
+          else if (from.name == "Acknowledge") next(from.path)
+          else next("/");
+        },
       },
       {
         path: "/acknowledge",

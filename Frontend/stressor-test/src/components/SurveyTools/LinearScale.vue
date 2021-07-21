@@ -23,7 +23,12 @@
           label="Max."
         ></v-slider>
       </v-col>
-      <v-col cols="12" md="6" class="d-flex align-center">
+      <v-col cols="12" md="6" class="d-flex align-center justify-content-around">
+        <label
+          class="ml-6 text-subtitle-h6  text-sm-h5 font-weight-bold"
+          v-if="!edition_mode"
+          >{{ answer_selected }}</label
+        >
         <v-rating
           :dense="$vuetify.breakpoint.smAndDown"
           :small="$vuetify.breakpoint.xsOnly"
@@ -37,11 +42,6 @@
           v-model="answer_selected"
         >
         </v-rating>
-        <label
-          class="ml-6 text-subtitle-h6  text-sm-h5 font-weight-bold"
-          v-if="!edition_mode"
-          >{{ answer_selected }}</label
-        >
       </v-col>
     </v-row>
 
