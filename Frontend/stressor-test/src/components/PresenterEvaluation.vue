@@ -36,7 +36,7 @@
         :is="currentComponent(current_step)"
         :step_data="current_step"
         :ref="current_step._id"
-        @onEnd="finalizeStep"
+        @onEnd="sendResponse"
       ></component
     ></v-card-text>
 
@@ -114,16 +114,9 @@ export default {
   data() {
     return {
       sending: false,
-      isRunning: false
     };
   },
-   beforeMount() {
-    window.addEventListener("beforeunload", this.preventNav)
-  },
 
-  beforeDestroy() {
-    window.removeEventListener("beforeunload", this.preventNav);
-  },
   computed: {
     ...mapState({
       evaluation: (state) => state.presenter.evaluation,
@@ -152,13 +145,6 @@ export default {
       setNotifications: "settings/setNotifications",
       clearStates: "presenter/clearStates",
     }),
-
-    //Prevent reload and navigation at evaluation time
-    preventNav(event) {
-      if (this.isRunning) return
-      event.preventDefault()
-      event.returnValue = ""
-    },
 
     //Adapt the text length according screen size
     getNewLengthText(text) {
@@ -225,6 +211,17 @@ export default {
         session_id: this.session_id,
         response: content,
       };
+      // If type of current step is questionnaire execute the validation
+      if (
+        this.current_step.type === "question" &&
+        !this.validateQuestionnaire(content)
+      ) {
+        this.sendNotification(
+          "Required questions pending for answer. Please check"
+        );
+        this.sending = false;
+        return;
+      }
       // send the content to the server and wait for response
       const res = await this.updateResponses(payload);
       if (res?.status == 200) await this.nextStep();
@@ -245,12 +242,32 @@ export default {
       }
     },
 
-    // Function triggered when stressor is finished automatically
-    finalizeStep() {
-      this.sendResponse();
+    // Validate Questionnaire responses, before to send
+    validateQuestionnaire(answers) {
+      let invalid = true;
+      this.current_step.content?.questions.forEach((q) => {
+        if (q.required) {
+          const ans = answers?.content.find((x) => x.id === q.id);
+          this.validateAnswer(ans) ? null : (invalid = false);
+        }
+      });
+      return invalid;
+    },
+    validateAnswer(ans) {
+      if (ans?.answers && ans?.answers.length > 0) {
+        // Validate special types of radiodrid and checkboxgrid
+        if (ans.type === "radiogrid" || ans.type === "checkboxgrid") {
+          return ans.answers.every((x) => x[1] !== null && x[1].length > 0);
+        }
+        return true;
+      } else if (ans.type === "rating") {
+        return ans.answers > 0;
+      } else {
+        return false;
+      }
     },
 
-    sendNotification(text, time = 5000, type = "error") {
+    sendNotification(text, time = 3000, type = "error") {
       text =
         text ??
         "Something went wrong! please try again.If the problem persists, please contact the evaluator.";
