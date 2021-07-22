@@ -1,6 +1,0 @@
-flask_swagger_ui==3.36.0
-pymongo==3.11.4
-Flask==1.0.2
-Flask_Cors==3.0.2
-python-dotenv==0.17.1
-pymongo[srv]
