@@ -62,7 +62,7 @@ Install dependencies included in __requirements.txt__ file
 
 After the configuration is correct, in the same directory execute:
 
-    python main.py
+    python app.py
 
 After the server is running, in http://localhost:5000/swagger/ It's possible to find the swagger documentation. There you can find the interactive endpoint of the API REST:
 
