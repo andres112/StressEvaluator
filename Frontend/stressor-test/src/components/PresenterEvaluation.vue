@@ -18,7 +18,7 @@
 
       <v-spacer></v-spacer>
       <div class="text-subtitle-2 text-sm-subtitle-1 text-md-h6">
-        {{ currentStep }} of {{ evaluation.number_of_steps }} Steps
+        {{ currentStepNumber }} of {{ evaluation.number_of_steps }} Steps
       </div>
     </v-app-bar>
 
@@ -33,6 +33,7 @@
     <!-- Step content section -->
     <v-card-text
       ><component
+        :key="current_step._id"
         :is="currentComponent(current_step)"
         :step_data="current_step"
         :ref="current_step._id"
@@ -130,7 +131,7 @@ export default {
         return this.evaluation.steps[next_index];
       } else return null;
     },
-    currentStep() {
+    currentStepNumber() {
       return this.evaluation.steps.indexOf(this.current_step._id) + 1;
     },
   },
