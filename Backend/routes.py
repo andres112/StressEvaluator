@@ -3,7 +3,7 @@ import datetime
 
 from pymongo.errors import *
 from helpers import *
-from db_config import db, Test, Step, Result
+from db_config import Test, Step, Result
 
 endpoint = Blueprint("endpoint", __name__, static_folder='static')
 
@@ -393,17 +393,20 @@ def test_results(test_id):
             # convert test_id to test_uuid
             test_uuid = uuid.UUID(test_id)
 
+        response_type = request.args.get('type') or 'json'
+
         if request.method == 'GET':
-            # validate if full data or just the responses
-            if request.args.get('full_data') != "true":
-                results = Result.find({'test_id': test_uuid}, {'responses': 1})
-            else:
-                results = Result.find({'test_id': test_uuid})
+            results = Result.find({'test_id': test_uuid})
+            if request.args.get('raw') != "true":
+                responses = groupBy([item for item in results])
 
             if results is None:
                 return make_response(jsonify(message="Test results not found"), 404)
             else:
-                return make_response(jsonify([item for item in results]), 200)
+                if request.args.get('raw') == "true":
+                    return make_response(jsonify([item for item in results]), 200)
+                elif response_type == 'json':
+                    return make_response(jsonify(responses), 200)
     except BulkWriteError as e:
         return make_response(jsonify(message="Error sending answer",
                                      details=e.details), 500)

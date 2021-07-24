@@ -390,12 +390,22 @@
             }
           },
           {
-            "name": "full_data",
+            "name": "raw",
             "in": "query",
-            "description": "Complete user session data",
+            "description": "Complete user session data raw format",
             "required": false,
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "response format json or csv",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "json"
             }
           }
         ],
