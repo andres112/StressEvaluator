@@ -116,9 +116,9 @@
 import { mapState, mapActions, mapMutations } from "vuex";
 import { textLength } from "@/assets/helpers";
 import BuilderCreate from "./BuilderCreate.vue";
-import BuilderStepSettings from "./Common/StepSettings.vue";
-import StepButtons from "./Common/StepButtons.vue";
-import StepOverlayMenu from "./Common/StepOverlayMenu.vue";
+import BuilderStepSettings from "./StepComponents/StepSettings.vue";
+import StepButtons from "./StepComponents/StepButtons.vue";
+import StepOverlayMenu from "./StepComponents/StepOverlayMenu.vue";
 
 // Step components
 import TextEditor from "./StepComponents/TextEditor.vue";

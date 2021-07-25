@@ -390,7 +390,7 @@
             }
           },
           {
-            "name": "raw",
+            "name": "full",
             "in": "query",
             "description": "Complete user session data raw format",
             "required": false,
@@ -722,6 +722,25 @@
           "test_id": {
             "type": "string",
             "format": "string"
+          },
+          "user": {
+            "type": "object",
+            "required": ["email"],
+            "properties": {
+              "email":{
+                "type": "string",
+                "format": "email"
+              },
+              "age":{
+                "type": "integer",
+                "format": "int32"
+              },
+              "gender":{
+                "type": "string",
+                "format": "string",
+                "example": "n"
+              }
+            }
           },
           "consent": {
             "type": "boolean",
