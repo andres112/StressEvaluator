@@ -277,19 +277,24 @@ def create_session(test_id):
             # convert test_id to test_uuid
             test_uuid = uuid.UUID(test_id)
 
+        # Define the user parameter structure
+        user = {'email': None, 'age': None, 'gender': None}
+        user.update(request.json["user"])
+
         if request.method == 'POST':
             new_session = {'_id': request.json["session_id"],
                            'test_id': test_uuid,  # test_id correspond to the _id in mongodb
+                           'user': user,  # user parameter updated with data sent by user
                            'consent': None,
                            'current_step': None,
                            'creation_date': datetime.datetime.now(),
                            'close_date': None,
                            'responses': []}
-            # create new step
-            Result.insert_one(new_session)
-            return make_response(
-                jsonify(message="User session created successfully", test_id=test_uuid, session_id=new_session['_id']),
-                200)
+        # create new step
+        Result.insert_one(new_session)
+        return make_response(
+            jsonify(message="User session created successfully", test_id=test_uuid, session_id=new_session['_id']),
+            200)
     except BulkWriteError as e:
         return make_response(jsonify(message="Error creating User Session",
                                      details=e.details), 500)
@@ -397,13 +402,13 @@ def test_results(test_id):
 
         if request.method == 'GET':
             results = Result.find({'test_id': test_uuid})
-            if request.args.get('raw') != "true":
+            if request.args.get('full') != "true":
                 responses = groupBy([item for item in results])
 
             if results is None:
                 return make_response(jsonify(message="Test results not found"), 404)
             else:
-                if request.args.get('raw') == "true":
+                if request.args.get('full') == "true":
                     return make_response(jsonify([item for item in results]), 200)
                 elif response_type == 'json':
                     return make_response(jsonify(responses), 200)

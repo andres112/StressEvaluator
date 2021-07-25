@@ -26,14 +26,16 @@ const actions = {
   //************************************************* */
   // CRUD Evaluation session
   // Create session for user evaluation
-  async createSession({ commit, dispatch, state }, test_id) {
+  async createSession({ commit, dispatch, state }, session_data) {
     try {
       commit("setSessionId", createNanoId());
       const payload = {
         session_id: state.session_id,
-        test_id: test_id,
+        test_id: session_data.test_id,
+        user: session_data.user,
       };
-      const url = process.env.VUE_APP_BASE_URL + "create_session/" + test_id;
+      const url =
+        process.env.VUE_APP_BASE_URL + "create_session/" + session_data.test_id;
       const req = await fetch(url, {
         method: "POST",
         headers: {
@@ -157,7 +159,7 @@ const actions = {
         payload.step_id;
       const req = await fetch(url);
       if (req?.status == 200) {
-        const res = await req.json();        
+        const res = await req.json();
         // After step is retrieved update the session
         const new_step = {
           test_id: payload.test_id,
