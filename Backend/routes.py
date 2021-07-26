@@ -409,9 +409,20 @@ def test_results(test_id):
                 return make_response(jsonify(message="Test results not found"), 404)
             else:
                 if request.args.get('full') == "true":
-                    return make_response(jsonify([item for item in results]), 200)
+                    res = make_response(jsonify([item for item in results]), 200)
+                    res.headers['Content-Type'] = 'application/json'
+                    res.headers['Content-Disposition'] = f'attachment;filename=complete_results_{test_id}.json'
+                    return res
                 elif response_type == 'json':
-                    return make_response(jsonify(responses), 200)
+                    res = make_response(jsonify(responses), 200)
+                    res.headers['Content-Type'] = 'application/json'
+                    res.headers['Content-Disposition'] = f'attachment;filename=results_{test_id}.json'
+                    return res
+                elif response_type == 'csv':
+                    res = make_response(jsonify(responses), 200)
+                    res.headers['Content-Type'] = 'text/csv'
+                    res.headers['Content-Disposition'] = f'attachment;filename=results_{test_id}.csv'
+                    return res
     except BulkWriteError as e:
         return make_response(jsonify(message="Error sending answer",
                                      details=e.details), 500)

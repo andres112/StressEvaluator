@@ -378,7 +378,7 @@
         "tags": [
           "Result"
         ],
-        "summary": "Get responses from a test by ID",
+        "summary": "Download responses from a test by ID in json or csv format",
         "parameters": [
           {
             "name": "test_id",
@@ -401,7 +401,7 @@
           {
             "name": "type",
             "in": "query",
-            "description": "response format json or csv",
+            "description": "response format json or csv(one file per step)",
             "required": false,
             "schema": {
               "type": "string",

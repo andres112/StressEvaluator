@@ -1,7 +1,9 @@
+import json
 import uuid
 from db_config import DefaultRes
 from itertools import groupby
 import numpy as np
+import pandas as pd
 
 
 def keyExist(parameter, element):
@@ -25,12 +27,12 @@ def getDefaultRes(type):
 
 def groupBy(array):
     responses = np.array([item['responses'] for item in array]).flatten()
-    groups = groupby(responses, lambda content: content['step_id'])
-    step_content = []
+    sorted_responses = sorted(responses, key=lambda res: res['step_id'])
+    groups = groupby(sorted_responses, lambda content: content['step_id'])
+    step_groups = {}
     for step_id, group in groups:
+        step_content = []
         for content in group:
             step_content = np.append(step_content, content)
-    if len(step_content) > 0:
-        return step_content.tolist()
-    else:
-        return step_content
+        step_groups[str(step_id)] = step_content.tolist()
+    return step_groups
