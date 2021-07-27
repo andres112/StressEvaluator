@@ -1,9 +1,13 @@
-from flask import Blueprint, make_response, jsonify, request, abort
 import datetime
+import io
+import shutil
+import zipfile
 
+from flask import Blueprint, make_response, jsonify, request, abort, send_file
 from pymongo.errors import *
-from helpers import *
+
 from db_config import Test, Step, Result
+from helpers import *
 
 endpoint = Blueprint("endpoint", __name__, static_folder='static')
 
@@ -408,6 +412,7 @@ def test_results(test_id):
             if results is None:
                 return make_response(jsonify(message="Test results not found"), 404)
             else:
+                # multiple response options regarding request
                 if request.args.get('full') == "true":
                     res = make_response(jsonify([item for item in results]), 200)
                     res.headers['Content-Type'] = 'application/json'
@@ -419,10 +424,35 @@ def test_results(test_id):
                     res.headers['Content-Disposition'] = f'attachment;filename=results_{test_id}.json'
                     return res
                 elif response_type == 'csv':
-                    res = make_response(jsonify(responses), 200)
-                    res.headers['Content-Type'] = 'text/csv'
-                    res.headers['Content-Disposition'] = f'attachment;filename=results_{test_id}.csv'
-                    return res
+                    path = f'{test_id}/'
+                    # Create a csv file per step_id
+                    for res in responses:
+                        jsonToCsv(responses[res], path)
+                    # Create a zip file for multiple cvs files
+                    zipf = zipfile.ZipFile(f'{path}results_{test_id}.zip', 'w', compression=zipfile.ZIP_DEFLATED)
+                    for root, paths, files in os.walk(path):
+                        for file in files:
+                            if file.endswith('.csv'):
+                                zipf.write(path + file)
+                    zipf.close()
+
+                    # Create a memory space for the file response
+                    return_data = io.BytesIO()
+                    with open(f'{path}results_{test_id}.zip', 'rb') as fo:
+                        return_data.write(fo.read())
+                    # (after writing, cursor will be at last byte, so move it to start)
+                    return_data.seek(0)
+
+                    # remove the temporal directory to free memory
+                    shutil.rmtree(path)
+
+                    # send file to client with cache_timeout 0
+                    return send_file(return_data,
+                                     mimetype='zip',
+                                     attachment_filename=f'results_{test_id}.zip',
+                                     as_attachment=True,
+                                     cache_timeout=0)
+
     except BulkWriteError as e:
         return make_response(jsonify(message="Error sending answer",
                                      details=e.details), 500)
