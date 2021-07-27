@@ -1,9 +1,9 @@
-import json
 import uuid
 from db_config import DefaultRes
 from itertools import groupby
 import numpy as np
 import pandas as pd
+import os
 
 
 def keyExist(parameter, element):
@@ -36,3 +36,20 @@ def groupBy(array):
             step_content = np.append(step_content, content)
         step_groups[str(step_id)] = step_content.tolist()
     return step_groups
+
+
+def jsonToCsv(responses, path):
+    content_list = [item['content'] for item in responses]
+    # validate if content is list type
+    if isinstance(responses[0]['content'], list):
+        flat_list = [val for sublist in content_list for val in sublist]
+    else:
+        flat_list = content_list
+    df = pd.DataFrame.from_dict(flat_list)
+    step_id = responses[0]['step_id']
+    # Create temporal directory for csv files
+    if not os.path.exists(path):
+        os.makedirs(path)
+    # Create csv file and save it into the just created directory
+    csv_file = df.to_csv(rf'{path}{step_id}.csv', index=False, header=True)
+    return csv_file

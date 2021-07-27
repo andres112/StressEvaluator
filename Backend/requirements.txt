@@ -6,3 +6,4 @@ python-dotenv==0.17.1
 pymongo[srv]
 gunicorn== 20.1.0
 numpy
+pandas
