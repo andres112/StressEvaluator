@@ -420,7 +420,7 @@ def test_results(test_id):
                 if request.args.get('full') == "true":
                     res = make_response(jsonify([item for item in results]), 200)
                     res.headers['Content-Type'] = 'application/json'
-                    res.headers['Content-Disposition'] = f'attachment;filename=complete_results_{test_id}.json'
+                    res.headers['Content-Disposition'] = f'attachment;filename=complete_{test_id}.json'
                     return res
                 elif response_type == 'json':
                     res = make_response(jsonify(responses), 200)
@@ -460,6 +460,14 @@ def test_results(test_id):
     except BulkWriteError as e:
         return make_response(jsonify(message="Error sending answer",
                                      details=e.details), 500)
+
+#TODO:
+# Create new endpoint for summary
+# Get all sessions and convert to dataframes
+# Get total of consents true and false
+# Get finished evaluations (with close_date)
+# Get distribution of gender
+# Get distribution by age (15<; 16-30; 31-45; 46-60; 61-75; >75)
 
 
 # Just for development DELETE for production

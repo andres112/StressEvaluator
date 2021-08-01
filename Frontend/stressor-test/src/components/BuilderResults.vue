@@ -25,7 +25,6 @@
             class="text-capitalize"
             large
             elevation="2"
-            type="submit"
             :loading="result_loading"
             :disabled="!id"
             @click.prevent="onSubmit()"
@@ -41,6 +40,7 @@
     <result-cards
       :evaluation="evaluation"
       v-if="result"
+      @download="downloadFiles"
     ></result-cards>
   </v-layout>
 </template>
@@ -64,6 +64,7 @@ export default {
   methods: {
     ...mapActions({
       getEvaluation: "builder/searchOneEvaluation",
+      getResults: "builder/getResults",
     }),
     async onSubmit() {
       this.result_loading = true;
@@ -76,6 +77,27 @@ export default {
         this.result = false;
       }
       this.result_loading = false;
+    },
+    async downloadFiles(config) {
+      let filename = "";
+      if (config.full) {
+        filename = `complete_${this.id}.json`;
+      }
+      else if (config.type == "csv") {
+        filename = `results_${this.id}.zip`;
+      }
+      else{
+        filename = `results_${this.id}.json`;
+      }
+
+      const payload = { test_id: this.id, ...config };
+      const res = await this.getResults(payload);
+      await res.blob().then((b) => {
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(b);
+        a.setAttribute("download", filename);
+        a.click();
+      });
     },
   },
   watch: {
