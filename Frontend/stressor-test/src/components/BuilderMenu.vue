@@ -43,6 +43,7 @@
             x-large
             dark
             block
+            @click.prevent="onClick('/builder/results')"
           >
             <v-icon left large>
               mdi-chart-timeline-variant-shimmer

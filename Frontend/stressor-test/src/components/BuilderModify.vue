@@ -7,6 +7,7 @@
           Stress Evaluator
         </v-card-title>
         <p class="text-subtitle-2 mb-6 green--text">Builder Mode</p>
+        <!-- Searching section -->
         <v-card-text>
           <v-form @submit.prevent="onSubmit()">
             <v-col cols="12" class="mx-auto">
@@ -81,7 +82,12 @@
           </span>
           <v-layout v-else>
             <!-- Dialog or modal for evaluation deletion confirmation -->
-            <v-dialog v-model="isDeleting" persistent max-width="350px" v-if="!item.published">
+            <v-dialog
+              v-model="isDeleting"
+              persistent
+              max-width="350px"
+              v-if="!item.published"
+            >
               <template v-slot:activator="{ on, attrs }">
                 <span v-bind="attrs" v-on="on">
                   <v-tooltip top>

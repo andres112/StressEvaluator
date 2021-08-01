@@ -44,15 +44,15 @@
           </v-col>
           <v-col cols="12" md="5">
             <v-card shaped color="light-blue lighten-5">
-              <v-list-item two-line v-for="item in personal_info" :key="item">
+              <v-list-item two-line v-for="(item, index) in ownerInfo" :key="index">
                 <v-list-item-content>
                   <v-list-item-title
                     class="text-sm-h5 text-lg-h4 text-h6 font-weight-bold"
                   >
-                    {{ evaluation[item] }}
+                    {{ item }}
                   </v-list-item-title>
                   <v-list-item-subtitle class="text-capitalize">
-                    {{ item }}
+                    {{ index }}
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
@@ -103,7 +103,7 @@ export default {
   data() {
     return {
       loading: false,
-      personal_info: ["owner", "organization", "email"],
+      owner_info: ["owner", "organization", "email"],
     };
   },
   computed: {
@@ -111,6 +111,14 @@ export default {
     validateUserForm() {
       debugger;
       return this.$refs.userForm.valid;
+    },
+    ownerInfo() {
+      const owner_info = {
+        owner: this.evaluation?.owner,
+        organization: this.evaluation?.organization ?? "--",
+        email: this.evaluation?.email,
+      };
+      return owner_info;
     },
   },
   methods: {
