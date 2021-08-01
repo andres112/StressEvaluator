@@ -6,7 +6,7 @@ $sidebar-color: #ccff90;
 }
 .editor-title {
   position: sticky;
-  position: -webkit-sticky; /* for Safari */
+  position: -webkit-sticky;
   top: 0%;
   z-index: 2;
 }
@@ -23,9 +23,9 @@ $sidebar-color: #ccff90;
   overflow-y: auto;
 }
 
-input{
-  &.presenter-input{
-    transform:scale(1.75);
-    cursor:pointer;
+input {
+  &.presenter-input {
+    transform: scale(1.75);
+    cursor: pointer;
   }
 }

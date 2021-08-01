@@ -86,7 +86,8 @@ def create():
                             'test_link': None,
                             'published': False,
                             'closed': False,
-                            'creation_date': datetime.datetime.now()}
+                            'creation_date': datetime.datetime.now(),
+                            'close_date': None}
                 Test.insert_one(new_test)
 
                 # insert the consent in firs place of steps
@@ -145,6 +146,9 @@ def test_operations(test_id):
             for param in __parameters:
                 if keyExist(param, request.json):
                     updated_test[param] = request.json[param]
+                    # Validate if parameter closed is true and set the close_date too
+                    if param == 'closed' and request.json[param]:
+                        updated_test["close_date"] = datetime.datetime.now()
             # update test in db
             test = Test.update_one({'_id': test_uuid},
                                    {'$set': updated_test})
