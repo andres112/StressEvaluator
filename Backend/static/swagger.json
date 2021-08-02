@@ -419,6 +419,33 @@
         }
       }
     },
+    "/test_stats/{test_id}": {
+      "get": {
+        "tags": [
+          "Result"
+        ],
+        "summary": "Get the general statistics of evaluation based on test_id",
+        "parameters": [
+          {
+            "name": "test_id",
+            "in": "path",
+            "description": "Test id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
     "/create_session/{test_id}": {
       "post": {
         "tags": [

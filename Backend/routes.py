@@ -461,11 +461,40 @@ def test_results(test_id):
         return make_response(jsonify(message="Error sending answer",
                                      details=e.details), 500)
 
-#TODO:
+
+@endpoint.route('/test_stats/<test_id>', methods=['GET'])
+def test_statistics(test_id):
+    try:
+        if test_id is None:
+            abort(400)
+            return
+
+        test_uuid = test_id
+        if isUUID(test_id):
+            # convert test_id to test_uuid
+            test_uuid = uuid.UUID(test_id)
+        response = {}
+        if request.method == 'GET':
+            results = Result.find({'test_id': test_uuid})
+            df = pd.DataFrame.from_dict([item for item in results])
+            # Get number of consented sessions
+            response['consent'] = df[df['consent']].count()['consent']
+            response['no_consent'] = df[df['consent'] == False].count()['consent']
+            df_not_null = df.notnull()
+            response['finished'] = df_not_null[df_not_null['close_date']].count()['close_date']
+            response['no_finished'] = df_not_null[df_not_null['close_date'] == False].count()['close_date']
+            print(response)
+
+    except BulkWriteError as e:
+        return make_response(jsonify(message="Error sending answer",
+                                     details=e.details), 500)
+
+
+# TODO:
 # Create new endpoint for summary
-# Get all sessions and convert to dataframes
-# Get total of consents true and false
-# Get finished evaluations (with close_date)
+# Get all sessions and convert to dataframes: Done
+# Get total of consents true and false: Done
+# Get finished evaluations (with close_date): Done
 # Get distribution of gender
 # Get distribution by age (15<; 16-30; 31-45; 46-60; 61-75; >75)
 
