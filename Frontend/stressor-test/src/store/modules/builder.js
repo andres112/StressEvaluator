@@ -259,7 +259,7 @@ const actions = {
   //************************************************* */
   // Results section
 
-  async getResults({ commit }, payload) {
+  async getResults({}, payload) {
     try {
       const url = new URL(
         process.env.VUE_APP_BASE_URL + "test_results/" + payload.test_id
@@ -271,6 +271,18 @@ const actions = {
       url.search = new URLSearchParams(params).toString();
       const req = await fetch(url);
       return req;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  async getStatistics({}, test_id) {
+    try {
+      const url = new URL(
+        process.env.VUE_APP_BASE_URL + "test_stats/" + test_id
+      );
+      const req = await fetch(url);
+      return req.json();
     } catch (error) {
       console.log(error);
     }

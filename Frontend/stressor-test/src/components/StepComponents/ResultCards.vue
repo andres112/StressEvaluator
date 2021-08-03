@@ -84,6 +84,7 @@
           </v-card-text>
         </v-card>
       </v-col>
+
       <!-- Evaluation results download card -->
       <v-col cols="12" sm="10" lg="6">
         <v-card>
@@ -97,7 +98,9 @@
               <v-col cols="5">
                 <v-list-item two-line class="pl-0">
                   <v-list-item-content>
-                    <v-list-item-title class="font-weight-bold text-md-h5 text-h6 mr-2">
+                    <v-list-item-title
+                      class="font-weight-bold text-md-h5 text-h6 mr-2"
+                    >
                       Complete
                     </v-list-item-title>
                     <v-list-item-subtitle>
@@ -125,7 +128,9 @@
               <v-col cols="5">
                 <v-list-item two-line class="pl-0">
                   <v-list-item-content>
-                    <v-list-item-title class="font-weight-bold text-md-h5 text-h6 mr-2">
+                    <v-list-item-title
+                      class="font-weight-bold text-md-h5 text-h6 mr-2"
+                    >
                       Partial
                     </v-list-item-title>
                     <v-list-item-subtitle>
@@ -163,16 +168,17 @@
           </v-card-text>
         </v-card>
       </v-col>
+
       <!-- Evaluation statistics summary download card -->
       <v-col cols="12">
         <v-card>
           <v-card-title
             class="text-h5 font-weight-bold grey--text text--darken-1"
           >
-            Summary
+            General Summary
           </v-card-title>
-          {{ evaluation }}</v-card
-        >
+          <pre>{{ statistics }}</pre>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
@@ -183,6 +189,7 @@ export default {
   name: "PresenterResultCards",
   props: {
     evaluation: Object,
+    statistics: Object,
   },
   computed: {
     ownerInfo() {

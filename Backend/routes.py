@@ -479,9 +479,13 @@ def test_statistics(test_id):
             results = Result.find({'test_id': test_uuid})
             df_results = pd.DataFrame.from_dict([item for item in results])
 
+            # Get number of evaluations done
+            response['total'] = int(df_results.shape[0])
+
             # Get number of consented sessions
             response['consent'] = int(df_results['consent'].sum())
-            response['no_consent'] = int((~df_results['consent']).sum())
+            no_res = int(df_results['consent'].isnull().sum())
+            response['no_consent'] = response['total'] - response['consent'] - no_res
 
             # Get the number of finished evaluations
             response['finished'] = int(df_results['close_date'].notnull().sum())
@@ -499,7 +503,7 @@ def test_statistics(test_id):
             response['gender']['prefer_not_say'] += null_gender
 
             # Users ages
-            ages = {'15<=': int(df_users[df_users['age'].astype(int) <= 15].shape[0]),
+            ages = {'≤15': int(df_users[df_users['age'].astype(int) <= 15].shape[0]),
                     '16-30': int(
                         df_users[(df_users['age'].astype(int) >= 16) & (df_users['age'].astype(int) <= 30)].shape[0]),
                     '31-45': int(
@@ -519,15 +523,6 @@ def test_statistics(test_id):
     except BulkWriteError as e:
         return make_response(jsonify(message="Error sending answer",
                                      details=e.details), 500)
-
-
-# TODO:
-# Create new endpoint for summary
-# Get all sessions and convert to dataframes: Done
-# Get total of consents true and false: Done
-# Get finished evaluations (with close_date): Done
-# Get distribution of gender: Done
-# Get distribution by age (15<; 16-30; 31-45; 46-60; 61-75; >75)
 
 
 # Just for development DELETE for production

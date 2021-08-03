@@ -39,6 +39,7 @@
     </v-layout>
     <result-cards
       :evaluation="evaluation"
+      :statistics="statistics"
       v-if="result"
       @download="downloadFiles"
     ></result-cards>
@@ -59,20 +60,24 @@ export default {
       id: null,
       result_loading: false,
       evaluation: null,
+      statistics: null,
     };
   },
   methods: {
     ...mapActions({
       getEvaluation: "builder/searchOneEvaluation",
       getResults: "builder/getResults",
+      getStatistics: "builder/getStatistics",
     }),
     async onSubmit() {
       this.result_loading = true;
-      const res = await this.getEvaluation(this.id);
-      // Validate if response exist and is published
-      if (res?._id) {
+      const test = await this.getEvaluation(this.id);
+      const stats = await this.getStatistics(this.id);
+      // Validate if response exist
+      if (test?._id) {
         this.result = true;
-        this.evaluation = res;
+        this.evaluation = test;
+        this.statistics = stats;
       } else {
         this.result = false;
       }
@@ -82,11 +87,9 @@ export default {
       let filename = "";
       if (config.full) {
         filename = `complete_${this.id}.json`;
-      }
-      else if (config.type == "csv") {
+      } else if (config.type == "csv") {
         filename = `results_${this.id}.zip`;
-      }
-      else{
+      } else {
         filename = `results_${this.id}.json`;
       }
 
