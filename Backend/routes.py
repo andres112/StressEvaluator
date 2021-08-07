@@ -3,6 +3,7 @@ import io
 import shutil
 import zipfile
 
+import pandas as pd
 from flask import Blueprint, make_response, jsonify, request, abort, send_file
 from pymongo.errors import *
 
@@ -461,13 +462,73 @@ def test_results(test_id):
         return make_response(jsonify(message="Error sending answer",
                                      details=e.details), 500)
 
-#TODO:
-# Create new endpoint for summary
-# Get all sessions and convert to dataframes
-# Get total of consents true and false
-# Get finished evaluations (with close_date)
-# Get distribution of gender
-# Get distribution by age (15<; 16-30; 31-45; 46-60; 61-75; >75)
+
+@endpoint.route('/test_stats/<test_id>', methods=['GET'])
+def test_statistics(test_id):
+    try:
+        if test_id is None:
+            abort(400)
+            return
+
+        test_uuid = test_id
+        if isUUID(test_id):
+            # convert test_id to test_uuid
+            test_uuid = uuid.UUID(test_id)
+        response = {}
+        if request.method == 'GET':
+            results = Result.find({'test_id': test_uuid})
+            df_results = pd.DataFrame.from_dict([item for item in results])
+
+            # Get number of evaluations done
+            response['total'] = int(df_results.shape[0])
+
+            # Get number of consented sessions
+            response['consent'] = int(df_results['consent'].sum())
+            no_res = int(df_results['consent'].isnull().sum())
+            response['no_consent'] = response['total'] - response['consent'] - no_res
+
+            # Get the number of finished evaluations
+            response['finished'] = int(df_results['close_date'].notnull().sum())
+            response['no_finished'] = int(df_results['close_date'].isnull().sum())
+
+            # Get users' information
+            df_users = pd.DataFrame(list(df_results['user']))
+            # User genders summary
+            response['gender'] = {'male': int(df_users[df_users['gender'] == 'male'].count()['gender']),
+                                  'female': int(df_users[df_users['gender'] == 'female'].count()['gender']),
+                                  'intersex': int(df_users[df_users['gender'] == 'inter'].count()['gender']),
+                                  'prefer_not_say': int(df_users[df_users['gender'] == 'noapply'].count()['gender'])}
+            # Add the None responses to gender.prefer_not_say
+            null_gender = int(df_users['gender'].isnull().sum())
+            response['gender']['prefer_not_say'] += null_gender
+
+            # Users ages
+            # group1: ≤15
+            # group2: 16-30
+            # group3: 31-45
+            # group4: 46-60
+            # group5: 61-75
+            # group6: >75
+            ages = {'group1': int(df_users[df_users['age'].astype(int) <= 15].shape[0]),
+                    'group2': int(
+                        df_users[(df_users['age'].astype(int) >= 16) & (df_users['age'].astype(int) <= 30)].shape[0]),
+                    'group3': int(
+                        df_users[(df_users['age'].astype(int) >= 31) & (df_users['age'].astype(int) <= 45)].shape[0]),
+                    'group4': int(
+                        df_users[(df_users['age'].astype(int) >= 46) & (df_users['age'].astype(int) <= 60)].shape[0]),
+                    'group5': int(
+                        df_users[(df_users['age'].astype(int) >= 61) & (df_users['age'].astype(int) <= 75)].shape[0]),
+                    'group6': int(df_users[df_users['age'].astype(int) > 75].count()['age'])}
+            response['age'] = ages
+
+            if results is None:
+                return make_response(jsonify(message="Test results not found"), 404)
+            else:
+                return make_response(jsonify(response), 200)
+
+    except BulkWriteError as e:
+        return make_response(jsonify(message="Error sending answer",
+                                     details=e.details), 500)
 
 
 # Just for development DELETE for production

@@ -65,7 +65,7 @@ export default {
         { text: "Female", value: "female" },
         { text: "Male", value: "male" },
         { text: "Intersex", value: "inter" },
-        { text: "Prefer not to say", value: "na" },
+        { text: "Prefer not to say", value: "noapply" },
       ],
       rules: {
         required: (value) => !!value || "Required.",
