@@ -172,12 +172,115 @@
       <!-- Evaluation statistics summary download card -->
       <v-col cols="12">
         <v-card>
+          <!-- General Summary -->
           <v-card-title
             class="text-h5 font-weight-bold grey--text text--darken-1"
           >
             General Summary
           </v-card-title>
-          <pre>{{ statistics }}</pre>
+          <v-card-text>
+            <v-row justify="center">
+              <v-col
+                cols="4"
+                sm="2"
+                v-for="(item, index) in summary.general"
+                :key="index"
+              >
+                <v-list-item two-line class="pl-0">
+                  <v-list-item-content class="text-center">
+                    <v-list-item-subtitle
+                      class="text-lg-h2 text-md-h3 text-sm-h4 text-h4 mr-2"
+                    >
+                      <number
+                        :from="0"
+                        :to="item"
+                        :duration="animationDuration(item)"
+                        :delay="0.5"
+                      ></number>
+                    </v-list-item-subtitle>
+                    <v-list-item-title
+                      class="font-weight-bold text-lg-h5 text-md-h6 text-sm-subtitle-1 text-subtitle-2 text-capitalize"
+                    >
+                      {{ setTextSpaces(index) }}
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-col>
+            </v-row>
+          </v-card-text>
+          <v-divider class="mx-4"></v-divider>
+          <!-- Gender Distribution -->
+          <v-card-title
+            class="text-h5 font-weight-bold grey--text text--darken-1"
+          >
+            Gender Distribution
+          </v-card-title>
+          <v-card-text>
+            <v-row justify="center">
+              <v-col
+                cols="3"
+                v-for="(item, index) in summary.gender"
+                :key="index"
+              >
+                <v-list-item two-line class="pl-0">
+                  <v-list-item-content class="text-center">
+                    <v-list-item-subtitle
+                      class="text-lg-h3 text-md-h3 text-sm-h4 text-h4 mr-2"
+                    >
+                      <number
+                        :from="0"
+                        :to="item"
+                        :duration="animationDuration(item)"
+                        :delay="0.5"
+                      ></number>
+                    </v-list-item-subtitle>
+                    <v-list-item-title
+                      class="font-weight-bold text-lg-h5 text-md-h6 text-sm-subtitle-1 text-subtitle-2 text-capitalize"
+                    >
+                      {{ setTextSpaces(index) }}
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-col>
+            </v-row>
+          </v-card-text>
+          <v-divider class="mx-4"></v-divider>
+          <!-- Gender Distribution -->
+          <v-card-title
+            class="text-h5 font-weight-bold grey--text text--darken-1"
+          >
+            Age Distribution
+          </v-card-title>
+          <v-card-text>
+            <v-row justify="center">
+              <v-col
+                cols="4"
+                sm="2"
+                v-for="(item, index) in summary.age"
+                :key="index"
+              >
+                <v-list-item two-line class="pl-0">
+                  <v-list-item-content class="text-center">
+                    <v-list-item-subtitle
+                      class="text-lg-h4 text-md-h4 text-sm-h5 text-h5 mr-2"
+                    >
+                      <number
+                        :from="0"
+                        :to="item"
+                        :duration="animationDuration(item)"
+                        :delay="0.5"
+                      ></number>
+                    </v-list-item-subtitle>
+                    <v-list-item-title
+                      class="font-weight-bold text-lg-h6 text-md-h6 text-sm-subtitle-1 text-subtitle-2 text-capitalize"
+                    >
+                      {{ setTextSpaces(index) }}
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-col>
+            </v-row>
+          </v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -202,18 +305,44 @@ export default {
     },
     otherInfo() {
       const other_info = {
-        creation_date: this.formatDate(this.evaluation?.creation_date),
-        close_date: this.formatDate(this.evaluation?.close_date),
+        creation_date: this.formatData(this.evaluation?.creation_date),
+        close_date: this.formatData(this.evaluation?.close_date),
         number_of_steps: this.evaluation?.number_of_steps,
       };
       return other_info;
+    },
+    summary() {
+      const summary = {
+        general: {
+          total_evaluations: this.statistics?.total,
+          finished: this.statistics?.finished,
+          no_finished: this.statistics?.no_finished,
+          consent: this.statistics?.consent,
+          no_consent: this.statistics?.no_consent,
+        },
+        gender: {
+          female: this.statistics.gender?.female,
+          male: this.statistics.gender?.male,
+          intersex: this.statistics.gender?.intersex,
+          no_said: this.statistics.gender?.prefer_not_say,
+        },
+        age: {
+          "≤15": this.statistics.age?.group1,
+          "16-30": this.statistics.age?.group2,
+          "31-45": this.statistics.age?.group3,
+          "46-60": this.statistics.age?.group4,
+          "61-75": this.statistics.age?.group5,
+          ">75": this.statistics.age?.group6,
+        },
+      };
+      return summary;
     },
   },
   methods: {
     setTextSpaces(text) {
       return text.replaceAll("_", " ");
     },
-    formatDate(date_string) {
+    formatData(date_string) {
       if (date_string) {
         const date = new Date(date_string);
         return date.toLocaleDateString();
@@ -227,6 +356,12 @@ export default {
         params = { full: true };
       }
       this.$emit("download", params);
+    },
+    animationDuration(number) {
+      if (number < 10) return 0.5;
+      if (number < 100) return 1;
+      if (number < 1000) return 3;
+      return 5;
     },
   },
 };

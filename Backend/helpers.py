@@ -26,7 +26,8 @@ def getDefaultRes(type):
 
 
 def groupBy(array):
-    responses = np.array([item['responses'] for item in array]).flatten()
+    # Get the responses only and remove results with empty responses
+    responses = np.array([item['responses'] for item in array if item['responses']], dtype=object).flatten()
     sorted_responses = sorted(responses, key=lambda res: res['step_id'])
     groups = groupby(sorted_responses, lambda content: content['step_id'])
     step_groups = {}

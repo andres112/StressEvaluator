@@ -496,23 +496,29 @@ def test_statistics(test_id):
             # User genders summary
             response['gender'] = {'male': int(df_users[df_users['gender'] == 'male'].count()['gender']),
                                   'female': int(df_users[df_users['gender'] == 'female'].count()['gender']),
-                                  'inter': int(df_users[df_users['gender'] == 'inter'].count()['gender']),
+                                  'intersex': int(df_users[df_users['gender'] == 'inter'].count()['gender']),
                                   'prefer_not_say': int(df_users[df_users['gender'] == 'noapply'].count()['gender'])}
             # Add the None responses to gender.prefer_not_say
             null_gender = int(df_users['gender'].isnull().sum())
             response['gender']['prefer_not_say'] += null_gender
 
             # Users ages
-            ages = {'≤15': int(df_users[df_users['age'].astype(int) <= 15].shape[0]),
-                    '16-30': int(
+            # group1: ≤15
+            # group2: 16-30
+            # group3: 31-45
+            # group4: 46-60
+            # group5: 61-75
+            # group6: >75
+            ages = {'group1': int(df_users[df_users['age'].astype(int) <= 15].shape[0]),
+                    'group2': int(
                         df_users[(df_users['age'].astype(int) >= 16) & (df_users['age'].astype(int) <= 30)].shape[0]),
-                    '31-45': int(
+                    'group3': int(
                         df_users[(df_users['age'].astype(int) >= 31) & (df_users['age'].astype(int) <= 45)].shape[0]),
-                    '46-60': int(
+                    'group4': int(
                         df_users[(df_users['age'].astype(int) >= 46) & (df_users['age'].astype(int) <= 60)].shape[0]),
-                    '61-75': int(
+                    'group5': int(
                         df_users[(df_users['age'].astype(int) >= 61) & (df_users['age'].astype(int) <= 75)].shape[0]),
-                    '>75': int(df_users[df_users['age'].astype(int) > 75].count()['age'])}
+                    'group6': int(df_users[df_users['age'].astype(int) > 75].count()['age'])}
             response['age'] = ages
 
             if results is None:
