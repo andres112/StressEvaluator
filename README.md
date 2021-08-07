@@ -160,6 +160,13 @@ After the server is running, in http://localhost:5000/swagger/ It's possible to 
             }
             ```
  - ### Result
-    - GET: http://localhost:5000/test_results/{test_id} -> Get results from test with test_id
+    - GET: http://localhost:5000/test_results/{test_id} -> Download the results from test with test_id
         - Path params: 
-            - test_id[String] *required*           
+            - test_id[String] *required*
+        - Query params: 
+            - full[String] default *false* (**full=true get all the sessions in json format**)
+            - type[String] default *'json'* (**json or csv format, ignored when full=true**)
+        
+    - GET: http://localhost:5000/test_stats/{test_id} -> Get summary of evaluation done for users
+        - Path params: 
+            - test_id[String] *required*   

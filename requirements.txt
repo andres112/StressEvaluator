@@ -5,3 +5,5 @@ Flask_Cors==3.0.2
 python-dotenv==0.17.1
 pymongo[srv]
 gunicorn== 20.1.0
+numpy
+pandas

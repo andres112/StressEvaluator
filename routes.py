@@ -1,9 +1,14 @@
-from flask import Blueprint, make_response, jsonify, request, abort
 import datetime
+import io
+import shutil
+import zipfile
 
+import pandas as pd
+from flask import Blueprint, make_response, jsonify, request, abort, send_file
 from pymongo.errors import *
+
+from db_config import Test, Step, Result
 from helpers import *
-from db_config import db, Test, Step, Result
 
 endpoint = Blueprint("endpoint", __name__, static_folder='static')
 
@@ -82,7 +87,8 @@ def create():
                             'test_link': None,
                             'published': False,
                             'closed': False,
-                            'creation_date': datetime.datetime.now()}
+                            'creation_date': datetime.datetime.now(),
+                            'close_date': None}
                 Test.insert_one(new_test)
 
                 # insert the consent in firs place of steps
@@ -141,6 +147,9 @@ def test_operations(test_id):
             for param in __parameters:
                 if keyExist(param, request.json):
                     updated_test[param] = request.json[param]
+                    # Validate if parameter closed is true and set the close_date too
+                    if param == 'closed' and request.json[param]:
+                        updated_test["close_date"] = datetime.datetime.now()
             # update test in db
             test = Test.update_one({'_id': test_uuid},
                                    {'$set': updated_test})
@@ -277,19 +286,24 @@ def create_session(test_id):
             # convert test_id to test_uuid
             test_uuid = uuid.UUID(test_id)
 
+        # Define the user parameter structure
+        user = {'email': None, 'age': None, 'gender': None}
+        user.update(request.json["user"])
+
         if request.method == 'POST':
             new_session = {'_id': request.json["session_id"],
                            'test_id': test_uuid,  # test_id correspond to the _id in mongodb
+                           'user': user,  # user parameter updated with data sent by user
                            'consent': None,
                            'current_step': None,
                            'creation_date': datetime.datetime.now(),
                            'close_date': None,
                            'responses': []}
-            # create new step
-            Result.insert_one(new_session)
-            return make_response(
-                jsonify(message="User session created successfully", test_id=test_uuid, session_id=new_session['_id']),
-                200)
+        # create new step
+        Result.insert_one(new_session)
+        return make_response(
+            jsonify(message="User session created successfully", test_id=test_uuid, session_id=new_session['_id']),
+            200)
     except BulkWriteError as e:
         return make_response(jsonify(message="Error creating User Session",
                                      details=e.details), 500)
@@ -393,17 +407,125 @@ def test_results(test_id):
             # convert test_id to test_uuid
             test_uuid = uuid.UUID(test_id)
 
+        response_type = request.args.get('type') or 'json'
+
         if request.method == 'GET':
-            # validate if full data or just the responses
-            if request.args.get('full_data') != "true":
-                results = Result.find({'test_id': test_uuid}, {'responses': 1})
-            else:
-                results = Result.find({'test_id': test_uuid})
+            results = Result.find({'test_id': test_uuid})
+            if request.args.get('full') != "true":
+                responses = groupBy([item for item in results])
 
             if results is None:
                 return make_response(jsonify(message="Test results not found"), 404)
             else:
-                return make_response(jsonify([item for item in results]), 200)
+                # multiple response options regarding request
+                if request.args.get('full') == "true":
+                    res = make_response(jsonify([item for item in results]), 200)
+                    res.headers['Content-Type'] = 'application/json'
+                    res.headers['Content-Disposition'] = f'attachment;filename=complete_{test_id}.json'
+                    return res
+                elif response_type == 'json':
+                    res = make_response(jsonify(responses), 200)
+                    res.headers['Content-Type'] = 'application/json'
+                    res.headers['Content-Disposition'] = f'attachment;filename=results_{test_id}.json'
+                    return res
+                elif response_type == 'csv':
+                    path = f'{test_id}/'
+                    # Create a csv file per step_id
+                    for res in responses:
+                        jsonToCsv(responses[res], path)
+                    # Create a zip file for multiple cvs files
+                    zipf = zipfile.ZipFile(f'{path}results_{test_id}.zip', 'w', compression=zipfile.ZIP_DEFLATED)
+                    for root, paths, files in os.walk(path):
+                        for file in files:
+                            if file.endswith('.csv'):
+                                zipf.write(path + file)
+                    zipf.close()
+
+                    # Create a memory space for the file response
+                    return_data = io.BytesIO()
+                    with open(f'{path}results_{test_id}.zip', 'rb') as fo:
+                        return_data.write(fo.read())
+                    # (after writing, cursor will be at last byte, so move it to start)
+                    return_data.seek(0)
+
+                    # remove the temporal directory to free memory
+                    shutil.rmtree(path)
+
+                    # send file to client with cache_timeout 0
+                    return send_file(return_data,
+                                     mimetype='zip',
+                                     attachment_filename=f'results_{test_id}.zip',
+                                     as_attachment=True,
+                                     cache_timeout=0)
+
+    except BulkWriteError as e:
+        return make_response(jsonify(message="Error sending answer",
+                                     details=e.details), 500)
+
+
+@endpoint.route('/test_stats/<test_id>', methods=['GET'])
+def test_statistics(test_id):
+    try:
+        if test_id is None:
+            abort(400)
+            return
+
+        test_uuid = test_id
+        if isUUID(test_id):
+            # convert test_id to test_uuid
+            test_uuid = uuid.UUID(test_id)
+        response = {}
+        if request.method == 'GET':
+            results = Result.find({'test_id': test_uuid})
+            df_results = pd.DataFrame.from_dict([item for item in results])
+
+            # Get number of evaluations done
+            response['total'] = int(df_results.shape[0])
+
+            # Get number of consented sessions
+            response['consent'] = int(df_results['consent'].sum())
+            no_res = int(df_results['consent'].isnull().sum())
+            response['no_consent'] = response['total'] - response['consent'] - no_res
+
+            # Get the number of finished evaluations
+            response['finished'] = int(df_results['close_date'].notnull().sum())
+            response['no_finished'] = int(df_results['close_date'].isnull().sum())
+
+            # Get users' information
+            df_users = pd.DataFrame(list(df_results['user']))
+            # User genders summary
+            response['gender'] = {'male': int(df_users[df_users['gender'] == 'male'].count()['gender']),
+                                  'female': int(df_users[df_users['gender'] == 'female'].count()['gender']),
+                                  'intersex': int(df_users[df_users['gender'] == 'inter'].count()['gender']),
+                                  'prefer_not_say': int(df_users[df_users['gender'] == 'noapply'].count()['gender'])}
+            # Add the None responses to gender.prefer_not_say
+            null_gender = int(df_users['gender'].isnull().sum())
+            response['gender']['prefer_not_say'] += null_gender
+
+            # Users ages
+            # group1: ≤15
+            # group2: 16-30
+            # group3: 31-45
+            # group4: 46-60
+            # group5: 61-75
+            # group6: >75
+            ages = {'group1': int(df_users[df_users['age'].astype(int) <= 15].shape[0]),
+                    'group2': int(
+                        df_users[(df_users['age'].astype(int) >= 16) & (df_users['age'].astype(int) <= 30)].shape[0]),
+                    'group3': int(
+                        df_users[(df_users['age'].astype(int) >= 31) & (df_users['age'].astype(int) <= 45)].shape[0]),
+                    'group4': int(
+                        df_users[(df_users['age'].astype(int) >= 46) & (df_users['age'].astype(int) <= 60)].shape[0]),
+                    'group5': int(
+                        df_users[(df_users['age'].astype(int) >= 61) & (df_users['age'].astype(int) <= 75)].shape[0]),
+                    'group6': int(df_users[df_users['age'].astype(int) > 75].count()['age'])}
+            response['age'] = ages
+
+            if results is None:
+                return make_response(jsonify(message="Test results not found"), 404)
+            else:
+                return make_response(jsonify(response), 200)
+
     except BulkWriteError as e:
         return make_response(jsonify(message="Error sending answer",
                                      details=e.details), 500)

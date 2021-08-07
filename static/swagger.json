@@ -378,7 +378,7 @@
         "tags": [
           "Result"
         ],
-        "summary": "Get responses from a test by ID",
+        "summary": "Download responses from a test by ID in json or csv format",
         "parameters": [
           {
             "name": "test_id",
@@ -390,12 +390,49 @@
             }
           },
           {
-            "name": "full_data",
+            "name": "full",
             "in": "query",
-            "description": "Complete user session data",
+            "description": "Complete user session data raw format",
             "required": false,
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "response format json or csv(one file per step)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        }
+      }
+    },
+    "/test_stats/{test_id}": {
+      "get": {
+        "tags": [
+          "Result"
+        ],
+        "summary": "Get the general statistics of evaluation based on test_id",
+        "parameters": [
+          {
+            "name": "test_id",
+            "in": "path",
+            "description": "Test id",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -712,6 +749,25 @@
           "test_id": {
             "type": "string",
             "format": "string"
+          },
+          "user": {
+            "type": "object",
+            "required": ["email"],
+            "properties": {
+              "email":{
+                "type": "string",
+                "format": "email"
+              },
+              "age":{
+                "type": "integer",
+                "format": "int32"
+              },
+              "gender":{
+                "type": "string",
+                "format": "string",
+                "example": "n"
+              }
+            }
           },
           "consent": {
             "type": "boolean",
