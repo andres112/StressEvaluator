@@ -7,7 +7,7 @@
     <v-card elevation="0" class="container">
       <v-row justify="center">
         <v-col cols="12" lg="11">
-          <v-list-item three-line class="mb-4">
+          <v-list-item two-line class="mb-4">
             <v-list-item-content>
               <v-list-item-title class="text-md-h4 text-h5 font-weight-bold">
                 {{ evaluation.name }}
@@ -44,21 +44,25 @@
           </v-col>
           <v-col cols="12" md="5">
             <v-card shaped color="light-blue lighten-5">
-              <v-list-item two-line v-for="item in personal_info" :key="item">
+              <v-list-item two-line v-for="(item, index) in ownerInfo" :key="index">
                 <v-list-item-content>
                   <v-list-item-title
                     class="text-sm-h5 text-lg-h4 text-h6 font-weight-bold"
                   >
-                    {{ evaluation[item] }}
+                    {{ item }}
                   </v-list-item-title>
                   <v-list-item-subtitle class="text-capitalize">
-                    {{ item }}
+                    {{ index }}
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-card>
           </v-col>
         </v-row>
+      </v-card-text>
+
+      <v-card-text>
+        <user-form ref="userForm"></user-form>
       </v-card-text>
 
       <v-card-actions>
@@ -89,23 +93,48 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import UserForm from "@/components/Common/UserForm";
+
 export default {
   name: "PresenterIntroduction",
+  components: {
+    UserForm,
+  },
   data() {
     return {
       loading: false,
-      personal_info: ["owner", "organization", "email"],
+      owner_info: ["owner", "organization", "email"],
     };
   },
   computed: {
     ...mapState({ evaluation: (state) => state.presenter.evaluation }),
+    validateUserForm() {
+      debugger;
+      return this.$refs.userForm.valid;
+    },
+    ownerInfo() {
+      const owner_info = {
+        owner: this.evaluation?.owner,
+        organization: this.evaluation?.organization ?? "--",
+        email: this.evaluation?.email,
+      };
+      return owner_info;
+    },
   },
   methods: {
     ...mapActions({ createSession: "presenter/createSession" }),
     async start() {
+      const user_form = this.$refs.userForm;
+      if (!user_form.valid) {
+        user_form.validate();
+        return;
+      }
       this.loading = true;
       const test_id = this.evaluation._id;
-      const res = await this.createSession(test_id);
+      const res = await this.createSession({
+        test_id: test_id,
+        user: user_form.user,
+      });
       if (res?.session_id) {
         this.loading = false;
         this.$router.push(`/presenter/${test_id}/session/${res.session_id}`);

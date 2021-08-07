@@ -85,7 +85,7 @@ const actions = {
       } else {
         commit("setTestList", [res]);
       }
-      return req;
+      return res;
     } catch (error) {
       console.log(error);
     }
@@ -256,6 +256,39 @@ const actions = {
   },
   //************************************************* */
 
+  //************************************************* */
+  // Results section
+
+  async getResults({}, payload) {
+    try {
+      const url = new URL(
+        process.env.VUE_APP_BASE_URL + "test_results/" + payload.test_id
+      );
+      const params = {
+        full: payload?.full ?? "false",
+        type: payload?.type ?? "json",
+      };
+      url.search = new URLSearchParams(params).toString();
+      const req = await fetch(url);
+      return req;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  async getStatistics({}, test_id) {
+    try {
+      const url = new URL(
+        process.env.VUE_APP_BASE_URL + "test_stats/" + test_id
+      );
+      const req = await fetch(url);
+      return req.json();
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  //************************************************* */
   async setSelectedEvaluation({ commit }, payload) {
     try {
       // set retrieved evaluation

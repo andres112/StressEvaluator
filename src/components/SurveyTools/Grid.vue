@@ -168,7 +168,7 @@ export default {
   data() {
     return {
       answer_selected: [],
-      answer_map: null,
+      answers_map: null,
     };
   },
   created() {
@@ -220,7 +220,10 @@ export default {
         value = value.text;
       }
       this.answers_map.set(key.text, value);
-      this.answer_selected = Array.from(this.answers_map);
+      this.answer_selected = Array.from(this.answers_map, ([row, column]) => ({
+        row: row,
+        column: column,
+      }));
     },
   },
 };
