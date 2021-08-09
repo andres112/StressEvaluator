@@ -2,7 +2,7 @@
   <v-container class="mt-4">
     <v-row dense justify="center">
       <!-- Evaluation information card -->
-      <v-col cols="12" sm="10" lg="6">
+      <v-col cols="12" lg="6">
         <v-card>
           <v-card-title
             class="text-h5 font-weight-bold grey--text text--darken-1"
@@ -86,7 +86,7 @@
       </v-col>
 
       <!-- Evaluation results download card -->
-      <v-col cols="12" sm="10" lg="6">
+      <v-col cols="12" lg="6">
         <v-card>
           <v-card-title
             class="text-h5 font-weight-bold grey--text text--darken-1"
@@ -95,7 +95,7 @@
           </v-card-title>
           <v-card-text>
             <v-row class="my-4" align="center">
-              <v-col cols="5">
+              <v-col cols="12" md="6" lg="5">
                 <v-list-item two-line class="pl-0">
                   <v-list-item-content>
                     <v-list-item-title
@@ -109,7 +109,7 @@
                   </v-list-item-content>
                 </v-list-item>
               </v-col>
-              <v-col cols="7">
+              <v-col cols="12" md="6" lg="7">
                 <v-btn
                   color="light-green"
                   elevation="2"
@@ -125,21 +125,21 @@
             </v-row>
             <v-divider class="mx-1 my-2"></v-divider>
             <v-row class="my-4" align="center">
-              <v-col cols="5">
+              <v-col cols="12" md="6" lg="5">
                 <v-list-item two-line class="pl-0">
                   <v-list-item-content>
                     <v-list-item-title
                       class="font-weight-bold text-md-h5 text-h6 mr-2"
                     >
-                      Partial
+                      Only Results
                     </v-list-item-title>
                     <v-list-item-subtitle>
-                      User responsens separated by evaluation's steps.
+                      User responses separated by evaluation's steps.
                     </v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
               </v-col>
-              <v-col cols="7">
+              <v-col cols="12" md="6" lg="7">
                 <v-btn
                   color="light-green"
                   elevation="2"
