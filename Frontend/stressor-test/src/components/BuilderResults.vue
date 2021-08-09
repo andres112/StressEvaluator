@@ -3,7 +3,7 @@
     <home-button />
     <v-layout justify-center align-center>
       <v-card class="text-center top-10" elevation="0">
-        <v-card-title class="text-md-h2 text-sm-h4 text-h5 font-weight-bold">
+        <v-card-title class="d-flex justify-center text-md-h2 text-sm-h4 text-h5 font-weight-bold">
           Stress Evaluator
         </v-card-title>
         <p class="text-subtitle-2 mb-6 green--text">Builder Mode</p>
