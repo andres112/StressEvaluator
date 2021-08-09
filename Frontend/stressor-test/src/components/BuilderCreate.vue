@@ -8,7 +8,9 @@
       loader-height="2"
       min-width="35%"
     >
-      <v-card-title class="d-flex justify-center text-md-h2 text-sm-h3 text-h5 font-weight-bold">
+      <v-card-title
+        class="d-flex justify-center text-md-h2 text-sm-h3 text-h5 font-weight-bold"
+      >
         Stress Evaluator
       </v-card-title>
       <p class="text-subtitle-2 mb-4 green--text">Builder Mode</p>
