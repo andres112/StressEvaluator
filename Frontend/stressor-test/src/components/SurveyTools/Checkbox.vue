@@ -18,7 +18,7 @@
           dense
           v-if="edition_mode"
           color="light-green"
-          v-model="opt.text"
+          v-model.trim="opt.text"
           placeholder="Option"
           counter
           maxlength="150"
@@ -44,7 +44,12 @@
       </a>
       <br />
       <div class="d-inline-flex">
-        <v-checkbox dense v-model="content.required" class="ml-1" label="Required"></v-checkbox>
+        <v-checkbox
+          dense
+          v-model="content.required"
+          class="ml-1"
+          label="Required"
+        ></v-checkbox>
       </div>
     </div>
   </v-container>
@@ -53,6 +58,8 @@
 import { mapState } from "vuex";
 import { createNanoId } from "@/assets/helpers.js";
 import Question from "./Question.vue";
+
+const MAX_OPTIONS = 15;
 
 export default {
   name: "Checkbox",
@@ -78,11 +85,16 @@ export default {
       this.$emit("onDeleteQuestion", this.content.id);
     },
     addOption() {
-      const new_option = { value: createNanoId(), text: "" };
-      this.content.options.push(new_option);
+      if (this.content.options.length < MAX_OPTIONS) {
+        // Nano id used for creating option id
+        const new_option = { value: createNanoId(), text: "" };
+        this.content.options.push(new_option);
+      }
     },
     deleteOption(option_id) {
-      this.content.options = this.content.options.filter((x) => x.value != option_id);
+      this.content.options = this.content.options.filter(
+        (x) => x.value != option_id
+      );
     },
   },
 };

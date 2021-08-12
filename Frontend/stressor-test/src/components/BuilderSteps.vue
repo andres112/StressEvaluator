@@ -279,7 +279,7 @@ export default {
       const aux = this;
       setTimeout(function() {
         aux.current_tab = aux.steps.length - 1;
-      }, 750);
+      }, 1000);
     },
   },
   watch: {

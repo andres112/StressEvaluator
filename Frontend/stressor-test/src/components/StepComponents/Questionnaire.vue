@@ -89,6 +89,7 @@ import SingleText from "../SurveyTools/SingleText.vue";
 import LongText from "../SurveyTools/LongText.vue";
 import LinearScale from "../SurveyTools/LinearScale.vue";
 import Grid from "../SurveyTools/Grid.vue";
+import Images from "../SurveyTools/Images.vue";
 
 export default {
   name: "Questionnaire",
@@ -100,6 +101,7 @@ export default {
     LongText,
     LinearScale,
     Grid,
+    Images
   },
   props: {
     step_data: Object,
@@ -122,6 +124,7 @@ export default {
       { text: "Linear Scale", icon: "mdi-dots-horizontal", value: "rating" },
       { text: "Radiogroup Grid", icon: "mdi-dots-grid", value: "radiogrid" },
       { text: "Checkbox Grid", icon: "mdi-view-grid", value: "checkboxgrid" },
+      { text: "Image Selector", icon: "mdi-image", value: "image" }
     ],
   }),
   mounted() {
@@ -154,7 +157,7 @@ export default {
         required: false,
         options: null,
       };
-      if (["checkbox", "radio", "dropdown"].includes(tool)) {
+      if (["checkbox", "radio", "dropdown", "image"].includes(tool)) {
         q.options = [];
       }
       if (tool == "dropdown") {
@@ -198,6 +201,9 @@ export default {
       }
       if (["radiogrid", "checkboxgrid"].includes(tool)) {
         return Grid;
+      }
+      if (tool == "image") {
+        return Images;
       }
     },
     onDeleteQuestion(question_id) {

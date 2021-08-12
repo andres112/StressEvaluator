@@ -15,7 +15,7 @@
             <v-text-field
               dense
               color="light-green"
-              v-model="opt.text"
+              v-model.trim="opt.text"
               placeholder="Option"
               class="ml-4"
               counter

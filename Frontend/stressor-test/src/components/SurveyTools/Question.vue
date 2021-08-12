@@ -6,7 +6,7 @@
         v-if="edition_mode"
         dense
         color="light-green"
-        v-model="content.question"
+        v-model.trim="content.question"
         placeholder="Question"
         counter
         maxlength="200"
