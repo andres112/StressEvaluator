@@ -29,3 +29,10 @@ input {
     cursor: pointer;
   }
 }
+.selectable{
+  cursor: pointer;
+  transition: all 0.3s ease-in;
+  &:hover{
+    transform: scale(1.1);
+  }
+}

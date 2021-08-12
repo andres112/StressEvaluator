@@ -28,7 +28,7 @@
             dense
             v-if="edition_mode"
             color="light-green"
-            v-model="row.text"
+            v-model.trim="row.text"
             placeholder="Option"
             counter
             maxlength="25"
@@ -66,7 +66,7 @@
             dense
             v-if="edition_mode"
             color="light-green"
-            v-model="column.text"
+            v-model.trim="column.text"
             placeholder="Option"
             counter
             maxlength="25"
