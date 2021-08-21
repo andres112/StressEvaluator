@@ -130,6 +130,7 @@
                 color="light-green"
                 class="text-h6"
                 :disabled="edition_mode"
+                autofocus
               ></v-text-field>
             </v-col>
           </v-row>

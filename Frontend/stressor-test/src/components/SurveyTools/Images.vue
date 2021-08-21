@@ -40,12 +40,14 @@
             @click="setAnswer(opt.text)"
           >
             <template v-slot:placeholder>
-              <v-row class="fill-height ma-0" align="center" justify="center">
-                <v-progress-circular
-                  indeterminate
-                  color="grey lighten-5"
-                ></v-progress-circular>
-              </v-row>
+              <v-sheet
+                class="px-2 py-2 fill-height"
+              >
+                <v-skeleton-loader
+                  class="mx-auto"
+                  type="image"
+                ></v-skeleton-loader>
+              </v-sheet>
             </template>
           </v-img>
         </v-card>

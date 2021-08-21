@@ -67,7 +67,7 @@
         shaped
       >
         <v-subheader class="text-subtitle-1 blue--text"
-          >{{ `Question ${item + 1}` }}
+          >Question {{item + 1}}
         </v-subheader>
         <component
           :is="getToolComponent(question.type)"
@@ -101,7 +101,7 @@ export default {
     LongText,
     LinearScale,
     Grid,
-    Images
+    Images,
   },
   props: {
     step_data: Object,
@@ -124,7 +124,7 @@ export default {
       { text: "Linear Scale", icon: "mdi-dots-horizontal", value: "rating" },
       { text: "Radiogroup Grid", icon: "mdi-dots-grid", value: "radiogrid" },
       { text: "Checkbox Grid", icon: "mdi-view-grid", value: "checkboxgrid" },
-      { text: "Image Selector", icon: "mdi-image", value: "image" }
+      { text: "Image Selector", icon: "mdi-image", value: "image" },
     ],
   }),
   mounted() {
@@ -146,6 +146,9 @@ export default {
   },
   computed: {
     ...mapState({ edition_mode: (state) => state.settings.edition_mode }),
+    content() {
+      return this.step_data?.content;
+    },
   },
   methods: {
     addTool(tool) {
@@ -233,6 +236,11 @@ export default {
     },
     isSelectedCard(qId) {
       return qId == this.selectedCard ? 20 : 2;
+    },
+  },
+  watch: {
+    content() {
+      this.survey = this.content.questions;
     },
   },
 };
