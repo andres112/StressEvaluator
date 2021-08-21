@@ -3,14 +3,28 @@
     "name": true,
     "type": false,
     "duration": false,
-    "stressor": false
+    "stressor": false,
+    "template": false
   },
   "question": {
     "name": true,
     "type": true,
     "duration": false,
-    "stressor": false
+    "stressor": false,
+    "template": true
   },
-  "stress": { "name": true, "type": true, "duration": true, "stressor": true },
-  "info": { "name": true, "type": true, "duration": false, "stressor": false }
+  "stress": {
+    "name": true,
+    "type": true,
+    "duration": true,
+    "stressor": true,
+    "template": false
+  },
+  "info": {
+    "name": true,
+    "type": true,
+    "duration": false,
+    "stressor": false,
+    "template": false
+  }
 }

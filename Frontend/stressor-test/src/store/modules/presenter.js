@@ -160,7 +160,10 @@ const actions = {
       const req = await fetch(url);
       if (req?.status == 200) {
         const res = await req.json();
-        // After step is retrieved update the session
+        // Reuse this action only for get info about the step purposes
+        if (payload?.no_action) return res;
+
+        // After step is retrieved and no_action is false or undefined, update the session
         const new_step = {
           test_id: payload.test_id,
           session_id: state.session_id,

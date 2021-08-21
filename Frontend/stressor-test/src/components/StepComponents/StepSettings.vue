@@ -35,6 +35,30 @@
             v-if="checkBR('type')"
             :disabled="published_mode"
           ></v-select>
+          <div v-if="checkBR('template')" class="d-flex">
+            <v-select
+              v-model="template"
+              :rules="[rules.required]"
+              :items="templates"
+              item-text="text"
+              item-value="value"
+              dense
+              label="Template"
+              outlined
+              color="light-green"
+              :disabled="published_mode"
+            ></v-select>
+            <v-btn
+              color="light-green"
+              dark
+              elevation="0"
+              class="mr-2"
+              icon
+              @click="changeContent()"
+            >
+              <v-icon>mdi-content-copy</v-icon>
+            </v-btn>
+          </div>
         </v-layout>
         <v-layout flex-column flex-sm-row justify-space-between>
           <v-autocomplete
@@ -75,7 +99,7 @@ import { mapState } from "vuex";
 export default {
   name: "BuilderStepSettings",
   props: {
-    br: Object,    
+    br: Object,
   },
   data() {
     return {
@@ -85,7 +109,11 @@ export default {
         { text: "Information", value: "info" },
       ],
       stressor_list: [],
-      rules: { min: (value) => value > 0 || "Wrong value!" },
+      rules: {
+        min: (value) => value > 0 || "Wrong value!",
+        required: (value) => !value || "This will remove the current content",
+      },
+      template: [],
     };
   },
   created() {
@@ -94,12 +122,31 @@ export default {
   computed: {
     ...mapState({
       current_step: (state) => state.builder.current_step,
+      steps: (state) => state.builder.steps,
       published_mode: (state) => state.settings.published_mode,
     }),
+    templates() {
+      const q_list = this.steps
+        .filter(
+          (x) =>
+            x.type === "question" &&
+            x._id != this.current_step._id &&
+            x.content?.questions.length > 0
+        )
+        .map((y) => {
+          return { text: y.name, value: y._id };
+        });
+      return q_list;
+    },
   },
   methods: {
     checkBR(el) {
       return this.br?.[el] ?? false;
+    },
+    changeContent() {
+      this.current_step.content = this.steps.find(
+        (x) => x._id == this.template
+      ).content;
     },
   },
 };
