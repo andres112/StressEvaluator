@@ -1,0 +1,3 @@
+# exclude folder content
+timestamp_creator/input/*
+timestamp_creator/output/*

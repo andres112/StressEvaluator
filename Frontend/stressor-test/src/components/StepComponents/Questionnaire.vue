@@ -67,7 +67,7 @@
         shaped
       >
         <v-subheader class="text-subtitle-1 blue--text"
-          >Question {{item + 1}}
+          >Question {{ item + 1 }}
         </v-subheader>
         <component
           :is="getToolComponent(question.type)"
@@ -90,6 +90,7 @@ import LongText from "../SurveyTools/LongText.vue";
 import LinearScale from "../SurveyTools/LinearScale.vue";
 import Grid from "../SurveyTools/Grid.vue";
 import Images from "../SurveyTools/Images.vue";
+import Label from "../SurveyTools/Label.vue";
 
 export default {
   name: "Questionnaire",
@@ -102,6 +103,7 @@ export default {
     LinearScale,
     Grid,
     Images,
+    Label,
   },
   props: {
     step_data: Object,
@@ -125,6 +127,7 @@ export default {
       { text: "Radiogroup Grid", icon: "mdi-dots-grid", value: "radiogrid" },
       { text: "Checkbox Grid", icon: "mdi-view-grid", value: "checkboxgrid" },
       { text: "Image Selector", icon: "mdi-image", value: "image" },
+      { text: "Label", icon: "mdi-label", value: "label" },
     ],
   }),
   mounted() {
@@ -136,7 +139,7 @@ export default {
     if (!this.edition_mode) {
       // Initialize answers variable for user response
       this.answers = {
-        start_time: new Date(),
+        start_time: Math.floor(Date.now() / 1000),
         step_id: this.step_data._id,
         type: this.step_data.type,
         end_time: null,
@@ -184,30 +187,19 @@ export default {
       }, 2);
     },
     getToolComponent(tool) {
-      if (tool == "checkbox") {
-        return Checkbox;
-      }
-      if (tool == "radio") {
-        return Radiogroup;
-      }
-      if (tool == "dropdown") {
-        return Dropdown;
-      }
-      if (tool == "single") {
-        return SingleText;
-      }
-      if (tool == "long") {
-        return LongText;
-      }
-      if (tool == "rating") {
-        return LinearScale;
-      }
-      if (["radiogrid", "checkboxgrid"].includes(tool)) {
-        return Grid;
-      }
-      if (tool == "image") {
-        return Images;
-      }
+      const TOOLS = {
+        checkbox: Checkbox,
+        radio: Radiogroup,
+        dropdown: Dropdown,
+        single: SingleText,
+        long: LongText,
+        rating: LinearScale,
+        radiogrid: Grid,
+        checkboxgrid: Grid,
+        image: Image,
+        label: Label,
+      };
+      return TOOLS[tool] || null;
     },
     onDeleteQuestion(question_id) {
       this.survey = this.survey.filter((x) => x.id != question_id);
@@ -219,7 +211,7 @@ export default {
     // Get step answers in user implementation mode
     getAnswer() {
       const aux = this;
-      this.answers.end_time = new Date();
+      this.answers.end_time = Math.floor(Date.now() / 1000);
       // Get all the answers given by user
       this.answers.content = this.survey.map(function(x) {
         return {

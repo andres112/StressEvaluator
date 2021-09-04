@@ -1,5 +1,13 @@
 <template>
   <v-container class="py-0 px-0 pr-md-6">
+    <v-progress-linear
+      :value="remainingTime"
+      reverse
+      rounded
+      height="12"
+      v-if="stepDuration"
+      color="light-green"
+    ></v-progress-linear>
     <div
       class="editor-node"
       :class="{ edition: edition_mode }"
@@ -39,10 +47,17 @@ export default {
         theme: "snow",
         readOnly: false,
       },
+      remainingTime: 100,
+      answers: {},
     };
   },
   props: {
     step_data: Object,
+  },
+  created() {
+    if (this.stepDuration) {
+      this.countDown();
+    }
   },
   mounted() {
     this.initializeEditor();
@@ -52,6 +67,9 @@ export default {
       edition_mode: (state) => state.settings.edition_mode,
       published_mode: (state) => state.settings.published_mode,
     }),
+    stepDuration() {
+      return this.step_data.duration > 0 && !this.edition_mode;
+    },
   },
   methods: {
     initializeEditor() {
@@ -84,9 +102,35 @@ export default {
         ? this.editorInstance.root.innerHTML
         : "";
     },
+
+    // If the step has duration, executes the countdown
+    countDown() {
+      this.answers = {
+        start_time: Math.floor(Date.now() / 1000),
+        step_id: this.step_data._id,
+        type: this.step_data.type,
+        end_time: null,
+        content: {},
+      };
+      const decrease_factor = 100 / this.step_data.duration;
+      this.remainingTime = 100;
+      const interval = setInterval(() => {
+        this.remainingTime -= decrease_factor;
+        if (this.remainingTime <= 0) {
+          clearInterval(interval);
+          this.$emit("onEnd");
+        }
+      }, 1000);
+    },
+
     getContent() {
       const content = this.editorInstance.getContents();
       return { content: content.ops };
+    },
+    // Get step answers in user implementation mode
+    getAnswer() {
+      this.answers.end_time = Math.floor(Date.now() / 1000);
+      return this.answers;
     },
   },
 };

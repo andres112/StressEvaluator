@@ -290,6 +290,8 @@ def create_session(test_id):
         user = {'email': None, 'age': None, 'gender': None}
         user.update(request.json["user"])
 
+        settings = request.json["settings"] if "settings" in request.json else None
+
         if request.method == 'POST':
             new_session = {'_id': request.json["session_id"],
                            'test_id': test_uuid,  # test_id correspond to the _id in mongodb
@@ -298,7 +300,8 @@ def create_session(test_id):
                            'current_step': None,
                            'creation_date': datetime.datetime.now(),
                            'close_date': None,
-                           'responses': []}
+                           'responses': [],
+                           'settings': settings}
         # create new step
         Result.insert_one(new_session)
         return make_response(
@@ -348,7 +351,7 @@ def session_step(test_id, session_id):
         if request.method == 'PUT':
             updated_session = {}
             # parameters allowed
-            __parameters = ['consent', 'current_step']
+            __parameters = ['consent', 'current_step', 'settings']
             # build the data to send to db
             for param in __parameters:
                 if keyExist(param, request.json):

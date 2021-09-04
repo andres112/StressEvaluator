@@ -98,7 +98,7 @@ export default {
     },
     // Get step answers in user implementation mode
     getAnswer() {
-      this.answers.end_time = new Date();
+      this.answers.end_time = Math.floor(Date.now() / 1000);
       this.answers.content = this.$refs.stressor.metrics;
       return this.answers;
     },
@@ -108,7 +108,7 @@ export default {
       this.waiting = true;
       const msg = ["Go!", "Set"];
       let contDown = msg.length;
-      this.waiting_msg = "Ready"
+      this.waiting_msg = "Ready";
       const interval = setInterval(() => {
         this.waiting_msg = msg[contDown - 1];
         if (contDown <= 0) {
@@ -124,7 +124,7 @@ export default {
     playControl() {
       // Initialize answers variable for user response
       this.answers = {
-        start_time: new Date(),
+        start_time: Math.floor(Date.now() / 1000),
         step_id: this.step_data._id,
         type: this.step_data.type,
         end_time: null,

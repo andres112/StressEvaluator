@@ -1,5 +1,19 @@
 <template>
   <v-layout justify-center align-center fill-height column>
+    <!-- NOTE: stimulus section -->
+    <v-dialog v-model="config">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn absolute top left icon color="grey" v-bind="attrs" v-on="on">
+          <v-icon x-large> mdi-cog</v-icon>
+        </v-btn>
+      </template>
+      <stimulus
+        ref="stimulus"
+        :steps="evaluation.steps"
+        :evalId="evaluation._id"
+      ></stimulus>
+    </v-dialog>
+    <!-- ---------------------- -->
     <p class="text-md-h2 text-sm-h3 text-h4 font-weight-bold">
       Stress Evaluator
     </p>
@@ -44,7 +58,11 @@
           </v-col>
           <v-col cols="12" md="5">
             <v-card shaped color="light-blue lighten-5">
-              <v-list-item two-line v-for="(item, index) in ownerInfo" :key="index">
+              <v-list-item
+                two-line
+                v-for="(item, index) in ownerInfo"
+                :key="index"
+              >
                 <v-list-item-content>
                   <v-list-item-title
                     class="text-sm-h5 text-lg-h4 text-h6 font-weight-bold"
@@ -92,24 +110,29 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
 import UserForm from "@/components/Common/UserForm";
+// NOTE: stimulus section
+import Settings from "@/components/Stimulus/Settings";
 
 export default {
   name: "PresenterIntroduction",
   components: {
     UserForm,
+    // NOTE: stimulus section
+    stimulus: Settings,
   },
   data() {
     return {
       loading: false,
       owner_info: ["owner", "organization", "email"],
+      // NOTE: stimulus section
+      config: false,
     };
   },
   computed: {
     ...mapState({ evaluation: (state) => state.presenter.evaluation }),
     validateUserForm() {
-      debugger;
       return this.$refs.userForm.valid;
     },
     ownerInfo() {
@@ -123,8 +146,12 @@ export default {
   },
   methods: {
     ...mapActions({ createSession: "presenter/createSession" }),
+    // NOTE: stimulus section
+    ...mapMutations({ setSettings: "stimulus/setSettings" }),
     async start() {
       const user_form = this.$refs.userForm;
+      // NOTE: stimulus section
+      const stimulus = this.$refs.stimulus?.settings;
       if (!user_form.valid) {
         user_form.validate();
         return;
@@ -134,7 +161,11 @@ export default {
       const res = await this.createSession({
         test_id: test_id,
         user: user_form.user,
+        // NOTE: stimulus section
+        settings: stimulus,
       });
+      // NOTE: stimulus section
+      this.setSettings(stimulus);
       if (res?.session_id) {
         this.loading = false;
         this.$router.push(`/presenter/${test_id}/session/${res.session_id}`);

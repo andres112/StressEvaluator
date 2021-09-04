@@ -31,15 +31,15 @@
     <v-divider class="mx-4"></v-divider>
 
     <!-- Step content section -->
-    <v-card-text
-      ><component
+    <v-card-text>
+      <component
         :key="current_step._id"
         :is="currentComponent(current_step)"
         :step_data="current_step"
         :ref="current_step._id"
         @onEnd="sendResponse"
-      ></component
-    ></v-card-text>
+      ></component>
+    </v-card-text>
 
     <!-- Step buttons section -->
     <v-card-actions class="d-flex justify-center">
@@ -49,8 +49,8 @@
         class="text-capitalize"
         x-large
         dark
-        v-if="current_step.type === 'info'"
-        @click.prevent="nextStep()"
+        v-if="current_step.type === 'info' && current_step.duration <= 0"
+        @click.prevent="validateAmbient()"
       >
         <span class="text-h6 font-weight-bold mx-2">
           Continue
@@ -97,6 +97,16 @@
         </span>
       </v-btn>
     </v-card-actions>
+
+    <!-- NOTE: stimulus section -->
+    <!-- Overlay for ambient data -->
+    <ambient-conditions
+      v-if="ambient"
+      :step_id="getNextStep"
+      :test_id="current_step.test_id"
+      :session_id="session_id"
+      @onEndAmbient="nextStep()"
+    ></ambient-conditions>
   </v-card>
 </template>
 
@@ -108,13 +118,17 @@ import { textLength } from "@/assets/helpers";
 import TextEditor from "./StepComponents/TextEditor.vue";
 import Questionnaire from "./StepComponents/Questionnaire.vue";
 import Stressor from "./StepComponents/Stressor.vue";
+//NOTE: stimulus section
+import AmbientConditions from "./Stimulus/AmbientConditions.vue";
 
 export default {
   name: "PresenterEvaluation",
-  components: { TextEditor, Questionnaire, Stressor },
+  components: { TextEditor, Questionnaire, Stressor, AmbientConditions },
   data() {
     return {
       sending: false,
+      //NOTE: stimulus section
+      ambient: false,
     };
   },
 
@@ -123,6 +137,8 @@ export default {
       evaluation: (state) => state.presenter.evaluation,
       current_step: (state) => state.presenter.current_step,
       session_id: (state) => state.presenter.session_id,
+      //NOTE: stimulus section
+      stimulus_settings: (state) => state.stimulus.stimulus_settings,
     }),
     getNextStep() {
       const next_index =
@@ -167,11 +183,12 @@ export default {
 
     // Go the next step
     async nextStep() {
-      const nextStep = this.getNextStep;
-      if (nextStep) {
+      //NOTE: stimulus section
+      this.ambient = false;
+      if (this.getNextStep) {
         const step_update = {
           test_id: this.current_step.test_id,
-          step_id: nextStep,
+          step_id: this.getNextStep,
         };
         await this.getStep(step_update);
       } else {
@@ -191,7 +208,7 @@ export default {
       const update_res = await this.updateSession(session_update);
       if (res) {
         update_res?.status == 200
-          ? await this.nextStep()
+          ? await this.validateAmbient()
           : this.sendNotification(); // send notification with parameters by default
       } else {
         this.closeEvaluation();
@@ -225,7 +242,7 @@ export default {
       }
       // send the content to the server and wait for response
       const res = await this.updateResponses(payload);
-      if (res?.status == 200) await this.nextStep();
+      if (res?.status == 200) await this.validateAmbient();
       else this.sendNotification(); // send notification with parameters by default
       this.sending = false;
     },
@@ -265,6 +282,18 @@ export default {
         return ans.answers > 0;
       } else {
         return false;
+      }
+    },
+
+    //NOTE: stimulus section
+    validateAmbient() {
+      if (this.stimulus_settings && this.stimulus_settings.length > 0) {
+        this.ambient = this.stimulus_settings.find(
+          (x) => x.step_id == this.getNextStep
+        )?.ambient;
+      }
+      if (!this.ambient) {
+        this.nextStep();
       }
     },
 

@@ -201,8 +201,7 @@ export default {
       } else {
         payload["name"] = this.current_step.name;
         payload["type"] = this.current_step.type;
-        payload["duration"] =
-          this.current_step.type == "stress" ? this.current_step.duration : 0;
+        payload["duration"] = this.current_step.duration;
         payload["stressor"] =
           this.current_step.type == "stress"
             ? this.current_step.stressor

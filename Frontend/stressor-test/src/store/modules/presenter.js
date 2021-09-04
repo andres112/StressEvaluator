@@ -33,6 +33,8 @@ const actions = {
         session_id: state.session_id,
         test_id: session_data.test_id,
         user: session_data.user,
+        // NOTE: stimulus section
+        settings: session_data.settings,
       };
       const url =
         process.env.VUE_APP_BASE_URL + "create_session/" + session_data.test_id;
@@ -82,7 +84,7 @@ const actions = {
     }
   },
 
-  async closeSession({ commit }, payload) {
+  async closeSession({ commit, dispatch }, payload) {
     try {
       // Url for session updating
       const url =
@@ -92,6 +94,9 @@ const actions = {
         "/session/" +
         payload.session_id;
       const req = await fetch(url);
+      // NOTE: stimulus section
+      dispatch("stimulus/controlLights", { on: false }, { root: true });
+      dispatch("stimulus/controlMusic", { action: "stop" }, { root: true });
       return req;
     } catch (error) {
       console.log(error);
@@ -149,7 +154,7 @@ const actions = {
   },
 
   // Get step by step identifier and evaluation id
-  async getStep({ commit, dispatch, state }, payload) {
+  async getStep({ commit, dispatch, state, rootState }, payload) {
     try {
       const url =
         process.env.VUE_APP_BASE_URL +
@@ -171,6 +176,28 @@ const actions = {
         };
         await dispatch("updateSession", new_step);
         commit("setCurrentStep", res);
+
+        // NOTE: stimulus section
+        const ss = rootState.stimulus.stimulus_settings.find(
+          (x) => x.step_id === res._id
+        );
+        // NOTE: stimulus section
+        dispatch(
+          "stimulus/controlLights",
+          {
+            on: ss.light,
+            rgb: ss.color,
+            ambient: ss.ambient,
+          },
+          { root: true }
+        );
+        dispatch(
+          "stimulus/controlMusic",
+          {
+            action: ss.music ? "play" : "stop",
+          },
+          { root: true }
+        );
       }
       return req;
     } catch (error) {
