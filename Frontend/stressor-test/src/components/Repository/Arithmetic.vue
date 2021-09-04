@@ -17,7 +17,7 @@
           <v-form ref="properties_settings">
             <!-- Interval duration: The time interval used to solve the task -->
             <v-text-field
-              v-model.number="properties.int_duration"
+              v-model.number="properties.interval_duration"
               :rules="[rules.required, rules.maxInterval, rules.globalRelation]"
               dense
               type="number"
@@ -97,7 +97,7 @@
           >
             Component
           </p>
-          <v-row justify="center" class="my-6">
+          <v-row justify="center" class="my-6" :class="getAnimation">
             <v-progress-circular
               :rotate="90"
               :size="300"
@@ -106,7 +106,7 @@
               v-model="step_time"
             >
               <p class="text-h2 font-weight-bold">
-                {{ properties.int_duration - elapsed_time }}
+                {{ properties.interval_duration - elapsed_time }}
               </p>
             </v-progress-circular>
           </v-row>
@@ -142,12 +142,14 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import { playSound } from "@/assets/helpers";
+import "animate.css";
 
 // Build the stressor's properties only with parameter
 const buildProperty = function(obj) {
-  const { int_duration = 30, operation = "add", seed = [] } = obj;
+  const { interval_duration = 30, operation = "add", seed = [] } = obj;
   return {
-    int_duration: int_duration,
+    interval_duration: interval_duration,
     operation: operation,
     seed: seed,
   };
@@ -177,6 +179,8 @@ export default {
       ],
       seeds: [null, null, null],
 
+      animate: false,
+
       interval: {},
       step_time: 0,
       elapsed_time: 0,
@@ -186,7 +190,7 @@ export default {
       result: null,
 
       properties: {
-        int_duration: 0,
+        interval_duration: 0,
         operation: "add",
         seed: [],
       },
@@ -209,6 +213,7 @@ export default {
     this.getSecondNumber();
   },
   beforeDestroy() {
+    this.animate = false;
     this.stopTimer();
   },
   computed: {
@@ -236,6 +241,9 @@ export default {
       if (this.properties.operation == "div")
         return Math.trunc(this.first_number / this.second_number);
     },
+    getAnimation() {
+      if (this.animate) return "animate__animated animate__headShake";
+    },
   },
   methods: {
     ...mapMutations({ setNotifications: "settings/setNotifications" }),
@@ -257,6 +265,7 @@ export default {
     validateResult() {
       if (this.result > this.getResult) {
         this.metrics.errors++;
+        this.playSound("incorrect");
         this.stopTimer();
         this.playTimer();
         this.sendNotification("Incorrect!", "error");
@@ -264,6 +273,7 @@ export default {
       }
       if (this.result == this.getResult) {
         this.metrics.hits++;
+        this.playSound("correct");
         this.stopTimer();
         this.playTimer();
         this.sendNotification("Correct!", "ok");
@@ -273,13 +283,14 @@ export default {
     // Time representation in circular progress.
     playTimer() {
       this.step_time = 0;
-      const rel_time = 100 / this.properties.int_duration;
+      const rel_time = 100 / this.properties.interval_duration;
       this.interval = setInterval(() => {
         this.elapsed_time++;
         if (this.step_time >= 100) {
           this.clearData(rel_time, 1);
           this.metrics.total++;
           this.metrics.not_ans++;
+          this.playSound("incorrect");
           this.sendNotification("Not Answered", "error");
           return;
         }
@@ -310,6 +321,16 @@ export default {
         status: type,
       };
       this.setNotifications(notification);
+    },
+    // Play a sound for result validation - shake animation when incorrect
+    playSound(sound) {
+      playSound(sound);
+      if (sound == "incorrect") {
+        this.animate = true;
+        setTimeout(() => {
+          this.animate = false;
+        }, 1000);
+      }
     },
   },
   watch: {

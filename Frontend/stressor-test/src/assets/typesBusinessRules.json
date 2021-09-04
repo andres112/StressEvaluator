@@ -23,7 +23,7 @@
   "info": {
     "name": true,
     "type": true,
-    "duration": false,
+    "duration": true,
     "stressor": false,
     "template": false
   }

@@ -86,6 +86,9 @@
             suffix="sec"
             v-if="checkBR('duration')"
             :disabled="published_mode"
+            :hint="
+              current_step.type != 'stress' ? '0 means not limit of time' : null
+            "
           ></v-text-field>
         </v-layout>
       </v-layout>
@@ -110,7 +113,12 @@ export default {
       ],
       stressor_list: [],
       rules: {
-        min: (value) => value > 0 || "Wrong value!",
+        min: (value) => {
+          if (value > 0) return true;
+          else if (this.current_step.type != "stress" && value >= 0)
+            return true;
+          else return "Wrong value!";
+        },
         required: (value) => !value || "This will remove the current content",
       },
       template: [],
@@ -144,9 +152,9 @@ export default {
       return this.br?.[el] ?? false;
     },
     changeContent() {
-      this.current_step.content = this.steps.find(
-        (x) => x._id == this.template
-      ).content;
+      this.current_step.content = JSON.parse(
+        JSON.stringify(this.steps.find((x) => x._id == this.template).content)
+      );
     },
   },
 };

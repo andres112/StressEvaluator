@@ -1,5 +1,10 @@
 import { nanoid } from "nanoid";
 
+const SOUNDS = {
+  correct: require("./sounds/correct.mp3"),
+  incorrect: require("./sounds/incorrect.mp3"),
+};
+
 export const removeEmpty = function(obj) {
   for (let p in obj) {
     if (!obj[p]) {
@@ -32,4 +37,9 @@ export const copyToClipboard = function(msg) {
   tempInput.select();
   document.execCommand("copy");
   document.body.removeChild(tempInput);
+};
+
+export const playSound = function(name) {
+  const audio = new Audio(SOUNDS[name]);
+  audio.play();
 };

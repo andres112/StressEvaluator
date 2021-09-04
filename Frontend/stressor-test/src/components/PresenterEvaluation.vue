@@ -49,7 +49,7 @@
         class="text-capitalize"
         x-large
         dark
-        v-if="current_step.type === 'info'"
+        v-if="current_step.type === 'info' && current_step.duration <= 0"
         @click.prevent="nextStep()"
       >
         <span class="text-h6 font-weight-bold mx-2">
