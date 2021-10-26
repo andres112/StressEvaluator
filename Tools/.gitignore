@@ -1,3 +1,7 @@
 # exclude folder content
 timestamp_creator/input/*
 timestamp_creator/output/*
+music_dataset/*
+
+.ipynb_checkpoints/*
+.idea

@@ -275,7 +275,9 @@ export default {
       if (ans?.answers && ans?.answers.length > 0) {
         // Validate special types of radiodrid and checkboxgrid
         if (ans.type === "radiogrid" || ans.type === "checkboxgrid") {
-          return ans.answers.every((x) => x[1] !== null && x[1].length > 0);
+          return ans.answers.every(
+            (x) => x.column !== null && x.column.length > 0
+          );
         }
         return true;
       } else if (ans.type === "rating") {

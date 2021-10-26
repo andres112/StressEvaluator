@@ -3,6 +3,8 @@ const state = {
   dockIp: null,
   stimulus_settings: null,
   connected: null,
+  music: null,
+  color: null,
 };
 const mutations = {
   setBridgeIp(state, ip) {
@@ -16,6 +18,12 @@ const mutations = {
   },
   setSettings(state, payload) {
     state.stimulus_settings = payload;
+  },
+  setMusic(state, name) {
+    state.music = name;
+  },
+  setColor(state, color) {
+    state.color = color;
   },
 };
 const actions = {
@@ -49,6 +57,8 @@ const actions = {
           body: JSON.stringify({
             dock_ip: state.dockIp,
             bridge_ip: state.bridgeIp,
+            // dock_ip: "192.168.1.105",
+            // bridge_ip: "192.168.1.100",
           }),
         }
       );
@@ -114,7 +124,14 @@ const actions = {
       const url = new URL(
         `${process.env.VUE_APP_MUSIC_LIGHTS_URL}control_music/${commands?.action}`
       );
-      const req = await fetch(url);
+      const req = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // TODO: pending to send the song_id
+        body: JSON.stringify(commands),
+      });
       if (req.status === 200) {
         const res = await req.json();
       }

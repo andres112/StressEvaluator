@@ -195,6 +195,7 @@ const actions = {
           "stimulus/controlMusic",
           {
             action: ss.music ? "play" : "stop",
+            song_id: rootState.stimulus.music.value,
           },
           { root: true }
         );

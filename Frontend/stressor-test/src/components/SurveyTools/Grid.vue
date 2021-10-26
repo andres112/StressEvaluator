@@ -31,7 +31,7 @@
             v-model.trim="row.text"
             placeholder="Option"
             counter
-            maxlength="25"
+            maxlength="35"
             class="mr-4"
           ></v-text-field>
           <v-btn

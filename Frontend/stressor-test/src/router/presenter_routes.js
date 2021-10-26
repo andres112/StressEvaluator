@@ -23,6 +23,9 @@ export const p_routes = [
         name: "Introduction",
         component: Introduction,
         beforeEnter: (to, from, next) => {
+          // NOTE: stimulus section
+          store.commit("stimulus/setMusic", null);
+          store.commit("stimulus/setColor", null);
           store
             .dispatch("presenter/getEvaluation", to.params.test_id)
             .then((res) => {
@@ -41,7 +44,7 @@ export const p_routes = [
         component: Evaluation,
         beforeEnter: (to, from, next) => {
           if (from.name == "Introduction") next();
-          else if (from.name == "Acknowledge") next(from.path)
+          else if (from.name == "Acknowledge") next(from.path);
           else next("/");
         },
       },

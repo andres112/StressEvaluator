@@ -1,7 +1,7 @@
 <template>
   <v-layout justify-center align-center fill-height column>
     <!-- NOTE: stimulus section -->
-    <v-dialog v-model="config">
+    <v-dialog v-model="config" persistent>
       <template v-slot:activator="{ on, attrs }">
         <v-btn absolute top left icon color="grey" v-bind="attrs" v-on="on">
           <v-icon x-large> mdi-cog</v-icon>
@@ -11,6 +11,7 @@
         ref="stimulus"
         :steps="evaluation.steps"
         :evalId="evaluation._id"
+        @onClose="config = false"
       ></stimulus>
     </v-dialog>
     <!-- ---------------------- -->
@@ -85,7 +86,7 @@
 
       <v-card-actions>
         <v-row justify="center">
-          <v-col cols="10" sm="6" md="4" lg="2">
+          <v-col cols="8" sm="6" md="4" lg="2">
             <v-btn
               color="light-blue"
               class="my-4 text-capitalize white--text"
@@ -131,7 +132,12 @@ export default {
     };
   },
   computed: {
-    ...mapState({ evaluation: (state) => state.presenter.evaluation }),
+    ...mapState({
+      evaluation: (state) => state.presenter.evaluation,
+      // NOTE: stimulus section
+      music: (state) => state.stimulus.music,
+      color: (state) => state.stimulus.color,
+    }),
     validateUserForm() {
       return this.$refs.userForm.valid;
     },
@@ -149,13 +155,22 @@ export default {
     // NOTE: stimulus section
     ...mapMutations({ setSettings: "stimulus/setSettings" }),
     async start() {
+      const aux = this;
       const user_form = this.$refs.userForm;
       // NOTE: stimulus section
-      const stimulus = this.$refs.stimulus?.settings;
-      if (!user_form.valid) {
+      let stimulus = this.$refs.stimulus?.settings;
+      const experiment_group = this.$refs.stimulus?.group;
+      if (!user_form.valid || !this.music || !this.color || !stimulus) {
         user_form.validate();
         return;
       }
+      // NOTE: stimulus section, set the color selected by user
+      stimulus = stimulus.map(function(x) {
+        x.light && (x.color = aux.color.value);
+        return x;
+      });
+      // NOTE: stimulus section, set the expteriment group selected by user
+      user_form.user["group"] = experiment_group;
       this.loading = true;
       const test_id = this.evaluation._id;
       const res = await this.createSession({
@@ -175,9 +190,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.description {
-  white-space: pre-wrap;
-  text-align: justify;
-}
-</style>
+<style></style>

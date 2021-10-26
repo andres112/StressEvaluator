@@ -1,0 +1,577 @@
+{
+  "COMMENT": "This file is part of the experiment only. Contains the template settings for group A and group B. The experiment structure is already known, therefore the templates ",
+  "templates": [
+    {
+      "test_id": "500401b5-622f-48ce-8cc5-5a6d48c80391",
+      "groups": [
+        {
+          "id": "group_a_both",
+          "name": "Group A - Both",
+
+          "settings": [
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "cfa85906-8774-4fa2-80bd-ce7c6029d078",
+              "step_name": "Informed Consent"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "a054d14f-55e8-4a8d-8910-f9013fe211e8",
+              "step_name": "Preliminary Info"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "15d7b80f-e18c-4668-9e3a-ea5ddb4ac82d",
+              "step_name": "Control"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "d3183249-d7f1-4591-8282-d927104485e1",
+              "step_name": "Initial Questionnaire"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "7c46c990-13df-4bee-a508-73f08f54cc8c",
+              "step_name": "Instructions 1"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "ca66cfdd-3db1-444f-884e-a15e416bedac",
+              "step_name": "Arithmetic 1"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "cdef1165-18bb-4e74-be42-bae03f974e73",
+              "step_name": "Mid Questionnaire"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "5875262f-f5a4-4050-a8bd-e275fb920f43",
+              "step_name": "Recovery"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "24817f76-fbb1-4934-aa2a-c2d620467935",
+              "step_name": "Instructions 2"
+            },
+            {
+              "ambient": true,
+              "color": [255, 225, 255],
+              "light": true,
+              "music": true,
+              "step_id": "9524d6c2-c047-444a-8d9a-a5d9b7a5af2f",
+              "step_name": "Arithmetic 2"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "2452d47b-4176-4554-abca-bc161d6b2e94",
+              "step_name": "Final Questionnaire"
+            }
+          ]
+        },
+        {
+          "id": "group_b_both",
+          "name": "Group B Both",
+          "settings": [
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "cfa85906-8774-4fa2-80bd-ce7c6029d078",
+              "step_name": "Informed Consent"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "a054d14f-55e8-4a8d-8910-f9013fe211e8",
+              "step_name": "Preliminary Info"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "15d7b80f-e18c-4668-9e3a-ea5ddb4ac82d",
+              "step_name": "Control"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "d3183249-d7f1-4591-8282-d927104485e1",
+              "step_name": "Initial Questionnaire"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "7c46c990-13df-4bee-a508-73f08f54cc8c",
+              "step_name": "Instructions 1"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": true,
+              "music": true,
+              "step_id": "ca66cfdd-3db1-444f-884e-a15e416bedac",
+              "step_name": "Arithmetic 1"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "cdef1165-18bb-4e74-be42-bae03f974e73",
+              "step_name": "Mid Questionnaire"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "5875262f-f5a4-4050-a8bd-e275fb920f43",
+              "step_name": "Recovery"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "24817f76-fbb1-4934-aa2a-c2d620467935",
+              "step_name": "Instructions 2"
+            },
+            {
+              "ambient": true,
+              "color": [255, 225, 255],
+              "light": false,
+              "music": false,
+              "step_id": "9524d6c2-c047-444a-8d9a-a5d9b7a5af2f",
+              "step_name": "Arithmetic 2"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "2452d47b-4176-4554-abca-bc161d6b2e94",
+              "step_name": "Final Questionnaire"
+            }
+          ]
+        },
+        {
+          "id": "group_a_light",
+          "name": "Group A - Light",
+
+          "settings": [
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "cfa85906-8774-4fa2-80bd-ce7c6029d078",
+              "step_name": "Informed Consent"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "a054d14f-55e8-4a8d-8910-f9013fe211e8",
+              "step_name": "Preliminary Info"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "15d7b80f-e18c-4668-9e3a-ea5ddb4ac82d",
+              "step_name": "Control"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "d3183249-d7f1-4591-8282-d927104485e1",
+              "step_name": "Initial Questionnaire"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "7c46c990-13df-4bee-a508-73f08f54cc8c",
+              "step_name": "Instructions 1"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "ca66cfdd-3db1-444f-884e-a15e416bedac",
+              "step_name": "Arithmetic 1"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "cdef1165-18bb-4e74-be42-bae03f974e73",
+              "step_name": "Mid Questionnaire"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "5875262f-f5a4-4050-a8bd-e275fb920f43",
+              "step_name": "Recovery"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "24817f76-fbb1-4934-aa2a-c2d620467935",
+              "step_name": "Instructions 2"
+            },
+            {
+              "ambient": true,
+              "color": [255, 225, 255],
+              "light": true,
+              "music": false,
+              "step_id": "9524d6c2-c047-444a-8d9a-a5d9b7a5af2f",
+              "step_name": "Arithmetic 2"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "2452d47b-4176-4554-abca-bc161d6b2e94",
+              "step_name": "Final Questionnaire"
+            }
+          ]
+        },
+        {
+          "id": "group_b_light",
+          "name": "Group B Light",
+          "settings": [
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "cfa85906-8774-4fa2-80bd-ce7c6029d078",
+              "step_name": "Informed Consent"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "a054d14f-55e8-4a8d-8910-f9013fe211e8",
+              "step_name": "Preliminary Info"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "15d7b80f-e18c-4668-9e3a-ea5ddb4ac82d",
+              "step_name": "Control"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "d3183249-d7f1-4591-8282-d927104485e1",
+              "step_name": "Initial Questionnaire"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "7c46c990-13df-4bee-a508-73f08f54cc8c",
+              "step_name": "Instructions 1"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": true,
+              "music": false,
+              "step_id": "ca66cfdd-3db1-444f-884e-a15e416bedac",
+              "step_name": "Arithmetic 1"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "cdef1165-18bb-4e74-be42-bae03f974e73",
+              "step_name": "Mid Questionnaire"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "5875262f-f5a4-4050-a8bd-e275fb920f43",
+              "step_name": "Recovery"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "24817f76-fbb1-4934-aa2a-c2d620467935",
+              "step_name": "Instructions 2"
+            },
+            {
+              "ambient": true,
+              "color": [255, 225, 255],
+              "light": false,
+              "music": false,
+              "step_id": "9524d6c2-c047-444a-8d9a-a5d9b7a5af2f",
+              "step_name": "Arithmetic 2"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "2452d47b-4176-4554-abca-bc161d6b2e94",
+              "step_name": "Final Questionnaire"
+            }
+          ]
+        },
+        {
+          "id": "group_a_music",
+          "name": "Group A - Music",
+
+          "settings": [
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "cfa85906-8774-4fa2-80bd-ce7c6029d078",
+              "step_name": "Informed Consent"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "a054d14f-55e8-4a8d-8910-f9013fe211e8",
+              "step_name": "Preliminary Info"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "15d7b80f-e18c-4668-9e3a-ea5ddb4ac82d",
+              "step_name": "Control"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "d3183249-d7f1-4591-8282-d927104485e1",
+              "step_name": "Initial Questionnaire"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "7c46c990-13df-4bee-a508-73f08f54cc8c",
+              "step_name": "Instructions 1"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "ca66cfdd-3db1-444f-884e-a15e416bedac",
+              "step_name": "Arithmetic 1"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "cdef1165-18bb-4e74-be42-bae03f974e73",
+              "step_name": "Mid Questionnaire"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "5875262f-f5a4-4050-a8bd-e275fb920f43",
+              "step_name": "Recovery"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "24817f76-fbb1-4934-aa2a-c2d620467935",
+              "step_name": "Instructions 2"
+            },
+            {
+              "ambient": true,
+              "color": [255, 225, 255],
+              "light": false,
+              "music": true,
+              "step_id": "9524d6c2-c047-444a-8d9a-a5d9b7a5af2f",
+              "step_name": "Arithmetic 2"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "2452d47b-4176-4554-abca-bc161d6b2e94",
+              "step_name": "Final Questionnaire"
+            }
+          ]
+        },
+        {
+          "id": "group_b_music",
+          "name": "Group B Music",
+          "settings": [
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "cfa85906-8774-4fa2-80bd-ce7c6029d078",
+              "step_name": "Informed Consent"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "a054d14f-55e8-4a8d-8910-f9013fe211e8",
+              "step_name": "Preliminary Info"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "15d7b80f-e18c-4668-9e3a-ea5ddb4ac82d",
+              "step_name": "Control"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "d3183249-d7f1-4591-8282-d927104485e1",
+              "step_name": "Initial Questionnaire"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "7c46c990-13df-4bee-a508-73f08f54cc8c",
+              "step_name": "Instructions 1"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": true,
+              "step_id": "ca66cfdd-3db1-444f-884e-a15e416bedac",
+              "step_name": "Arithmetic 1"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "cdef1165-18bb-4e74-be42-bae03f974e73",
+              "step_name": "Mid Questionnaire"
+            },
+            {
+              "ambient": true,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "5875262f-f5a4-4050-a8bd-e275fb920f43",
+              "step_name": "Recovery"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "24817f76-fbb1-4934-aa2a-c2d620467935",
+              "step_name": "Instructions 2"
+            },
+            {
+              "ambient": true,
+              "color": [255, 225, 255],
+              "light": false,
+              "music": false,
+              "step_id": "9524d6c2-c047-444a-8d9a-a5d9b7a5af2f",
+              "step_name": "Arithmetic 2"
+            },
+            {
+              "ambient": false,
+              "color": [255, 255, 255],
+              "light": false,
+              "music": false,
+              "step_id": "2452d47b-4176-4554-abca-bc161d6b2e94",
+              "step_name": "Final Questionnaire"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

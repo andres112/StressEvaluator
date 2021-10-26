@@ -63,13 +63,17 @@
       <v-card
         v-for="(question, item) in survey"
         :key="question.id"
-        class="mb-4"
+        class="mb-3"
         shaped
+        :elevation="getElevation(question.type)"
       >
-        <v-subheader class="text-subtitle-1 blue--text"
-          >Question {{ item + 1 }}
+        <v-subheader
+          class="text-subtitle-1 blue--text"
+          v-if="!!getElevation(question.type)"
+          >Question {{ item_ctrl[item] }}
         </v-subheader>
         <component
+          :class="!getElevation(question.type) ? 'mt-6' : 'mt-0'"
           :is="getToolComponent(question.type)"
           :content="question"
           :ref="`ans-${question.id}`"
@@ -129,11 +133,13 @@ export default {
       { text: "Image Selector", icon: "mdi-image", value: "image" },
       { text: "Label", icon: "mdi-label", value: "label" },
     ],
+    item_ctrl: [],
   }),
   mounted() {
     this.survey = Array.isArray(this.step_data?.content?.questions)
       ? this.step_data.content.questions
       : [];
+    this.setItems();  
   },
   created() {
     if (!this.edition_mode) {
@@ -144,7 +150,7 @@ export default {
         type: this.step_data.type,
         end_time: null,
         content: [],
-      };
+      };      
     }
   },
   computed: {
@@ -175,6 +181,9 @@ export default {
       if (["radiogrid", "checkboxgrid"].includes(tool)) {
         q.options = { rows: [], columns: [] };
       }
+      if (tool == "label") {
+        q["description"] = null;
+      }
       // Data structure for question
       this.survey.push(q);
 
@@ -196,7 +205,7 @@ export default {
         rating: LinearScale,
         radiogrid: Grid,
         checkboxgrid: Grid,
-        image: Image,
+        image: Images,
         label: Label,
       };
       return TOOLS[tool] || null;
@@ -228,6 +237,22 @@ export default {
     },
     isSelectedCard(qId) {
       return qId == this.selectedCard ? 20 : 2;
+    },
+    getElevation(q_type) {
+      return q_type == "label" ? 0 : 3;
+    },
+    setItems() {
+      this.item_ctrl = [];
+      let counter = 1;
+      this.survey.forEach((q) => {
+        // if label type, reduce the counter
+        if (q.type == "label") {
+          counter--;
+        }
+        this.item_ctrl.push(counter);
+        // increase the counter for next question
+        counter++;
+      });
     },
   },
   watch: {

@@ -91,6 +91,15 @@
           :sm="edition_mode ? 7 : 12"
           :md="edition_mode ? 8 : 12"
         >
+          <!-- Image indicator for sensor measurement  -->
+          <div class="float-right mx-0">
+            <v-img
+              contain
+              max-width="100"
+              src="https://firebasestorage.googleapis.com/v0/b/empathy-74497.appspot.com/o/hand_sensor_icon.png?alt=media&token=a01e1cbd-169a-43af-a3c5-f386a33530f5"
+            ></v-img>
+          </div>
+          <!-- --------------------------------------- -->
           <p
             class="mb-6 text-subtitle-2 text-sm-subtitle-1 font-weight-bold"
             v-if="edition_mode"
@@ -249,10 +258,12 @@ export default {
     ...mapMutations({ setNotifications: "settings/setNotifications" }),
     // Create the first number of the operation according operation choosen
     createFirstNumber() {
-      if (["sub", "div"].includes(this.properties.operation))
-        this.first_number = Math.floor(1000 + Math.random() * 9000);
-      if (["add", "mul"].includes(this.properties.operation))
-        this.first_number = Math.floor(1 + Math.random() * 999);
+      if (["sub", "add"].includes(this.properties.operation))
+        this.first_number = Math.floor(1000 + Math.random() * 99999);
+      if (["div"].includes(this.properties.operation))
+        this.first_number = Math.floor(1000 + Math.random() * 9999);
+      if (["mul"].includes(this.properties.operation))
+        this.first_number = Math.floor(10 + Math.random() * 999);
     },
     // Get the second number randomly from seeds
     getSecondNumber() {
