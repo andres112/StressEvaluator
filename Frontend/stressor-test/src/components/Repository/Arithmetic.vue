@@ -249,10 +249,12 @@ export default {
     ...mapMutations({ setNotifications: "settings/setNotifications" }),
     // Create the first number of the operation according operation choosen
     createFirstNumber() {
-      if (["sub", "div"].includes(this.properties.operation))
-        this.first_number = Math.floor(1000 + Math.random() * 9000);
-      if (["add", "mul"].includes(this.properties.operation))
-        this.first_number = Math.floor(1 + Math.random() * 999);
+      if (["sub", "add"].includes(this.properties.operation))
+        this.first_number = Math.floor(1000 + Math.random() * 99999);
+      if (["div"].includes(this.properties.operation))
+        this.first_number = Math.floor(1000 + Math.random() * 9999);
+      if (["mul"].includes(this.properties.operation))
+        this.first_number = Math.floor(10 + Math.random() * 999);
     },
     // Get the second number randomly from seeds
     getSecondNumber() {

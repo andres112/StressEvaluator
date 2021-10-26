@@ -44,7 +44,11 @@
           </v-col>
           <v-col cols="12" md="5">
             <v-card shaped color="light-blue lighten-5">
-              <v-list-item two-line v-for="(item, index) in ownerInfo" :key="index">
+              <v-list-item
+                two-line
+                v-for="(item, index) in ownerInfo"
+                :key="index"
+              >
                 <v-list-item-content>
                   <v-list-item-title
                     class="text-sm-h5 text-lg-h4 text-h6 font-weight-bold"
@@ -144,9 +148,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.description {
-  white-space: pre-wrap;
-  text-align: justify;
-}
-</style>
+<style></style>

@@ -9,7 +9,7 @@
           dense
           :disabled="edition_mode"
           color="light-green"
-          v-model="answer_selected"
+          v-model.trim="answer_selected"
           placeholder="Write your short answer."
           counter
           maxlength="100"

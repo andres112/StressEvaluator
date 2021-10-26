@@ -29,10 +29,22 @@ input {
     cursor: pointer;
   }
 }
-.selectable{
+.selectable {
   cursor: pointer;
   transition: all 0.3s ease-in;
-  &:hover{
+  &:hover {
     transform: scale(1.1);
   }
+}
+.editor-node {
+  p {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem !important;
+  }
+}
+
+// Wrap the text and inlcude the linebreaks
+.description {
+  white-space: pre-wrap;
+  text-align: justify;
 }
