@@ -2,6 +2,7 @@
 timestamp_creator/input/*
 timestamp_creator/output/*
 music_dataset/*
+empatica/*
 
 .ipynb_checkpoints/*
 .idea

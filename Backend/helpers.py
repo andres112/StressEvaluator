@@ -19,7 +19,7 @@ def isUUID(text):
 
 
 def getDefaultRes(type):
-    # Get default resources from database   
+    # Get default resources from database
     D_RES = DefaultRes.find_one({'type': type})
     del D_RES["_id"]
     return D_RES
