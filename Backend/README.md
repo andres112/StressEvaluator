@@ -2,7 +2,6 @@
 
 ### As a part of **The effect of music and colored light on stress in occupational health** project.
 
-
 ## Tools (requirements.txt)
 - python v 3.x 
 - Flask
@@ -50,7 +49,7 @@ __Clone the Project__
 
 In your local machine execute the following: 
 
-    git clone https://gitlab.forge.hefr.ch/karl.daher/mt_stress_detection.git
+    git clone https://github.com/andres112/StressEvaluator.git
 
     cd .\mt_stress_detection\Backend\
 
@@ -169,4 +168,4 @@ After the server is running, in http://localhost:5000/swagger/ It's possible to 
         
     - GET: http://localhost:5000/test_stats/{test_id} -> Get summary of evaluation done for users
         - Path params: 
-            - test_id[String] *required*   
+            - test_id[String] *required*  

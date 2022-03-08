@@ -1,0 +1,6 @@
+Flask~=1.0.2
+discoverhue~=1.0.2
+phue~=1.1
+pygame~=2.0.1
+nanoleafapi~=2.1.1
+NanoLeafDiscovery~=0.1.0

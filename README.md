@@ -15,3 +15,7 @@ Read more [here](./Backend/README.md)
 ## Frontend Module
 
 Read more [here](./Frontend/stressor-test/README.md) 
+
+## Stimuli Control Module
+
+Read more [here](./StimuliControl/README.md) 
